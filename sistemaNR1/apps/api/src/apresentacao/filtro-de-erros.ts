@@ -2,6 +2,18 @@ import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import type { Response } from 'express';
 import { randomUUID } from 'node:crypto';
+import { ErroDeUsuario } from '../dominio/usuario.js';
+
+const statusPorErroUsuario = {
+  NAO_AUTENTICADO: 401,
+  SEM_PERMISSAO: 403,
+  LOTACAO_INVALIDA: 400,
+  MATRICULA_DUPLICADA: 409,
+  VINCULO_DUPLICADO: 409,
+  IDENTIDADE_RECUSADA: 409,
+  SERVICO_INDISPONIVEL: 503,
+  CADASTRO_PARCIAL: 409,
+} as const;
 
 function obterMensagem(excecao: unknown): string | string[] {
   if (!(excecao instanceof HttpException)) {
@@ -27,6 +39,19 @@ function obterMensagem(excecao: unknown): string | string[] {
 export class FiltroDeErros implements ExceptionFilter {
   catch(excecao: unknown, contexto: ArgumentsHost): void {
     const resposta = contexto.switchToHttp().getResponse<Response>();
+    if (excecao instanceof ErroDeUsuario) {
+      const statusCode = statusPorErroUsuario[excecao.codigo];
+      resposta.status(statusCode).json({
+        statusCode,
+        codigo: excecao.codigo,
+        mensagem: excecao.message,
+        correlationId: randomUUID(),
+        ...(excecao.usuarioIdCriado
+          ? { usuarioIdCriado: excecao.usuarioIdCriado }
+          : {}),
+      });
+      return;
+    }
     const statusCode =
       excecao instanceof HttpException
         ? excecao.getStatus()

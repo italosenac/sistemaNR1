@@ -53,6 +53,14 @@ export default function PaginaInicial() {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-12 sm:px-10 sm:py-20">
+        <div className="mb-8">
+          <Link
+            href="/usuarios"
+            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+          >
+            Usuários e vínculos
+          </Link>
+        </div>
         <div className="mb-4 flex items-center gap-2 text-xs font-semibold tracking-[0.15em] text-teal-800 uppercase">
           <span className="h-px w-8 bg-teal-700" /> Cuidado que começa no
           trabalho

@@ -1,4 +1,4 @@
-# Instalação e execução — E0
+# Instalação e execução — E0 e cadastro C0
 
 Validado no Windows x64/PowerShell 5.1 em 2026-09-26. Estado e versões completas no [diagnóstico](diagnostico.md); evidências no [relatório E0](../validacao/relatorio-e0.md).
 
@@ -51,14 +51,15 @@ API estruturada manualmente nas quatro camadas pedidas, com CLI Nest local e Typ
 | Web, preparação solicitada | @supabase/ssr 0.12.7; @supabase/supabase-js 2.117.2; zod 4.6.5; react-hook-form 7.89.0; @hookform/resolvers 5.9.1 |
 | Componentes | class-variance-authority 0.7.1; cn 0.4.0; tw-animate-css 1.4.0 |
 | API | @nestjs/common/core/platform-express/testing 12.1.0; @nestjs/config 12.0.1; @nestjs/swagger 12.0.2; class-validator 0.15.1; class-transformer 0.5.1; reflect-metadata 0.2.2; rxjs 7.8.2; @supabase/supabase-js 2.117.2 |
+| API, cadastro C0 | pg 8.23.0; @types/pg 8.23.1; @jest/globals 30.5.2 |
 | Ferramentas | TypeScript 5.9.3; ESLint 9.39.5; typescript-eslint 8.70.1; Prettier 3.9.9; Nest CLI 12.0.7; Supabase CLI 2.118.0; concurrently 10.0.5 |
 | Testes | Jest 30.5.2; ts-jest 29.4.14; Supertest 7.3.0; Playwright 1.63.0 |
 
-Tipos e dependências auxiliares constam dos quatro manifests e do lockfile. `pnpm.cmd list --recursive --depth 0` lista os valores instalados. SDKs Supabase e bibliotecas de formulários são preparação explicitamente pedida; E0 não cria autenticação nem formulários de negócio.
+Tipos e dependências auxiliares constam dos quatro manifests e do lockfile. `pnpm.cmd list --recursive --depth 0` lista os valores instalados. E0 preparou SDKs e bibliotecas de formulários; a atualização de C0 utiliza essas dependências no cadastro administrativo em `/usuarios`.
 
 ## Variáveis de ambiente
 
-A aplicação funciona sem criar arquivos locais. Para configurar:
+A página inicial e a saúde de E0 funcionam sem arquivos locais. O cadastro C0 depende de Auth, schema preparado e conexão de runtime restrita. Para configurar os arquivos sem sobrescrever os existentes:
 
 ```powershell
 if (-not (Test-Path 'apps/web/.env.local')) { Copy-Item 'apps/web/.env.example' 'apps/web/.env.local' }
@@ -72,9 +73,10 @@ if (-not (Test-Path 'apps/api/.env')) { Copy-Item 'apps/api/.env.example' 'apps/
 | NODE_ENV | API; development |
 | PORT | API; 3001 |
 | FRONTEND_URL | API; http://localhost:3000; somente origem exata |
-| SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY / SUPABASE_SECRET_KEY | API; vazias |
+| SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY / SUPABASE_SECRET_KEY | API; vazias nos exemplos |
+| DATABASE_URL | API; conexão de runtime restrita para C0, ausente até provisionamento autorizado |
 
-Nenhum valor real foi usado. Arquivos `.env` e variantes estão ignorados; os exemplos são versionáveis. Variáveis públicas são incluídas no build Next: nunca colocar chave secreta nelas. `FRONTEND_URL` não aceita `*`, caminho ou barra final; CORS é uma regra do navegador, não autorização de usuário. Autorização de negócio será implementada em E1.
+Os exemplos e testes usam valores fictícios; a conexão posteriormente autorizada usa configurações locais ignoradas pelo Git. Variáveis públicas são incluídas no build Next: nunca colocar chave secreta nelas. `FRONTEND_URL` não aceita `*`, caminho ou barra final; CORS é uma regra do navegador. A API verifica a identidade no Supabase Auth e exige vínculo ativo de gestor na empresa para cadastrar usuários; validação real do banco/RLS ainda depende da aplicação autorizada da migração.
 
 ## Execução e verificação
 
@@ -88,7 +90,8 @@ pnpm.cmd dev:api
 - Frontend: http://localhost:3000
 - Saúde pública: http://localhost:3001/health
 - Swagger (development): http://localhost:3001/api/docs
-- Prefixo reservado às rotas de negócio futuras: /api/v1
+- Cadastro administrativo C0: http://localhost:3000/usuarios
+- Prefixo das rotas de negócio: /api/v1
 
 ```powershell
 Invoke-RestMethod -Uri 'http://localhost:3001/health'
@@ -99,7 +102,7 @@ pnpm.cmd build
 pnpm.cmd format:check
 ```
 
-`pnpm test` executa 14 testes HTTP/configuração e 7 testes no navegador. Fechar servidores manuais antes de executar os testes de navegador, pois eles iniciam seus próprios servidores nas portas 3000/3001. Windows usa Edge instalado. Fora do Windows, instalar Chromium com `pnpm exec playwright install chromium`. Se Edge estiver ausente no Windows, instalar seu navegador de teste com `pnpm.cmd exec playwright install msedge`.
+`pnpm test` executa testes HTTP/configuração/cadastro e testes no navegador. Playwright usa servidores próprios nas portas 3100/3101 e diretório `.next-e2e`, com variáveis fictícias que impedem cadastros remotos pelos testes. Windows usa Edge instalado. Fora do Windows, instalar Chromium com `pnpm exec playwright install chromium`. Se Edge estiver ausente no Windows, instalar seu navegador de teste com `pnpm.cmd exec playwright install msedge`. Scripts SQL de RLS são separados e aguardam autorização para migração/teste real.
 
 Produção local após build, em terminais separados:
 
@@ -115,7 +118,7 @@ O ambiente `production` deve ser definido explicitamente também na hospedagem f
 
 ## Supabase na próxima etapa
 
-Na entrega E0, a CLI local foi inicializada com `supabase/config.toml`, mantendo migrations vazia e sem conexão remota. **Atualização de 2026-09-26:** projeto informado pelo usuário vinculado pelo CLI, autenticação confirmada e consulta SQL constante bem-sucedida, sem aplicação de migrações. As configurações foram colocadas em `apps/web/.env.local` e `apps/api/.env`, ambos ignorados. Evidências e limites no [relatório da conexão](../validacao/conexao-supabase.md). E1 aguarda permissão; Auth funcional, Storage e RLS ainda não estão implementados. Docker não é necessário para E0.
+Na entrega E0, a CLI local foi inicializada com `supabase/config.toml`, mantendo migrations vazia e sem conexão remota. **Atualização de 2026-09-26:** projeto informado pelo usuário vinculado pelo CLI, autenticação confirmada e consulta SQL constante bem-sucedida, sem aplicação de migrações. As configurações foram colocadas em `apps/web/.env.local` e `apps/api/.env`, ambos ignorados. Evidências e limites no [relatório da conexão](../validacao/conexao-supabase.md). O pedido posterior autorizou o recorte de usuários C0: integração Auth e SQL de RLS preparados localmente; E1 permanece parcial e Storage não foi implementado. Docker não é necessário para E0.
 
 O projeto de teste já foi indicado pelo usuário e as variáveis locais foram conferidas. Para configuração em outra máquina, login CLI pode ser interativo; não copiar tokens para código, terminal compartilhado ou relatório. Com projeto definido, os comandos são:
 
@@ -124,4 +127,4 @@ pnpm.cmd exec supabase login
 pnpm.cmd exec supabase link --project-ref REFERENCIA_DO_PROJETO_DE_TESTE
 ```
 
-Nesta máquina o vínculo foi executado usando a autenticação já disponível, sem novo login interativo. Antes de implementar E1, obter a permissão solicitada pelo usuário. A proibição de aplicar migrações continua vigente. Depois da autorização pertinente, criar migrations a partir da Camada 0, revisar privilégios/RLS, implementar verificação de identidade e vínculo no servidor e testar isolamento entre duas empresas sintéticas. A saúde de processo atual não testa banco; a consulta de conexão foi uma verificação separada. [Guia oficial da CLI Supabase](https://supabase.com/docs/guides/local-development/cli/getting-started).
+Nesta máquina o vínculo foi executado usando a autenticação já disponível, sem novo login interativo. O pedido posterior autorizou preparar usuários/perfis/matrículas/lotação da Camada 0. A proibição de aplicar migrações continua vigente; scripts SQL e código estão preparados, não implantados. Antes de habilitar persistência, revisar a migração e provisionar um login restrito membro de `sistemanr1_api`, preencher `DATABASE_URL` somente no backend e validar isolamento real entre empresas sintéticas. A saúde de processo atual não testa banco; a consulta de conexão foi uma verificação separada. [Guia oficial da CLI Supabase](https://supabase.com/docs/guides/local-development/cli/getting-started).

@@ -7,7 +7,9 @@
 | Agregado / entidade | Conteúdo principal | Relações e invariantes |
 | --- | --- | --- |
 | Empresa | Identificador e nome fictício | 1:N estabelecimentos; fronteira do tenant |
-| VinculoDeAcesso | Usuário Auth, empresa, papel, ativo | N:M usuários/empresas; papéis administrados no servidor |
+| IdentidadeAuth | Identificador, e-mail e credencial gerenciados pelo Supabase Auth | Sem senha/hash/e-mail duplicados em tabelas próprias; verificação de sessão no servidor |
+| PerfilUsuario | usuarioId referenciando Auth, nomeCompleto | Um perfil por identidade; não contém matrícula nem dados de respostas |
+| VinculoDeAcesso | Usuário, empresa, matrícula funcional, papel, ativo e lotação opcional | N:M usuários/empresas; um vínculo por usuário/empresa, matrícula única dentro da empresa; permissões administradas no servidor |
 | Estabelecimento / Setor | Nome, localização/ambiente e processo | Empresa 1:N estabelecimento 1:N setor |
 | Funcao / Turno / GrupoDeExposicao | Atividade, combinação organizacional, população esperada | Grupo pertence a um setor; função/turno opcionais quando não detalhados; partição sem sobreposição |
 | EstruturaCongelada | Revisão e cópia dos grupos/populações | Campanha aponta para revisão imutável, não para cadastro vivo |
@@ -32,6 +34,13 @@
 
 ```mermaid
 erDiagram
+  IdentidadeAuth ||--|| PerfilUsuario : possui
+  PerfilUsuario ||--o{ VinculoDeAcesso : participa
+  Empresa ||--o{ VinculoDeAcesso : autoriza
+  Estabelecimento |o--o{ VinculoDeAcesso : lota
+  Setor |o--o{ VinculoDeAcesso : lota
+  Funcao |o--o{ VinculoDeAcesso : atribui
+  Turno |o--o{ VinculoDeAcesso : atribui
   Empresa ||--o{ Estabelecimento : possui
   Estabelecimento ||--o{ Setor : contem
   Setor ||--o{ GrupoDeExposicao : organiza
@@ -50,6 +59,8 @@ erDiagram
 ```
 
 Não existe aresta Token → Resposta ou Trabalhador → Resposta. Grupo/campanha são atributos compartilhados necessários à agregação, mas não autorizam consulta individual nem eliminam risco de correlação operacional.
+
+Atualização C0 de 2026-09-26: matrícula é textual e pertence ao vínculo, permitindo valores diferentes em empresas distintas e preservando zeros iniciais. Todas as referências de lotação incluem a mesma empresa; setor também referencia seu estabelecimento. Lotação administrativa não define automaticamente população de campanha e nunca é copiada para resposta individual. A migração local correspondente está preparada, **não aplicada**, em [C0 usuários](../../supabase/migrations/20260926000100_c0_usuarios_e_vinculos.sql).
 
 ## Estados e fronteiras transacionais
 

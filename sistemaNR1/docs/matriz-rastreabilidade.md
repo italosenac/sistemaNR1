@@ -36,7 +36,7 @@ E0 não entra na contagem dos RFs e não altera seus estados. Os cenários de ne
 | RF-03.5 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.3.3.1 | [RF-03.5](../specs/m3-inventario/rf-03-5.spec.md) | inventários / documentos | RF-03.4; RF-03.6 (artefatos gerados) | necessário para produção futura | CA-03-5-01 a CA-03-5-04; ver testes na SPEC | Pendente |
 | RF-03.6 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.2 | [RF-03.6](../specs/m3-inventario/rf-03-6.spec.md) | documentos / inventários | RF-03.1; RF-03.3; RF-03.4 | essencial para o MVP | CA-03-6-01 a CA-03-6-05; ver testes na SPEC | Pendente |
 
-C0: [SPEC](../specs/camada-0/estrutura-organizacional.spec.md), origem M1 p.2/M2 p.2, módulo organizações, essencial; CA-C0-01 a 05; pendente.
+C0: [SPEC](../specs/camada-0/estrutura-organizacional.spec.md), origem M1 p.2/M2 p.2 e atualização explícita do cadastro em 2026-09-26; módulo organizações, essencial. **Parcialmente implementado:** CA-C0-01 a 05 preservados e pendentes; CA-C0-06 a 12 acrescentados para perfis/matrículas/lotação. Código, DTOs e formulários preparados; testes locais de aplicação/navegador em [evidência](evidencias/c0-usuarios.md). Migração não aplicada, testes reais de persistência/RLS pendentes; nenhum RF de M1–M3 foi concluído ou alterado.
 
 Dependências entre rascunho, publicação e consolidação não são ciclos entre módulos: ver [contratos](arquitetura/contratos-modulos.md). RF-03.2 é biblioteca auxiliar, não requisito anterior obrigatório para cadastrar perigo completo em M2.
 

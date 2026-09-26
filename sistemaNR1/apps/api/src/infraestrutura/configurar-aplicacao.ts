@@ -35,6 +35,7 @@ export function configurarAplicacao(aplicacao: INestApplication): void {
         'Fundação técnica E0. Módulos de negócio ainda não implementados.',
       )
       .setVersion('0.1.0')
+      .addBearerAuth()
       .build();
     SwaggerModule.setup(
       'api/docs',

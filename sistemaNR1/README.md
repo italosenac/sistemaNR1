@@ -1,6 +1,6 @@
 # sistemaNR1 — MVP
 
-SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada:** página Next.js integrada ao endpoint de saúde NestJS. Banco, autenticação e os 21 requisitos de negócio permanecem pendentes.
+SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcial:** cadastro de usuários/perfis/vínculos preparado, com migração ainda não aplicada. Os 21 requisitos M1–M3 continuam pendentes.
 
 ## Executar localmente
 
@@ -15,6 +15,7 @@ pnpm.cmd dev
 - Página: [http://localhost:3000](http://localhost:3000).
 - API: [http://localhost:3001/health](http://localhost:3001/health).
 - Swagger em desenvolvimento: [http://localhost:3001/api/docs](http://localhost:3001/api/docs).
+- Usuários e vínculos: [http://localhost:3000/usuarios](http://localhost:3000/usuarios). Persistência depende da preparação de banco descrita abaixo.
 
 `Ctrl+C` encerra os processos. As portas 3000 e 3001 devem estar livres. A raiz Git existente fica em `MVP`; não executar `git init` dentro deste projeto.
 
@@ -34,7 +35,7 @@ pnpm.cmd dev:web       # frontend, após compilar contratos
 pnpm.cmd dev:api       # backend, após compilar contratos
 pnpm.cmd typecheck
 pnpm.cmd lint
-pnpm.cmd test          # 14 testes API + 7 testes de navegador
+pnpm.cmd test          # API e navegador com dados fictícios
 pnpm.cmd test:api
 pnpm.cmd test:e2e
 pnpm.cmd build        # contratos antes das aplicações
@@ -42,7 +43,7 @@ pnpm.cmd format
 pnpm.cmd format:check
 ```
 
-Os testes Playwright iniciam e encerram seus próprios servidores; interrompa `pnpm dev` antes deles. No Windows utilizam Microsoft Edge instalado, sem abrir janela. Em outro sistema, executar antes `pnpm.cmd exec playwright install chromium` (usar `pnpm` fora do Windows). A API usa ESM e o Jest usa `--experimental-vm-modules`, conforme sua documentação; o aviso experimental permanece visível.
+Os testes Playwright iniciam e encerram seus próprios servidores nas portas **3100/3101**, com saída Next em `.next-e2e` e identidade fictícia; não usam o projeto Supabase remoto. No Windows utilizam Microsoft Edge instalado, sem abrir janela. Em outro sistema, executar antes `pnpm.cmd exec playwright install chromium` (usar `pnpm` fora do Windows). A API usa ESM e o Jest usa `--experimental-vm-modules`, conforme sua documentação; o aviso experimental permanece visível. Testes SQL de RLS estão preparados separadamente e não são executados por `pnpm test`.
 
 Builds locais de produção, em terminais separados, depois de `pnpm.cmd build`:
 
@@ -61,17 +62,24 @@ Swagger não é registrado em `NODE_ENV=production`. Para voltar ao desenvolvime
 ```text
 apps/web/                    # Next.js App Router, Tailwind e shadcn/ui
 apps/api/src/
-  dominio/                   # reservada; sem regras de negócio em E0
-  aplicacao/                 # reservada; sem casos de uso de negócio
-  infraestrutura/            # configuração, validação e composição HTTP
-  apresentacao/              # saúde e envelope de erros
-packages/contratos/          # RespostaDeSaude, compilado em dist/
+  dominio/                   # regras de lotação e erros de usuário
+  aplicacao/                 # cadastro/vínculo e portas de identidade/persistência
+  infraestrutura/            # Supabase Auth, PostgreSQL restrito e configuração
+  apresentacao/              # saúde, DTOs, autenticação e controllers
+packages/contratos/          # saúde e contratos de usuários, compilados em dist/
 supabase/config.toml         # configuração local da CLI
-supabase/migrations/         # sem migrações SQL
+supabase/migrations/         # migração C0 preparada, não aplicada
+supabase/tests/              # testes SQL preparados, não executados
 tests/                      # integração no navegador
 ```
 
-Supabase CLI e SDKs instalados; projeto remoto vinculado e conexão confirmada por consulta SQL constante, sem aplicar migrações. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Relatório da conexão](docs/validacao/conexao-supabase.md). Banco de negócio, autenticação funcional e RLS ainda aguardam implementação em E1 e permissão do usuário. A ausência de chaves continua não impedindo E0; procedimento em [instalação](docs/ambiente/instalacao.md).
+Supabase CLI e SDKs instalados; projeto remoto vinculado e conexão confirmada por consulta SQL constante, sem aplicar migrações. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Relatório da conexão](docs/validacao/conexao-supabase.md). A atualização posterior autorizou preparar o cadastro C0, mantendo a proibição de aplicar migrações. A ausência de chaves continua não impedindo E0; procedimento em [instalação](docs/ambiente/instalacao.md).
+
+### Cadastro C0 preparado
+
+Nome completo no perfil; e-mail/senha no Supabase Auth; matrícula, papel e lotação no vínculo por empresa. Gestor autorizado cria conta ou associa conta existente com matrícula independente. Credenciais existentes não são alteradas ao criar outro vínculo. Respostas anônimas M1 não recebem identidade nominal.
+
+A funcionalidade ainda precisa da migração revisada, bootstrap controlado de empresa/gestor e `DATABASE_URL` de um login PostgreSQL NOSUPERUSER/NOBYPASSRLS, membro de `sistemanr1_api`, com TLS validado e sem propriedade das tabelas. **Não executar migrações sem autorização.** Não usar `postgres` ou chave de serviço como acesso geral ao banco. Novas contas Auth são criadas sem confirmar artificialmente o e-mail; ativação deve seguir procedimento administrativo controlado. [Evidências e limites do recorte](docs/evidencias/c0-usuarios.md).
 
 Evidências: [diagnóstico e versões](docs/ambiente/diagnostico.md), [instalação detalhada](docs/ambiente/instalacao.md), [SPEC E0](specs/fundacao/e0.spec.md) e [relatório dos testes e builds](docs/validacao/relatorio-e0.md).
 

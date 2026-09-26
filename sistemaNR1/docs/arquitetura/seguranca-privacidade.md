@@ -19,6 +19,14 @@ Privilégio mínimo no banco e RLS por empresa como defesa adicional. Proposta: 
 
 Testar via dois usuários de empresas diferentes, acesso por identificador conhecido, chaves relacionadas, SQL sob papel restrito e download de objeto. Chaves de serviço/segredos nunca entram em `NEXT_PUBLIC_*`, Git, exemplos, logs, relatórios ou prompts. Não usar `service_role` como atalho para acesso geral. Migrações usam credencial separada, ausente do runtime.
 
+### Perfis e matrículas da Camada 0
+
+Cadastro administrativo atualizado em 2026-09-26: nome completo no perfil; e-mail e senha exclusivamente no Supabase Auth; matrícula e lotação no vínculo por empresa. Um vínculo não herda papel de outra empresa. Metadados Auth editáveis não autorizam operações. O frontend mantém sessão em memória, sem persistir senha/token em localStorage/sessionStorage; limpa a senha após tentativa de envio e ao alternar o tipo de cadastro.
+
+A chave secreta é usada somente pelo adaptador backend para criação controlada de identidade, depois da verificação de gestor ativo e lotação. A consulta de dados organizacionais usa PostgreSQL sob papel NOSUPERUSER/NOBYPASSRLS membro de `sistemanr1_api`, sem propriedade das tabelas. `DATABASE_URL` deve conter conexão desse login restrito e TLS validado; jamais usar a conexão administrativa por conveniência. Cada transação define contexto local a partir do identificador validado, faz commit/rollback e libera a conexão; rollback falho descarta a conexão.
+
+Schema `organizacao` não é acessível por `anon`/`authenticated` nem exposto no navegador. Migração preparada inclui RLS/FORCE RLS, funções estreitas de autorização, chaves compostas de empresa/lotação e unicidade de matrícula por empresa. Não há tabela própria de senha, nem relacionamento entre perfil/vínculo/matrícula e respostas ou tokens M1. **Políticas ainda não executadas no banco**: exigir testes reais antes de afirmar isolamento operacional concluído.
+
 ## Coleta e tokens
 
 Tokens opacos com entropia criptográfica suficiente (proposta: 32 bytes aleatórios), apenas hash persistido, vínculo a campanha/grupo, expiração e consumo único. QR/link é individual por código; não existe lista nominal de destinatários. Token em fragmento evita envio em URL HTTP; frontend envia somente no corpo por HTTPS, sem analytics ou scripts externos no formulário. Aplicar `no-referrer`, não cachear conteúdo sensível e apagar token da apresentação após recebimento.

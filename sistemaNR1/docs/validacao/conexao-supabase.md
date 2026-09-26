@@ -51,3 +51,7 @@ Implementar E1 conforme [backlog](../backlog-mvp.md), [Camada 0](../../specs/cam
 A restrição de **não aplicar migrações** permanece vigente até autorização explícita para isso. A implementação local pode preparar SQL, código e testes revisáveis; não deve declarar testes de persistência/RLS concluídos sem execução real no ambiente autorizado.
 
 Referências oficiais: [autenticação do CLI](https://supabase.com/docs/reference/cli/supabase-login), [vínculo do projeto](https://supabase.com/docs/reference/cli/supabase-link) e [chaves publicáveis e secretas](https://supabase.com/docs/guides/getting-started/api-keys).
+
+## Atualização posterior — autorização delimitada de C0
+
+Após esta verificação, o usuário solicitou explicitamente atualizar SPECs, migrações locais, DTOs, formulários e testes de usuários com nome completo/e-mail/senha/matrícula e lotação por empresa. Esse pedido autoriza o recorte descrito em [C0 usuários](../evidencias/c0-usuarios.md), mantendo a proibição de aplicar migrações. As afirmações acima sobre pasta vazia e código não iniciado registram o estado no momento da conexão; posteriormente uma migração foi preparada localmente, sem execução remota.

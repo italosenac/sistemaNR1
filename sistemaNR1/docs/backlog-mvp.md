@@ -1,6 +1,10 @@
 # Backlog do MVP
 
-Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; E1–E8 e todos os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
+Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; **E1 está parcialmente implementada no recorte de usuários**, e E2–E8 e os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
+
+## Registro de execução — E1 / usuários
+
+Atualização explícita do usuário em 2026-09-26 autorizou nome completo, e-mail/senha Auth, matrícula por empresa e lotação em estabelecimento/setor/função/turno. SPEC, modelo, DTOs, formulário `/usuarios`, endpoints de gestão, adaptadores e migração local preparados. [Evidências e limites](evidencias/c0-usuarios.md). Matrícula não é identidade de resposta M1. E1 permanece **Parcialmente implementado**: não foram aplicadas migrações, não há prova real de RLS/persistência nem conclusão dos critérios de estrutura/grupos/revisões C0-01 a 05. A autorização desta atualização não revogou a proibição de aplicar migrações.
 
 ## Registro de execução — E0
 

@@ -13,6 +13,24 @@
 
 Congelar no momento de publicação. Rejeitar referências cruzadas entre empresas e grupos sobrepostos. Sem cadastro nominal de trabalhadores.
 
+## C0 — Identidade, perfil e vínculo administrativo
+
+Atualização solicitada em 2026-09-26; tipos implementados em [contratos de usuários](../../packages/contratos/src/usuarios.ts), sem mudar os contratos M1–M3.
+
+| Operação implementada | Entrada / saída e autorização |
+| --- | --- |
+| GET /api/v1/minhas-empresas | Bearer validado no Supabase Auth; somente vínculos ativos do usuário |
+| GET /api/v1/empresas/{empresaId}/usuarios/opcoes | Gestor ativo; referências de lotação da empresa |
+| GET /api/v1/empresas/{empresaId}/usuarios | Gestor ativo; nome, matrícula, papel e lotação somente da empresa |
+| POST /api/v1/empresas/{empresaId}/usuarios | Nome completo, e-mail, senha, matrícula, papel e lotação opcional; gestor ativo antes de criar Auth |
+| POST /api/v1/empresas/{empresaId}/vinculos | usuarioId existente, matrícula, papel e lotação; não aceita nome/e-mail/senha e não altera identidade global |
+
+`empresaId` do caminho é uma seleção sujeita a autorização, nunca uma permissão por si só. O ator vem da sessão verificada; propriedades extras de contexto no corpo são recusadas. Senha é campo somente de entrada no Swagger e é encaminhada ao Auth sem persistência própria. Saída `VinculoUsuario` não contém senha/e-mail/token. Matrícula nunca compõe o perfil global.
+
+Auth e PostgreSQL têm commits separados. Se Auth criou identidade, mas o vínculo não foi confirmado, a API retorna `CADASTRO_PARCIAL` e o identificador recém-criado para reconciliação controlada; não remove conta automaticamente, não concede papel por metadado e não afirma que o commit do vínculo foi revertido quando seu resultado é incerto. O endpoint de vínculo permite resolver sem trocar a senha global.
+
+Rotas preparadas dependem de migração aplicada e conexão de runtime restrita, ainda não autorizadas nesta entrega. Os testes HTTP usam portas substituídas e não comprovam RLS.
+
 ## M1 → M2: PacoteDeColetaAgregadaV1
 
 | Campo | Tipo / semântica |

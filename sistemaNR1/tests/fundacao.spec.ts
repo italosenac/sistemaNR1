@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const enderecoSaude = 'http://localhost:3001/health';
+const enderecoSaude = 'http://localhost:3101/health';
 
 test('página consulta a API real e apresenta os módulos pendentes', async ({
   page,
