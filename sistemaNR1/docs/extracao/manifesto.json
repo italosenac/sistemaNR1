@@ -1,0 +1,31 @@
+[
+  {
+    "arquivo": "docs\\fontes\\M1.pdf",
+    "paginas": 3,
+    "sha256": "623d885ca37101011c0322712e90b061d0cfd4bcba70d5c899288f2053b0f45f",
+    "imagens_por_pagina": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "arquivo": "docs\\fontes\\M2.pdf",
+    "paginas": 3,
+    "sha256": "c343d037d36094556d3b536c40e5ea9e32db60de38fe87b3531473550b69d78e",
+    "imagens_por_pagina": [
+      2,
+      2,
+      0
+    ]
+  },
+  {
+    "arquivo": "docs\\fontes\\M3.pdf",
+    "paginas": 2,
+    "sha256": "979360ef746e2807772efc4e1eda9bad017c294532fee5ecfea51840fdd1d61d",
+    "imagens_por_pagina": [
+      0,
+      0
+    ]
+  }
+]
