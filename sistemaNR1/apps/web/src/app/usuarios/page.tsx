@@ -6,7 +6,7 @@ export default function PaginaUsuarios() {
     <main className="min-h-screen bg-[#f6f7f3] px-5 py-10 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <Link href="/" className="text-sm font-medium text-teal-800">
-          ← SistemaNR1
+          ← SISNR1
         </Link>
         <h1 className="mt-7 text-3xl font-semibold tracking-tight">
           Usuários e vínculos

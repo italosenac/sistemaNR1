@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SistemaNR1 — Gestão de riscos ocupacionais',
+  title: 'SISNR1 — Gestão de riscos ocupacionais',
   description:
-    'Ambiente demonstrativo do SistemaNR1. Módulos em desenvolvimento.',
+    'Ambiente demonstrativo do SISNR1. Módulos em desenvolvimento.',
 };
 
 export default function RootLayout({

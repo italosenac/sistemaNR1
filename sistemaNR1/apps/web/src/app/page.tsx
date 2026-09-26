@@ -37,14 +37,14 @@ export default function PaginaInicial() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5 sm:px-10">
           <Link
             href="/"
-            aria-label="SistemaNR1 — página inicial"
+            aria-label="SISNR1 — página inicial"
             className="flex items-center gap-3 font-semibold tracking-tight"
           >
             <span className="rounded-xl bg-teal-900 p-2.5 text-white">
               <Leaf className="size-5" aria-hidden="true" />
             </span>
             <span>
-              Sistema<span className="text-teal-700">NR1</span>
+              SIS<span className="text-teal-700">NR1</span>
             </span>
           </Link>
           <span className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">
@@ -66,7 +66,7 @@ export default function PaginaInicial() {
           trabalho
         </div>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">
-          SistemaNR1
+          SISNR1
         </h1>
         <p className="mt-4 text-xl text-slate-700 sm:text-2xl">
           Gestão de riscos ocupacionais
@@ -137,7 +137,7 @@ export default function PaginaInicial() {
         </div>
       </main>
       <footer className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 border-t border-slate-200 px-6 py-6 text-xs text-slate-500 sm:px-10">
-        <span>SistemaNR1</span>
+        <span>SISNR1</span>
         <span>Base inicial · E0</span>
       </footer>
     </div>
