@@ -1,0 +1,20 @@
+packages:
+  - apps/*
+  - packages/*
+
+engineStrict: true
+savePrefix: ''
+
+overrides:
+  typescript: 5.9.3
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@scarf/scarf': false
+  '@nestjs/core': true
+  esbuild: true
+  sharp: true
+  supabase: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - react-hook-form@7.89.0

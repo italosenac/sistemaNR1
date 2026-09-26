@@ -1,0 +1,34 @@
+{
+  "name": "sistemanr1",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.10.1",
+    "concurrently": "10.0.5",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.9",
+    "supabase": "2.118.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.1"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @sistemanr1/contratos build && concurrently --kill-others --names API,WEB \"pnpm --filter @sistemanr1/api dev\" \"pnpm --filter @sistemanr1/web dev\"",
+    "dev:web": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/web dev",
+    "dev:api": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api dev",
+    "build": "pnpm -r --sort run build",
+    "lint": "pnpm -r run lint && eslint tests playwright.config.ts",
+    "typecheck": "pnpm --filter @sistemanr1/contratos build && pnpm -r run typecheck && tsc -p tsconfig.testes.json",
+    "test": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api test && pnpm test:e2e",
+    "test:api": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api test",
+    "test:e2e": "playwright test",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\""
+  }
+}

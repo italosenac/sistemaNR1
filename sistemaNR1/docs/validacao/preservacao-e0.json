@@ -1,0 +1,241 @@
+{
+  "etapa": "antes da E0",
+  "arquivos": [
+    {
+      "arquivo": "docs/arquitetura/contratos-modulos.md",
+      "sha256": "085ccc2f1c2d24d8965e81145b9e3202545b631001c4b4e4d6bc9ac376a99b36"
+    },
+    {
+      "arquivo": "docs/arquitetura/decisoes.md",
+      "sha256": "7f642a69152dfb896f43033b867974449b9569d18354431f310089d7fafdb768"
+    },
+    {
+      "arquivo": "docs/arquitetura/integracoes-mcp.md",
+      "sha256": "f682d47ff3319a1dcfe6ad6222e44aef061f36e43930210d0f0998d5ea420daf"
+    },
+    {
+      "arquivo": "docs/arquitetura/modelo-dominio.md",
+      "sha256": "08a7921e10c91fe2bc75324a6da4f74ea9c1147d0999de4b86271d3cde7d26b0"
+    },
+    {
+      "arquivo": "docs/arquitetura/padroes-codigo.md",
+      "sha256": "5709970544b0233d0dd6baf4b1a68e0242d84fd855ac217538dfd7c92d08201b"
+    },
+    {
+      "arquivo": "docs/arquitetura/seguranca-privacidade.md",
+      "sha256": "704738c8e6d79a1576f07ba2062f16f3a205f278fb4dec1c3655d6afa431fe97"
+    },
+    {
+      "arquivo": "docs/arquitetura/visao-geral.md",
+      "sha256": "fbe77d50fa689d43b2c9bf10cbab357632334471de5c14d0917ffeea84315305"
+    },
+    {
+      "arquivo": "docs/backlog-mvp.md",
+      "sha256": "2567d5b7969ae0d5e8ce50a40e29f5d7cea46e9c623b7007ff44414ba12ff2b1"
+    },
+    {
+      "arquivo": "docs/conformidade/verificacao-nr1.md",
+      "sha256": "3d6ede5c03b36d4bbf76e5c73ff78a703270bbf11757183237fc99aced1c42a4"
+    },
+    {
+      "arquivo": "docs/desenvolvimento-sdd.md",
+      "sha256": "9b641097dc7d4bb4cc7d3f8d954c423d731c4f56ceaff9d2651c434e45fe8eb5"
+    },
+    {
+      "arquivo": "docs/extracao/m1.md",
+      "sha256": "9ba6b36fd8945ea2931ad086b1cd92cdf89ea35d56d93cd654eb214e4e94137b"
+    },
+    {
+      "arquivo": "docs/extracao/m2.md",
+      "sha256": "d73b4528d75d143b71853233b347fb84574a247c6d6bbd24b849382bc8b093be"
+    },
+    {
+      "arquivo": "docs/extracao/m3.md",
+      "sha256": "7c9f34029e9c5546e15e94d20c0bd39255c56dd068f62da4316e1dde1ebc3285"
+    },
+    {
+      "arquivo": "docs/extracao/manifesto.json",
+      "sha256": "f16384f6e19529c905f469bf488406acd8a60a21e015aebd275ca87d7a3c2b62"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M1-1.png",
+      "sha256": "f4f503916c57d0b3d486bf43cddde39bae32de7da9d43b560946c2dbcaefc818"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M1-2.png",
+      "sha256": "3109ae5f46fdf0184ebb56cc642468c30b4af97dc3fb08cadf03435f40c9a139"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M1-3.png",
+      "sha256": "55e2a00942e132a01f877169b327eaa5700a7c3c8f0fab0a2bc361f90c3ca417"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M2-1.png",
+      "sha256": "c15938a67b01232f1324c51799e15aece916fe5ef4e9b27e7dbc263a31ff4cfe"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M2-2.png",
+      "sha256": "8a396306f13ba44dbb398f1a6159694cd34112eea31a3c4784da33f9c26eebe7"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M2-3.png",
+      "sha256": "f070aebbb175ed8a63cf1eb0acea64c610c88a678e07701903ed475057b06747"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M3-1.png",
+      "sha256": "da3f25fce338c3d399f079cd45034486afd05cffdcac0fa6b13e200a6f358cc2"
+    },
+    {
+      "arquivo": "docs/extracao/previas/M3-2.png",
+      "sha256": "4bde840d22b79756844ee6b3b0a4f7409f248cab527383a931da7c74462c6f49"
+    },
+    {
+      "arquivo": "docs/extracao/relatorio-leitura.md",
+      "sha256": "7a6a96142a75e5e02dd242cf71ded5e56d54a44fe09335222f09e2216cdeef70"
+    },
+    {
+      "arquivo": "docs/fontes/M1.pdf",
+      "sha256": "623d885ca37101011c0322712e90b061d0cfd4bcba70d5c899288f2053b0f45f"
+    },
+    {
+      "arquivo": "docs/fontes/M2.pdf",
+      "sha256": "c343d037d36094556d3b536c40e5ea9e32db60de38fe87b3531473550b69d78e"
+    },
+    {
+      "arquivo": "docs/fontes/M3.pdf",
+      "sha256": "979360ef746e2807772efc4e1eda9bad017c294532fee5ecfea51840fdd1d61d"
+    },
+    {
+      "arquivo": "docs/matriz-rastreabilidade.md",
+      "sha256": "b3a90ff6e2cf1135c91c0c8ac7aeb46e16289abc07f0b33aaea5bc4a688deb31"
+    },
+    {
+      "arquivo": "docs/pendencias.md",
+      "sha256": "927bf46fff4dc3237ee7cfe9c7957d938e5caf1452f220945c80a3b142f2d09a"
+    },
+    {
+      "arquivo": "docs/validacao/relatorio.md",
+      "sha256": "86e8eaf83cccdffc9ef8729952b1b561e9e5fd7f8a678c6e262edb4f811815e1"
+    },
+    {
+      "arquivo": "docs/validacao/validar-documentacao.py",
+      "sha256": "76971be63a2ec936552b1ca4d129bbb10f3d690bc4f7131346c41f7740aae670"
+    },
+    {
+      "arquivo": "specs/camada-0/estrutura-organizacional.spec.md",
+      "sha256": "71b882a2ba504d30d39faf0ea03bc8c1ceba18a9ba4d724d6df108b1187279e2"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-1.spec.md",
+      "sha256": "9b3ca0b3c0a1f593f9020bea92c63844e2483bb157d35ac927750f16de65b248"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-2.spec.md",
+      "sha256": "bb388b73d1b413a816bacf60eeaa48199dd105deef45344dbdfbe0c1398444d6"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-3.spec.md",
+      "sha256": "6b67ce5ffca7a47fa8b33176a71096e707c3a39e1facda2db38abae8f5081c03"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-4.spec.md",
+      "sha256": "d3e40e69bf12674e1fb0cd765cc6509e23dc69fd007ee2d85f5817cbc701191e"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-5.spec.md",
+      "sha256": "8d728c5a50b4ed8efbceb0a9474f1d304a7a27b371d080e2175986906c15a216"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-6.spec.md",
+      "sha256": "5892e51e0c55626ca419f055d07df21f4695fdb8d74c8abdb0a1d99b769f3ed9"
+    },
+    {
+      "arquivo": "specs/m1-coleta/rf-01-7.spec.md",
+      "sha256": "07fd410a7f53d5d2d6ca7acb45bee35fe4dd4fa28984545e8f67c62bc0e3ef95"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-1.spec.md",
+      "sha256": "a5afc0effb5c6f48e4934ef53e5ebd7723054ccdd8954b7dc8041e6bef59d377"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-2.spec.md",
+      "sha256": "eb7a2026329ad5e857e2d74ea396302a19b59e224418e5c9eb52232d5ad4b72d"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-3.spec.md",
+      "sha256": "1db17c32161f85f6cb62bb8827c6b23129f46d1ef784ccc4a7073c82408d4e46"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-4.spec.md",
+      "sha256": "c54b124250301356f4defbf5525303412d29a26f22e6547af8a0988b11c22051"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-5.spec.md",
+      "sha256": "86044cdd6be7324186ce4321a836e3fad0d1e121265a249ee8e504cdb1935db4"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-6.spec.md",
+      "sha256": "d2c4b7ea8f3ffc27d23dd082e9c78db8ab06a6aeb49c094eddff36574efb1bcf"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-7.spec.md",
+      "sha256": "2860e2560923325481474ea9920bb2fb70e86f39f4e740a379c3ece1184e7405"
+    },
+    {
+      "arquivo": "specs/m2-avaliacao/rf-02-8.spec.md",
+      "sha256": "72ca5fbd5a68d95f2ac26bf38e1570861bc9f7015206b280649dd591f6f12a09"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-1.spec.md",
+      "sha256": "3d93f55c571a18d3f151ad6698967a44940d0f17e7ee4c7c2bea050138e473f0"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-2.spec.md",
+      "sha256": "27bd1f9de945ca54104ff2329fe685184b917ec9441a7580b5c469feaa4caee6"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-3.spec.md",
+      "sha256": "2f0c07dc30ece738f5862a9dd06e1e3c76723f202f3c448c7c5642713aa70bb4"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-4.spec.md",
+      "sha256": "de9e69d31ff18be611df0ed9fb02492d0f80605aa8aa95c460acf1dacec15998"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-5.spec.md",
+      "sha256": "7a8b34da9a5c9a2609b5d1bd09778b60e32d86dcca7d5c2fa370f79e707902ca"
+    },
+    {
+      "arquivo": "specs/m3-inventario/rf-03-6.spec.md",
+      "sha256": "1a0388e2b2b6c7c7b0b4cd3ca8de5e89cdef7782272bb6bc78ef7ba26bf4a4ef"
+    },
+    {
+      "arquivo": "specs/produto.spec.md",
+      "sha256": "bde0b2d6968412facf0007f28ab3afedddb8431a7ae3e8753f32780c6a867d01"
+    },
+    {
+      "arquivo": ".agents/skills/implementar-requisito/SKILL.md",
+      "sha256": "02fefc8c509780d4a966635e2db65dffd0d2c7d485a9414ac68a75faa544aa20"
+    },
+    {
+      "arquivo": ".agents/skills/revisar-codigo-limpo/SKILL.md",
+      "sha256": "3b3070b309700d77bd7a610c38ca0925a06808a4fc8cb662270d6a6ea02e4d1e"
+    },
+    {
+      "arquivo": ".agents/skills/validar-regra-negocio/SKILL.md",
+      "sha256": "b1887524f8fbe471389cefa669e7bb48a06b7c98cd83926e779f4bd119075809"
+    },
+    {
+      "arquivo": "AGENTS.md",
+      "sha256": "ca9c882d882ead794ca9625e73736b246ff4ba9f8059441aa2bbb33f1add4fd1"
+    },
+    {
+      "arquivo": "README.md",
+      "sha256": "f35911b233f5c1ffef2224cf3c0585d705f4cc9867325c3b5d3e8f1b7a026369"
+    },
+    {
+      "arquivo": "hello.txt",
+      "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+    }
+  ]
+}
