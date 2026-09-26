@@ -115,13 +115,13 @@ O ambiente `production` deve ser definido explicitamente também na hospedagem f
 
 ## Supabase na próxima etapa
 
-CLI local inicializada com `supabase/config.toml`; migrations vazia. Não foram executados `start`, `link`, `db push` ou migrations. Não há conexão remota ou garantia de Auth/Storage/RLS nesta entrega. Docker não é necessário para E0.
+Na entrega E0, a CLI local foi inicializada com `supabase/config.toml`, mantendo migrations vazia e sem conexão remota. **Atualização de 2026-09-26:** projeto informado pelo usuário vinculado pelo CLI, autenticação confirmada e consulta SQL constante bem-sucedida, sem aplicação de migrações. As configurações foram colocadas em `apps/web/.env.local` e `apps/api/.env`, ambos ignorados. Evidências e limites no [relatório da conexão](../validacao/conexao-supabase.md). E1 aguarda permissão; Auth funcional, Storage e RLS ainda não estão implementados. Docker não é necessário para E0.
 
-Na E1, selecionar/criar um projeto **de teste** com dados fictícios, confirmar escopo e preencher os arquivos locais com URL/chaves apropriadas do painel. Login CLI pode ser interativo; não copiar tokens para código, terminal compartilhado ou relatório. Com projeto definido, os comandos previstos são:
+O projeto de teste já foi indicado pelo usuário e as variáveis locais foram conferidas. Para configuração em outra máquina, login CLI pode ser interativo; não copiar tokens para código, terminal compartilhado ou relatório. Com projeto definido, os comandos são:
 
 ```powershell
 pnpm.cmd exec supabase login
 pnpm.cmd exec supabase link --project-ref REFERENCIA_DO_PROJETO_DE_TESTE
 ```
 
-Esses comandos não foram executados. Criar migrations a partir da Camada 0, revisar privilégios/RLS, implementar verificação de identidade e vínculo no servidor e testar isolamento entre duas empresas sintéticas. Só então aplicar migrations no ambiente de teste. A saúde de processo atual não testa banco; uma verificação de prontidão futura deverá ter semântica própria. [Guia oficial da CLI Supabase](https://supabase.com/docs/guides/local-development/cli/getting-started).
+Nesta máquina o vínculo foi executado usando a autenticação já disponível, sem novo login interativo. Antes de implementar E1, obter a permissão solicitada pelo usuário. A proibição de aplicar migrações continua vigente. Depois da autorização pertinente, criar migrations a partir da Camada 0, revisar privilégios/RLS, implementar verificação de identidade e vínculo no servidor e testar isolamento entre duas empresas sintéticas. A saúde de processo atual não testa banco; a consulta de conexão foi uma verificação separada. [Guia oficial da CLI Supabase](https://supabase.com/docs/guides/local-development/cli/getting-started).

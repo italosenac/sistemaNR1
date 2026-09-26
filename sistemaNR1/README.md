@@ -71,7 +71,7 @@ supabase/migrations/         # sem migrações SQL
 tests/                      # integração no navegador
 ```
 
-Supabase CLI e SDKs instalados, sem projeto remoto conectado, banco iniciado ou autenticação funcional. A ausência de chaves não impede E0. A conexão de teste e a implementação de banco/Auth/RLS pertencem à próxima etapa, seguindo a Camada 0; procedimento em [instalação](docs/ambiente/instalacao.md).
+Supabase CLI e SDKs instalados; projeto remoto vinculado e conexão confirmada por consulta SQL constante, sem aplicar migrações. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Relatório da conexão](docs/validacao/conexao-supabase.md). Banco de negócio, autenticação funcional e RLS ainda aguardam implementação em E1 e permissão do usuário. A ausência de chaves continua não impedindo E0; procedimento em [instalação](docs/ambiente/instalacao.md).
 
 Evidências: [diagnóstico e versões](docs/ambiente/diagnostico.md), [instalação detalhada](docs/ambiente/instalacao.md), [SPEC E0](specs/fundacao/e0.spec.md) e [relatório dos testes e builds](docs/validacao/relatorio-e0.md).
 
