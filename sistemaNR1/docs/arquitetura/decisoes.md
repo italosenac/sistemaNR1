@@ -1,0 +1,59 @@
+# Registro de decisões arquiteturais
+
+Data inicial: 2026-09-26. Decisões aceitas **para a demonstração acadêmica**; não aprovam uso real. Alterações futuras registram motivo, impacto nas SPECs, autor e data, preservando histórico no controle de versão.
+
+## ADR-01 — Stack e monólito modular
+
+Origem [MISSÃO]. Adotar a stack explicitada em visão-geral.md e monorepositório pnpm. [ARQ] Monólito modular NestJS reduz implantação e operações para o prazo curto, mantendo fronteiras por capacidade. Domínio TypeScript puro, dependência voltada ao interior, SQL parametrizado por adaptadores e transações explícitas. ORM, versões de pacotes e biblioteca PDF serão confirmados na implementação; não criar estrutura executável nesta etapa.
+
+## ADR-02 — Identidade administrativa separada da participação
+
+Origem [DOC] RF-01.1 e [MISSÃO] privacidade. [ARQ] Supabase Auth somente para usuários de gestão; participantes usam códigos aleatórios por grupo, sem destinatário cadastrado. Tokens e respostas não possuem ligação persistida entre si. Backend é o único ponto de entrada do negócio. Tradeoff: não é possível provar pessoa única por token sem criar vínculo nominal; demonstrar essa limitação, sem alegar anonimato absoluto.
+
+## ADR-03 — Instrumento e matriz exclusivamente demonstrativos
+
+Origem [PEND] PDFs não fornecem questionário, fórmula de probabilidade, magnitudes ou intervalos de classificação. [MISSÃO] solicita matriz demonstrativa. [ARQ] Permitir avançar com massa sintética e instrumento identificado como `questionario-demo-v1`, sem valor diagnóstico ou validação psicométrica.
+
+Proposta de instrumento mínimo, não extraído dos PDFs: dois fatores fictícios, **sobrecarga percebida** e **ritmo percebido**; uma pergunta por fator (“Na situação fictícia apresentada, a demanda supera o tempo disponível?” e “Na situação fictícia apresentada, o ritmo dificulta a execução das tarefas?”). Respostas 1=nunca, 2=às vezes, 3=frequentemente. Ambas obrigatórias para o instrumento demo; texto aberto desativado até RF-01.4. Registrar explicitamente versão, autoria acadêmica e finalidade. Não associar média dessas respostas à probabilidade de agravo.
+
+O responsável técnico fictício escolhe severidade e probabilidade em escalas ordinais 1–3 com justificativa. Descrições acadêmicas de magnitude: 1=menor, 2=intermediária, 3=maior; probabilidade: 1=menor, 2=intermediária, 3=maior. Não são limiares clínicos. Fórmula demo `R = S × P`; faixa baixa para R 1–2, média para R 3–4, alta para R 6–9; valores possíveis são 1, 2, 3, 4, 6 e 9.
+
+| Severidade / Probabilidade | 1 | 2 | 3 |
+| --- | --- | --- | --- |
+| 1 | 1 / baixa / manter | 2 / baixa / manter | 3 / média / aprimorar |
+| 2 | 2 / baixa / manter | 4 / média / aprimorar | 6 / alta / introduzir |
+| 3 | 3 / média / aprimorar | 6 / alta / introduzir | 9 / alta / introduzir |
+
+Todas as nove células possuem faixa e decisão. Cores propostas: verde, âmbar e vermelho, sempre acompanhadas de texto. O modelo é editável em versões, exige aprovação acadêmica antes do cálculo e preserva memória. Para uso real, substituir mediante validação profissional/metodológica P-01/P-02; não promover os números demo a critérios normativos.
+
+## ADR-04 — Supressão central e divulgação conservadora
+
+Origem [DOC] RF-01.3/02.5. [ARQ] k≥7, agregação hierárquica, supressão complementar e partições fixas. Filtros de função/turno somente sobre combinações previamente verificadas. Resultados dos fatores após encerramento; painel de adesão durante coleta usa intervalos e proteção do complemento. Nenhuma exportação contorna a política. Tradeoff: filtros podem ficar indisponíveis em grupos pequenos. Política exata em segurança-privacidade.md.
+
+## ADR-05 — Critérios e inventários como fotografias imutáveis
+
+Origem [DOC] RF-02.8/03.4/03.5. [ARQ] Novas versões em vez de atualização do consolidado. Resultado guarda critério e agregado de origem. M3 copia a avaliação e não recalcula. Diferenças semânticas usam IDs estáveis. PDF é artefato de uma versão, não documento editável em seu lugar. Auditoria acompanha autor/data/motivo sem dados de respondentes.
+
+## ADR-06 — Documento gerado, aprovação e assinatura são estados distintos
+
+Origem [DOC] M2 p.3 e RF-03.6; [MISSÃO] não declarar assinatura inexistente. [ARQ] Aprovação acadêmica permite cálculo demonstrativo e emissão de PDF marcado como demonstrativo/sem assinatura formal. Não libera avanço formal do ciclo. Critério alterado exige nova aprovação acadêmica e, no fluxo formal futuro, nova assinatura. Assinatura real permanece P-06; o primeiro MVP não simula estado formalmente assinado.
+
+Hash SHA-256 do conteúdo canônico pode aparecer no PDF. Hash dos bytes finais fica em metadados externos, evitando autorreferência impossível. Evidência assinada deve vincular versão e bytes; adicionar uma imagem de assinatura ou nome não muda automaticamente o estado para verificado.
+
+## ADR-07 — Inventário geral mínimo, sem inventar M4–M6
+
+Origem [DOC] RF-03.3. [ARQ] Cadastro estruturado manual de base geral sintética com riscos de outras categorias, combinado aos psicossociais no mesmo inventário. Um anexo/link isolado não atende à integração pretendida. Não implementar importador genérico nem motor de avaliação para todos os riscos.
+
+Risco evidente tem registro mínimo de medida em M2; necessidade de ação é saída sinalizada. Não construir plano de ação, cronogramas completos, reavaliação ou comunicação. Se medida imediata não for possível, registrar pendência e bloquear avanço formal até resolução do encaminhamento adequado.
+
+## ADR-08 — Retenção e hospedagem
+
+Origem [DOC] 20 anos e exportação aberta; [MISSÃO] preferência por serviços gratuitos. [ARQ] Política conservadora provisória conta 20 anos civis da consolidação por versão, preserva referências e não oferece expurgo no MVP. Bloqueio de exclusão e exportação entram cedo; prova operacional de preservação, restauração e custódia depende de infraestrutura futura. Não afirmar que planos gratuitos garantem décadas de retenção. Revalidar termos/cotas antes do deploy conforme fontes em visão-geral.md.
+
+## ADR-09 — MCP apenas como ferramenta de desenvolvimento
+
+Origem [MISSÃO]. [ARQ] Planejar servidores existentes e ferramentas locais; não criar servidor próprio ou dependência de MCP no runtime da aplicação. Integrações externas precisam de escopo autorizado e configuração efetiva; esta fase não conectou contas. Consultas de schema não incluem respostas individuais. Acesso a credenciais nunca é necessário nos relatórios.
+
+## ADR-10 — Nove alíneas e divergências documentais explícitas
+
+Origem [DOC] RF-03.1 referencia nove alíneas sem transcrevê-las. [NORMA] Consulta complementa sua enumeração na SPEC. [ARQ] Validação diferenciada para ausência declarada, inaplicabilidade fundamentada e dado obrigatório faltante; somente o último sempre bloqueia por incompletude, e a aplicabilidade normativa real exige P-04. Não preencher com texto genérico para passar nas travas. “Dados brutos” de M2 é interpretado como insumo agregado não classificado, preservando proibição individual expressa em M1.

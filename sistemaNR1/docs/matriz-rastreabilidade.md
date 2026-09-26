@@ -1,0 +1,37 @@
+# Matriz de rastreabilidade
+
+Data: 2026-09-26. **21 RFs documentais; todos pendentes de implementação.** C0 é suporte adicional, não está incluída na contagem. Fundamentos abaixo são os indicados nos PDFs, não declaração de que cada mecanismo está prescrito pela norma. Confrontação em [verificação NR-1](conformidade/verificacao-nr1.md). Cenários estão escritos nas SPECs; ainda não executados.
+
+| Requisito | Documento/página | Fundamento indicado | SPEC | Módulo responsável | Dependências | Prioridade MVP | Cenários planejados | Estado |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| RF-01.1 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3 | [RF-01.1](../specs/m1-coleta/rf-01-1.spec.md) | questionários / anonimato | C0; RF-01.2 (rascunho); RF-01.6 (publicação) | essencial para o MVP | CA-01-1-01 a CA-01-1-04; ver testes na SPEC | Pendente |
+| RF-01.2 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3, a | [RF-01.2](../specs/m1-coleta/rf-01-2.spec.md) | campanhas | C0; RF-01.1 e RF-01.6 (ativação); RF-01.3 (painel); RF-01.5 (encerramento) | essencial para o MVP | CA-01-2-01 a CA-01-2-04; ver testes na SPEC | Pendente |
+| RF-01.3 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | — (sem item indicado) | [RF-01.3](../specs/m1-coleta/rf-01-3.spec.md) | anonimato | C0; RF-01.1; RF-01.2 | essencial para o MVP | CA-01-3-01 a CA-01-3-05; ver testes na SPEC | Pendente |
+| RF-01.4 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3 | [RF-01.4](../specs/m1-coleta/rf-01-4.spec.md) | questionários / anonimato | RF-01.1; RF-01.3 | implementação complementar | CA-01-4-01 a CA-01-4-04; ver testes na SPEC | Pendente |
+| RF-01.5 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3, a e b | [RF-01.5](../specs/m1-coleta/rf-01-5.spec.md) | campanhas / documentos | RF-01.2; RF-01.3; RF-01.6 | essencial para o MVP | CA-01-5-01 a CA-01-5-04; ver testes na SPEC | Pendente |
+| RF-01.6 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3 | [RF-01.6](../specs/m1-coleta/rf-01-6.spec.md) | campanhas / questionários | C0; RF-01.2 (rascunho); RF-01.1 (envio) | essencial para o MVP | CA-01-6-01 a CA-01-6-04; ver testes na SPEC | Pendente |
+| RF-01.7 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.4.4.2 | [RF-01.7](../specs/m1-coleta/rf-01-7.spec.md) | indicadores | C0; RF-01.2 (escopo) | implementação complementar | CA-01-7-01 a CA-01-7-04; ver testes na SPEC | Pendente |
+| RF-02.1 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.4.4.2.2 | [RF-02.1](../specs/m2-avaliacao/rf-02-1.spec.md) | critérios de avaliação | C0; RF-02.8 (publicação de critérios) | essencial para o MVP | CA-02-1-01 a CA-02-1-04; ver testes na SPEC | Pendente |
+| RF-02.2 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.4.4.2 | [RF-02.2](../specs/m2-avaliacao/rf-02-2.spec.md) | avaliações | RF-01.3; RF-01.5; RF-02.1; RF-02.3; RF-02.6; RF-02.7; RF-02.8 | essencial para o MVP | CA-02-2-01 a CA-02-2-04; ver testes na SPEC | Pendente |
+| RF-02.3 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.4.4.4.1 | [RF-02.3](../specs/m2-avaliacao/rf-02-3.spec.md) | avaliações | C0; RF-02.1 (escala) | essencial para o MVP | CA-02-3-01 a CA-02-3-04; ver testes na SPEC | Pendente |
+| RF-02.4 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.4.4.3 | [RF-02.4](../specs/m2-avaliacao/rf-02-4.spec.md) | avaliações | RF-02.1; RF-02.2 | essencial para o MVP | CA-02-4-01 a CA-02-4-04; ver testes na SPEC | Pendente |
+| RF-02.5 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | — (sem item indicado) | [RF-02.5](../specs/m2-avaliacao/rf-02-5.spec.md) | avaliações / anonimato | RF-01.3; RF-02.4; C0 | implementação complementar | CA-02-5-01 a CA-02-5-04; ver testes na SPEC | Pendente |
+| RF-02.6 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.4.2 | [RF-02.6](../specs/m2-avaliacao/rf-02-6.spec.md) | avaliações | C0 | essencial para o MVP | CA-02-6-01 a CA-02-6-04; ver testes na SPEC | Pendente |
+| RF-02.7 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.3.2.1 | [RF-02.7](../specs/m2-avaliacao/rf-02-7.spec.md) | avaliações | C0 | essencial para o MVP | CA-02-7-01 a CA-02-7-04; ver testes na SPEC | Pendente |
+| RF-02.8 | [M2, p.1; contexto p.2–3](fontes/M2.pdf) | 1.5.7.2 | [RF-02.8](../specs/m2-avaliacao/rf-02-8.spec.md) | critérios de avaliação / documentos | RF-02.1 (rascunho) | essencial para o MVP | CA-02-8-01 a CA-02-8-05; ver testes na SPEC | Pendente |
+| RF-03.1 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.3.2 | [RF-03.1](../specs/m3-inventario/rf-03-1.spec.md) | inventários | C0; RF-02.4; RF-02.6; RF-02.7; RF-03.3; RF-03.4 | essencial para o MVP | CA-03-1-01 a CA-03-1-04; ver testes na SPEC | Pendente |
+| RF-03.2 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.3.2, c e d | [RF-03.2](../specs/m3-inventario/rf-03-2.spec.md) | inventários | C0 | implementação complementar | CA-03-2-01 a CA-03-2-04; ver testes na SPEC | Pendente |
+| RF-03.3 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.3.1.3 | [RF-03.3](../specs/m3-inventario/rf-03-3.spec.md) | inventários | C0; RF-02.4 (incorporação) | essencial para o MVP | CA-03-3-01 a CA-03-3-04; ver testes na SPEC | Pendente |
+| RF-03.4 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.3.3 | [RF-03.4](../specs/m3-inventario/rf-03-4.spec.md) | inventários / auditoria | C0; RF-03.1 (conteúdo do rascunho) | essencial para o MVP | CA-03-4-01 a CA-03-4-04; ver testes na SPEC | Pendente |
+| RF-03.5 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.3.3.1 | [RF-03.5](../specs/m3-inventario/rf-03-5.spec.md) | inventários / documentos | RF-03.4; RF-03.6 (artefatos gerados) | necessário para produção futura | CA-03-5-01 a CA-03-5-04; ver testes na SPEC | Pendente |
+| RF-03.6 | [M3, p.1; contexto p.2](fontes/M3.pdf) | 1.5.7.2 | [RF-03.6](../specs/m3-inventario/rf-03-6.spec.md) | documentos / inventários | RF-03.1; RF-03.3; RF-03.4 | essencial para o MVP | CA-03-6-01 a CA-03-6-05; ver testes na SPEC | Pendente |
+
+C0: [SPEC](../specs/camada-0/estrutura-organizacional.spec.md), origem M1 p.2/M2 p.2, módulo organizações, essencial; CA-C0-01 a 05; pendente.
+
+Dependências entre rascunho, publicação e consolidação não são ciclos entre módulos: ver [contratos](arquitetura/contratos-modulos.md). RF-03.2 é biblioteca auxiliar, não requisito anterior obrigatório para cadastrar perigo completo em M2.
+
+## Evidência futura e manutenção
+
+Ao implementar, registrar RF, IDs dos cenários, arquivo de teste, comando executado, data, resultado e revisão de código em `docs/evidencias/`; atualizar SPEC e esta matriz juntos. Arquivo não criado enquanto não houver evidência real. Resultado documental desta etapa está em [validação](validacao/relatorio.md) e **não** altera a coluna Estado.
+
+RF-02.8 e RF-03.6 podem ter geração demonstrativa implementada antes da assinatura real; nesse caso usar “Parcialmente implementado”. RF-03.5 exige distinguir guardas/exportação testadas da preservação operacional futura. Nenhum requisito será “Concluído e testado” apenas porque seu happy path está disponível.
