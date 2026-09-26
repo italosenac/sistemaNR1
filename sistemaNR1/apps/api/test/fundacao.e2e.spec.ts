@@ -5,9 +5,9 @@ import { Test } from '@nestjs/testing';
 import { IsString, MinLength } from 'class-validator';
 import request from 'supertest';
 import type { Server } from 'node:http';
-import { AppModule } from '../src/app.module';
-import { configurarAplicacao } from '../src/infraestrutura/configurar-aplicacao';
-import { validarAmbiente } from '../src/infraestrutura/validar-ambiente';
+import { AppModule } from '../src/app.module.js';
+import { configurarAplicacao } from '../src/infraestrutura/configurar-aplicacao.js';
+import { validarAmbiente } from '../src/infraestrutura/validar-ambiente.js';
 
 class EntradaDeProva {
   @IsString()

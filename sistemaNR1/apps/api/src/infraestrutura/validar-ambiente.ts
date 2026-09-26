@@ -9,7 +9,11 @@ class ConfiguracaoAmbiente {
   @Max(65535)
   PORT = 3001;
 
-  @IsUrl({ require_tld: false, protocols: ['http', 'https'], require_protocol: true })
+  @IsUrl({
+    require_tld: false,
+    protocols: ['http', 'https'],
+    require_protocol: true,
+  })
   FRONTEND_URL = 'http://localhost:3000';
 }
 

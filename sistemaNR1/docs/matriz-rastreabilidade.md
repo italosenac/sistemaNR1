@@ -2,6 +2,16 @@
 
 Data: 2026-09-26. **21 RFs documentais; todos pendentes de implementação.** C0 é suporte adicional, não está incluída na contagem. Fundamentos abaixo são os indicados nos PDFs, não declaração de que cada mecanismo está prescrito pela norma. Confrontação em [verificação NR-1](conformidade/verificacao-nr1.md). Cenários estão escritos nas SPECs; ainda não executados.
 
+## Fundação técnica adicional
+
+| Etapa | Origem | SPEC | Evidência | Estado |
+| --- | --- | --- | --- | --- |
+| E0 | Missão 02, backlog E0 | [Fundação](../specs/fundacao/e0.spec.md), CA-E0-01 a CA-E0-12 | [Relatório](validacao/relatorio-e0.md): 14 Jest + 7 Playwright, lint/typecheck/builds | Concluído e testado em 2026-09-26 |
+
+E0 não entra na contagem dos RFs e não altera seus estados. Os cenários de negócio da tabela seguinte continuam não executados.
+
+## Requisitos documentais
+
 | Requisito | Documento/página | Fundamento indicado | SPEC | Módulo responsável | Dependências | Prioridade MVP | Cenários planejados | Estado |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | RF-01.1 | [M1, p.1; contexto p.2–3](fontes/M1.pdf) | 1.5.3.3 | [RF-01.1](../specs/m1-coleta/rf-01-1.spec.md) | questionários / anonimato | C0; RF-01.2 (rascunho); RF-01.6 (publicação) | essencial para o MVP | CA-01-1-01 a CA-01-1-04; ver testes na SPEC | Pendente |

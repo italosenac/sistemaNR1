@@ -7,7 +7,9 @@ const esquemaDeSaude = z.object({
 });
 const TEMPO_LIMITE_MS = 5_000;
 
-export async function consultarSaude(sinal: AbortSignal): Promise<RespostaDeSaude> {
+export async function consultarSaude(
+  sinal: AbortSignal,
+): Promise<RespostaDeSaude> {
   const endereco = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   const resposta = await fetch(`${endereco.replace(/\/$/, '')}/health`, {
     signal: AbortSignal.any([sinal, AbortSignal.timeout(TEMPO_LIMITE_MS)]),

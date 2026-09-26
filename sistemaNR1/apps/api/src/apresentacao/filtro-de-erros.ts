@@ -13,7 +13,9 @@ function obterMensagem(excecao: unknown): string | string[] {
     if (typeof resposta.message === 'string') return resposta.message;
     if (
       Array.isArray(resposta.message) &&
-      resposta.message.every((mensagem: unknown) => typeof mensagem === 'string')
+      resposta.message.every(
+        (mensagem: unknown) => typeof mensagem === 'string',
+      )
     ) {
       return resposta.message as string[];
     }

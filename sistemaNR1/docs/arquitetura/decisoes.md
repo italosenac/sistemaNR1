@@ -57,3 +57,13 @@ Origem [MISSÃO]. [ARQ] Planejar servidores existentes e ferramentas locais; nã
 ## ADR-10 — Nove alíneas e divergências documentais explícitas
 
 Origem [DOC] RF-03.1 referencia nove alíneas sem transcrevê-las. [NORMA] Consulta complementa sua enumeração na SPEC. [ARQ] Validação diferenciada para ausência declarada, inaplicabilidade fundamentada e dado obrigatório faltante; somente o último sempre bloqueia por incompletude, e a aplicabilidade normativa real exige P-04. Não preencher com texto genérico para passar nas travas. “Dados brutos” de M2 é interpretado como insumo agregado não classificado, preservando proibição individual expressa em M1.
+
+## ADR-11 — Fundação E0, versões e execução local
+
+Origem [MISSÃO 02] e [ARQ], 2026-09-26. Versões exatas nos manifests e pnpm-lock.yaml: Node 24.19.0 LTS, pnpm 12.6.0, Next 16.3.6, Nest 12.1.0, TypeScript 5.9.3. TypeScript 7 disponível no registro não satisfazia os peers consultados; manter 5.9.3 com strict. Nest 12 instalado é ESM: API usa `type: module`, NodeNext e imports relativos com extensão `.js`. Jest usa ts-jest ESM e a opção Node `--experimental-vm-modules`. A tentativa CommonJS foi rejeitada por TypeScript/Jest e corrigida, sem desativar verificações. [Jest ESM](https://jestjs.io/docs/ecmascript-modules), [ts-jest ESM](https://kulshekhar.github.io/ts-jest/docs/guides/esm-support).
+
+O prefixo vigente da API é **/api/v1**, conforme pedido explícito da Missão 02; o `/v1` proposto anteriormente nos contratos documentais recebe `/api`. A rota técnica **GET /health** é excluída do prefixo e Swagger fica em `/api/docs` somente em desenvolvimento. Não há rotas de negócio publicadas. Saúde verifica o processo HTTP, sem afirmar conexão com banco/Auth/Storage. [Prefixo Nest](https://docs.nestjs.com/faq/global-prefix).
+
+As quatro camadas ficam diretamente em `apps/api/src` em E0; domínio e aplicação permanecem reservados. A organização futura por capacidade da visão geral continua válida quando os módulos forem implementados. Não criar módulos vazios ou serviços genéricos. Contratos compilam antes dos consumidores, usando pnpm workspaces sem Turborepo. O único contrato compartilhado é `RespostaDeSaude`.
+
+Next foi criado pelo CLI oficial dentro de `apps/web`; o arquivo workspace secundário do scaffold foi removido para manter uma única raiz. shadcn foi inicializado no aplicativo existente com `--no-monorepo`; componentes gerados usam Base UI. Fontes do sistema evitam downloads no build. SDKs Supabase e bibliotecas de formulários foram preparados por exigência da missão, sem clientes autenticados/formulários antecipados. [Next](https://nextjs.org/docs/app/getting-started/installation), [shadcn](https://ui.shadcn.com/docs/installation/next).

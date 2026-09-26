@@ -2,7 +2,7 @@
   "name": "@sistemanr1/api",
   "version": "0.1.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
@@ -10,8 +10,8 @@
     "start:prod": "node dist/main.js",
     "lint": "eslint src test --max-warnings 0",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "jest --runInBand",
-    "test:watch": "jest --watch"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "dependencies": {
     "@sistemanr1/contratos": "workspace:*",

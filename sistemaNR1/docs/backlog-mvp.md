@@ -1,6 +1,12 @@
 # Backlog do MVP
 
-Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. Nenhum item está implementado nesta etapa. Escopo detalhado permanece nas SPECs.
+Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; E1–E8 e todos os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
+
+## Registro de execução — E0
+
+**Concluído e testado — 2026-09-26.** Workspace pnpm funcional; Node 24.19.0/pnpm 12.6.0; Next.js e NestJS com TypeScript strict; página PT-BR, componentes básicos, saúde pública, DTOs/erros/CORS/Swagger; contrato compartilhado; CLI Supabase e exemplos sem credenciais. Nenhuma tabela, autenticação ou módulo de negócio implementado.
+
+Evidências: [SPEC técnica](../specs/fundacao/e0.spec.md), [relatório E0](validacao/relatorio-e0.md), [diagnóstico](ambiente/diagnostico.md) e [instalação](ambiente/instalacao.md). 14 testes Jest e 7 Playwright aprovados, lint/typecheck e builds de contratos/API/web aprovados. `pnpm dev` foi exercitado com consulta real no navegador. Histórico de planejamento E0–E8 abaixo preservado; a autorização de E0 veio da Missão 02. Próximo trabalho: E1/C0, com banco/Auth/RLS e isolamento entre empresas fictícias.
 
 ## Classificação de todos os RFs
 
@@ -57,4 +63,3 @@ Consolidar inventário geral sintético com a–i, exportar PDF datado/sem assin
 ## Definição de entrega
 
 Entregar a jornada somente após testes relevantes reais, inclusive negativos, com evidências na SPEC/matriz. Informar RFs parciais por assinatura/custódia. Publicação online não transforma RF parcial em concluído. Não omitir complemento apenas por não estar no primeiro roteiro.
-

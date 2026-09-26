@@ -1,6 +1,6 @@
 # Diagnóstico do ambiente E0
 
-Data: 2026-09-26. Diagnóstico anterior à geração do aplicativo; versões finais e resultados serão registrados após as instalações.
+Data: 2026-09-26. Diagnóstico inicial realizado antes da geração do aplicativo; instalações e verificações finais registradas abaixo.
 
 | Item | Estado inicial observado |
 | --- | --- |
@@ -37,8 +37,28 @@ Metadados consultados no registro oficial npm: Next 16.3.6, NestJS core 12.1.0/C
 
 Nenhum erro de escrita ou link foi reproduzido. Não houve processo OneDrive visível no diagnóstico; isso não comprova ausência de sincronização. `node_modules` e saídas de build serão ignorados pelo Git; `.gitignore` não configura exclusões do OneDrive. O store padrão pnpm fica em LocalAppData, fora da pasta sincronizada. Manter o projeto onde está; se houver conflito de sincronização, registrar o arquivo/erro e coordenar uma pausa de sincronização com o usuário, sem mover o projeto ou alterar segurança automaticamente.
 
-## Instalações em andamento
+## Instalações concluídas e versões finais
 
 `npm.cmd install --global pnpm@12.6.0 --no-fund --no-audit`: concluído, versão 12.6.0 confirmada.
 
-`winget upgrade --id OpenJS.NodeJS.LTS --exact --version 24.19.0 --silent --accept-package-agreements --accept-source-agreements --disable-interactivity`: download e hash do MSI confirmados; o instalador solicitou elevação administrativa. Resultado final será acrescentado após confirmação da instalação.
+`winget upgrade --id OpenJS.NodeJS.LTS --exact --version 24.19.0 --silent --accept-package-agreements --accept-source-agreements --disable-interactivity`: download/hash do MSI e instalação concluídos com sucesso após elevação administrativa. Node 24.19.0, npm 11.12.1, pnpm 12.6.0 e Git 2.55.0.windows.5 executaram antes da geração do código. Não foi necessário reiniciar o Windows.
+
+| Ferramenta | Versão final verificada | Instalação |
+| --- | --- | --- |
+| Node.js | 24.19.0 LTS | Atualização winget |
+| npm | 11.12.1 | Disponível e funcional |
+| Git | 2.55.0.windows.5 | Preservado |
+| Corepack | 0.34.6 | Preservado; não utilizado |
+| pnpm | 12.6.0 | Prefixo npm do usuário; packageManager fixado |
+| Next.js / React | 16.3.6 / 19.2.8 | apps/web |
+| NestJS / Nest CLI | 12.1.0 / 12.0.7 | apps/api, CLI local |
+| Supabase CLI | 2.118.0 | Dependência de desenvolvimento na raiz |
+| TypeScript | 5.9.3 | Workspace, strict |
+| Tailwind / shadcn | 4.3.3 / 4.21.0 | apps/web, CLI oficial |
+| Jest / ts-jest | 30.5.2 / 29.4.14 | API, ESM |
+| Playwright | 1.63.0 | Navegador Edge instalado no Windows |
+| ESLint / Prettier | 9.39.5 / 3.9.9 | Workspace |
+
+Confirmação final: `node --version`, `npm.cmd --version`, `pnpm.cmd --version`, `git --version`, `pnpm.cmd --filter @sistemanr1/api exec nest --version`, `pnpm.cmd exec supabase --version`, `pnpm.cmd --filter @sistemanr1/web exec next --version`, `pnpm.cmd list --recursive --depth 0`. ESLint 9 emitiu aviso de depreciação na instalação; a versão fixada é compatível com o scaffold/peers e passou lint, sem ocultar o aviso. Atualização da linha fica para manutenção de dependências.
+
+O primeiro install exigiu declarar os scripts nativos permitidos pelo pnpm 12. `allowBuilds` autoriza somente os pacotes listados no workspace; `@scarf/scarf` permanece bloqueado. A exceção de idade mínima de publicação está limitada a `react-hook-form@7.89.0`. `pnpm install --frozen-lockfile` final passou as políticas e confirmou resolução íntegra. Detalhes de falhas e correções no [relatório E0](../validacao/relatorio-e0.md).

@@ -2,7 +2,7 @@ import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import type { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { FiltroDeErros } from '../apresentacao/filtro-de-erros';
+import { FiltroDeErros } from '../apresentacao/filtro-de-erros.js';
 
 export function configurarAplicacao(aplicacao: INestApplication): void {
   const configuracao = aplicacao.get(ConfigService);
@@ -20,7 +20,10 @@ export function configurarAplicacao(aplicacao: INestApplication): void {
   );
   aplicacao.useGlobalFilters(new FiltroDeErros());
   aplicacao.enableCors({
-    origin: (origem, concluir) => {
+    origin: (
+      origem: string | undefined,
+      concluir: (erro: Error | null, permitir: boolean) => void,
+    ) => {
       concluir(null, !origem || origem === origemPermitida);
     },
     credentials: false,
@@ -28,9 +31,15 @@ export function configurarAplicacao(aplicacao: INestApplication): void {
   if (configuracao.getOrThrow<string>('NODE_ENV') === 'development') {
     const opcoes = new DocumentBuilder()
       .setTitle('SistemaNR1 — API')
-      .setDescription('Fundação técnica E0. Módulos de negócio ainda não implementados.')
+      .setDescription(
+        'Fundação técnica E0. Módulos de negócio ainda não implementados.',
+      )
       .setVersion('0.1.0')
       .build();
-    SwaggerModule.setup('api/docs', aplicacao, SwaggerModule.createDocument(aplicacao, opcoes));
+    SwaggerModule.setup(
+      'api/docs',
+      aplicacao,
+      SwaggerModule.createDocument(aplicacao, opcoes),
+    );
   }
 }

@@ -1,0 +1,15 @@
+{
+  "data": "2026-09-26",
+  "baseline": 59,
+  "identicos": 55,
+  "atualizados": [
+    "docs/arquitetura/decisoes.md",
+    "docs/backlog-mvp.md",
+    "docs/matriz-rastreabilidade.md",
+    "README.md"
+  ],
+  "linksDoReadmePreservados": 17,
+  "markdownVerificados": 49,
+  "linksLocaisVerificados": 256,
+  "problemas": []
+}
