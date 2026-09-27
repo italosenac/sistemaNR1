@@ -1,6 +1,6 @@
 # Integrações MCP planejadas
 
-Estado: **somente planejamento** em 2026-09-26. Não foram conectados Supabase/GitHub, instalados plugins, gravadas credenciais ou criados servidores MCP. MCP é ferramenta de desenvolvimento, não parte da API do produto.
+Estado MCP: **somente planejamento** em 2026-09-26. Nenhum MCP Supabase/GitHub ou plugin foi configurado. Separadamente, o Supabase CLI já foi vinculado ao projeto autorizado, conforme [relatório de conexão](../validacao/conexao-supabase.md); essa conexão não é MCP. MCP é ferramenta de desenvolvimento, não parte da API do produto.
 
 ## Matriz de capacidades e autorização
 

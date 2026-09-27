@@ -3,8 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'SISNR1 — Gestão de riscos ocupacionais',
-  description:
-    'Ambiente demonstrativo do SISNR1. Módulos em desenvolvimento.',
+  description: 'Ambiente demonstrativo do SISNR1. Módulos em desenvolvimento.',
 };
 
 export default function RootLayout({

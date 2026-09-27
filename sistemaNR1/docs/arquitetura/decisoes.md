@@ -8,6 +8,8 @@ Origem [MISSÃO]. Adotar a stack explicitada em visão-geral.md e monorepositór
 
 ## ADR-02 — Identidade administrativa separada da participação
 
+Escopo de identidade administrativa ampliado pela ADR-13 para os quatro papéis. Separação da participação anônima permanece integralmente válida.
+
 Origem [DOC] RF-01.1 e [MISSÃO] privacidade. [ARQ] Supabase Auth somente para usuários de gestão; participantes usam códigos aleatórios por grupo, sem destinatário cadastrado. Tokens e respostas não possuem ligação persistida entre si. Backend é o único ponto de entrada do negócio. Tradeoff: não é possível provar pessoa única por token sem criar vínculo nominal; demonstrar essa limitação, sem alegar anonimato absoluto.
 
 ## ADR-03 — Instrumento e matriz exclusivamente demonstrativos
@@ -70,6 +72,8 @@ Next foi criado pelo CLI oficial dentro de `apps/web`; o arquivo workspace secun
 
 ## ADR-12 — Identidade global e matrícula por empresa
 
+Histórico do recorte anterior. Obrigatoriedade de matrícula, papel único e lotação embutida são substituídos no modelo alvo pela ADR-13; código e SQL anteriores permanecem preservados até E1 autorizada.
+
 [MISSÃO] Atualização do cadastro solicitada em 2026-09-26. Nome completo no perfil referenciado por Auth; e-mail/senha sob gerenciamento Supabase Auth; matrícula no vínculo organizacional com empresa e lotação opcional. [ARQ] Um vínculo por usuário/empresa, matrícula textual de até 50 caracteres, única por empresa sem distinguir maiúsculas, preservando zeros iniciais. Nome de 3–150 caracteres, senha de 12–128 e política adicional do provedor. Não são critérios normativos nem alterações aos RFs dos PDFs.
 
 Cadastro administrado por gestor ativo. Conta existente pode ganhar vínculo/matrícula em outra empresa por identificador sem alterar suas credenciais. Nova identidade não recebe `email_confirm=true` artificialmente; confirmação/ativação é procedimento controlado antes do uso. Primeiro gestor e empresas não são criados publicamente. A interface `/usuarios` possui login, seleção de empresa e dois fluxos separados.
@@ -77,3 +81,19 @@ Cadastro administrado por gestor ativo. Conta existente pode ganhar vínculo/mat
 Auth Admin usa segredo apenas no servidor e apenas para identidade. Dados próprios permanecem no schema privado `organizacao`, com driver pg 8.23.0 e papel restrito. Transações usam o mesmo cliente e contexto local, conforme [node-postgres](https://node-postgres.com/features/transactions). Autenticação consulta [getUser](https://supabase.com/docs/reference/javascript/auth-getuser); criação usa [createUser](https://supabase.com/docs/reference/javascript/auth-admin-createuser). Nome é copiado para perfil por trigger de criação; permissões nunca vêm de metadados editáveis. Senha não é persistida no aplicativo.
 
 Falha após criar Auth pode deixar uma identidade sem vínculo confirmado; retorna identificador para reconciliação, sem apagamento automático ou concessão permissiva. Essa fronteira é explícita, pois não há transação distribuída entre os dois acessos. Migração e testes SQL ficam somente preparados por proibição expressa de aplicação. E1 permanece parcial até validação real de banco/RLS e critérios C0 restantes.
+
+## ADR-13 — Quatro papéis, identidade única e atribuições por vínculo
+
+2026-09-26, [MISSÃO]/[ARQ]. A tabela unificada de usuários do PDF complementar p.1 mistura credenciais, empresa única e papel global. Adotar Supabase Auth + Perfil + Vínculos Organizacionais + Atribuições + Lotações. Auth gerencia e-mail/senha; perfil guarda nome/status/datas sem tenant global. Vínculo tem matrícula opcional e estado por empresa. Atribuições permitem múltiplos papéis no mesmo vínculo quando explicitamente concedidos; lotação depende do vínculo, não do papel. Isso atende pessoa gestora em A/técnica em B e consultoria sem duplicar conta nem abrir clientes alheios.
+
+Catálogo de quatro papéis e matriz por operação substituem enum `gestor/tecnico/leitor` do recorte anterior. `leitor` não tem migração automática segura: revisar os vínculos antes de conceder capacidade nova. Matrícula vazia vira NULL, única somente quando preenchida. Identificação profissional é opcional e restrita; CPF não é público/obrigatório. Gestor não controla perfil global de terceiro. Concessão/revogação exige auditoria e não permite autoelevação ou eliminação do último gestor.
+
+Rejeitadas: autenticação por tipo de pessoa, hash próprio, tenant único no perfil, consultoria global, papel de JWT editável, worker nominal como origem da resposta. Conta pessoal pode existir sem alterar M1. Custo da escolha: joins e testes de revogação/grants/estado mais rigorosos; justificado pelo isolamento e acesso por cliente. [Modelo](modelo-identidade.md), [matriz](matriz-permissoes.md), [SPEC C0-USU](../../specs/camada-0/usuarios-perfis.spec.md). A auditoria altera documentação, não aplica a transição funcional ou SQL.
+
+## ADR-14 — Referência complementar, JSONB seletivo e ciclos conceituais
+
+2026-09-26, [MOD]/[ARQ]/[FUT]. PDF de schemas lido em cinco páginas, com 18 tabelas confrontadas em [compatibilidade](compatibilidade-schemas.md). Os 21 RFs continuam fonte funcional; omissões no quadro não removem entidades/travas. M1 mantém respostas protegidas, códigos sem pessoa e fotografias agregadas com k≥7, complementos/filtros. M2 pode usar JSONB validado em configuração versionada e memória, preservando FKs e entidades consultáveis relacionais; não importar enum de faixas nem recalcular histórico. M3 mantém nove alíneas, integração geral, versões/diferenças, responsável e artefatos privados; SHA-256 não é assinatura.
+
+CicloReferencia contém empresa/estabelecimento, início, encerramento previsto e status para futura associação opcional do inventário. Não calcular vencimento de 2/3 anos por inferência do PDF nem implementar máquina M5 na E1. Ação/evidência, aferição, comunicado/recibo e área pessoal são propostas futuras. Auditoria administrativa necessária à autorização/histórico pode existir sem implementar M5. Nenhum dado nominal desses futuros módulos será ligado a respostas M1.
+
+Impacto explícito: C0 estrutura/cadastro e SPEC do produto atualizados; CA-C0-09 revisto, CA-C0-13–16 e CA-USU-01–16 acrescentados. Os 21 arquivos de RF e PDFs originais são preservados. Backlog E1 separa adaptação do recorte, migrações revisadas, autorização e prova real; M1–M3 e ciclo funcional não entram na E1.

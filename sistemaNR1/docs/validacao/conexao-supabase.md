@@ -1,6 +1,6 @@
 # Verificação da conexão Supabase
 
-Data: 2026-09-26. Escopo autorizado: conferir variáveis locais sem mostrar valores, proteger credenciais, autenticar/verificar o CLI, vincular ao projeto informado pelo usuário e testar conexão sem aplicar migrações. A instrução mais recente exige nova permissão antes de implementar E1.
+Verificação inicial: 2026-09-26. Reconfirmação: 2026-09-27, registrada ao final. Escopo autorizado: conferir variáveis locais sem mostrar valores, proteger credenciais, autenticar/verificar o CLI, vincular ao projeto informado pelo usuário e testar conexão sem aplicar migrações. A instrução mais recente exige novo prompt e permissão antes de implementar a E1 revisada. As seções iniciais registram o estado histórico anterior ao recorte C0; as atualizações finais descrevem o estado atual.
 
 ## Resultado
 
@@ -55,3 +55,19 @@ Referências oficiais: [autenticação do CLI](https://supabase.com/docs/referen
 ## Atualização posterior — autorização delimitada de C0
 
 Após esta verificação, o usuário solicitou explicitamente atualizar SPECs, migrações locais, DTOs, formulários e testes de usuários com nome completo/e-mail/senha/matrícula e lotação por empresa. Esse pedido autoriza o recorte descrito em [C0 usuários](../evidencias/c0-usuarios.md), mantendo a proibição de aplicar migrações. As afirmações acima sobre pasta vazia e código não iniciado registram o estado no momento da conexão; posteriormente uma migração foi preparada localmente, sem execução remota.
+
+## Reconfirmação após a Missão A — 2026-09-27
+
+**Conexão confirmada novamente, sem alterações no banco.** Supabase CLI 2.118.0 reutilizou a autenticação disponível; consulta de projetos confirmou o alvo autorizado e seu estado ativo. `link --project-ref <projeto autorizado> --yes` terminou com saída 0 e a referência local corresponde ao alvo. `db query --linked "SELECT 1 AS conexao_ok" --output json` terminou com saída 0 e a constante foi confirmada, sem exibir metadados ou dados de negócio.
+
+As conferências locais foram repetidas sem imprimir valores: URL e chave publicável presentes em Next/Nest; ambas as URLs correspondem ao projeto autorizado e as chaves publicáveis coincidem. A nova chave secreta está presente apenas em `apps/api/.env`, sem ocorrência em `apps/web/.env.local`. Os dois ambientes continuam ignorados e não rastreados; os metadados de `supabase/.temp` também estão ignorados. A chave secreta atual não apareceu nos arquivos versionáveis nem nos 155 artefatos de frontend examinados em `.next` e `.next-e2e`. Essa busca cobre o checkout e esses artefatos, sem ampliar a conclusão para cópias externas.
+
+| Consulta HTTP de leitura repetida | Resultado |
+| --- | --- |
+| Auth `/auth/v1/settings`, chave publicável | 200 |
+| Data API `/rest/v1/`, chave do backend | 200 |
+| Data API `/rest/v1/`, chave publicável | 401; limite registrado, sem alteração de permissões |
+
+`DATABASE_URL` de runtime ainda não está configurada. A conexão via CLI/Management API não substitui a validação futura do pool PostgreSQL restrito, transações e RLS. Não foram aplicadas migrações nem executados testes SQL, seeds ou criação de contas. A migração preparada anteriormente permanece local e requer revisão para os quatro papéis, atribuições separadas, matrícula opcional e lotação por vínculo.
+
+O [relatório da auditoria](relatorio-auditoria-arquitetural.md) consolida documentação, limpeza e testes locais. A próxima ação depende de **permissão e novo prompt E1 enviados pelo usuário**, conforme sua orientação expressa. A proibição de aplicar migrações permanece vigente.

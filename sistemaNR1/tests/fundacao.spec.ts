@@ -23,7 +23,7 @@ test('página consulta a API real e apresenta os módulos pendentes', async ({
   page.on('pageerror', (erro) => erros.push(erro.message));
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { name: 'SistemaNR1', exact: true }),
+    page.getByRole('heading', { name: 'SISNR1', exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText('Gestão de riscos ocupacionais', { exact: true }),

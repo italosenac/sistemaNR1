@@ -2,6 +2,8 @@
 
 SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcial:** cadastro de usuários/perfis/vínculos preparado, com migração ainda não aplicada. Os 21 requisitos M1–M3 continuam pendentes.
 
+**Missão A: arquitetura consolidada para quatro papéis.** Modelo alvo com identidade única Auth, perfil global, vínculos por empresa, atribuições de papéis e lotação separadas. Matrícula opcional e única quando preenchida. O código/SQL anterior foi preservado e ainda precisa dessas adaptações; a E1 revisada aguarda novo prompt e permissão. [Relatório da auditoria](docs/validacao/relatorio-auditoria-arquitetural.md).
+
 ## Executar localmente
 
 Requisitos: Node.js **24.19.0 LTS**, pnpm **12.6.0** e Git. No PowerShell:
@@ -81,6 +83,8 @@ Nome completo no perfil; e-mail/senha no Supabase Auth; matrícula, papel e lota
 
 A funcionalidade ainda precisa da migração revisada, bootstrap controlado de empresa/gestor e `DATABASE_URL` de um login PostgreSQL NOSUPERUSER/NOBYPASSRLS, membro de `sistemanr1_api`, com TLS validado e sem propriedade das tabelas. **Não executar migrações sem autorização.** Não usar `postgres` ou chave de serviço como acesso geral ao banco. Novas contas Auth são criadas sem confirmar artificialmente o e-mail; ativação deve seguir procedimento administrativo controlado. [Evidências e limites do recorte](docs/evidencias/c0-usuarios.md).
 
+A interface atual ainda usa `gestor/tecnico/leitor`, matrícula obrigatória e uma lotação embutida no vínculo. O alvo `trabalhador/gestor_sst_rh/responsavel_tecnico/consultoria` está especificado em [usuários e perfis](specs/camada-0/usuarios-perfis.spec.md), com [permissões](docs/arquitetura/matriz-permissoes.md) e [isolamento](docs/arquitetura/isolamento-multiempresa.md). Consultoria acessará somente sua carteira autorizada. Conta pessoal de trabalhador não identifica respostas anônimas.
+
 Evidências: [diagnóstico e versões](docs/ambiente/diagnostico.md), [instalação detalhada](docs/ambiente/instalacao.md), [SPEC E0](specs/fundacao/e0.spec.md) e [relatório dos testes e builds](docs/validacao/relatorio-e0.md).
 
 ## Comece por aqui
@@ -89,6 +93,7 @@ Evidências: [diagnóstico e versões](docs/ambiente/diagnostico.md), [instalaç
 - [Matriz dos 21 requisitos](docs/matriz-rastreabilidade.md): links para cada SPEC, origem, dependências e cenários.
 - [Backlog do MVP](docs/backlog-mvp.md): etapas E0–E8 e roteiro completo de demonstração.
 - [Arquitetura](docs/arquitetura/visao-geral.md), [modelo de domínio](docs/arquitetura/modelo-dominio.md), [contratos](docs/arquitetura/contratos-modulos.md) e [decisões](docs/arquitetura/decisoes.md).
+- [Identidade multiempresa](docs/arquitetura/modelo-identidade.md) e [compatibilidade das 18 tabelas do PDF complementar](docs/arquitetura/compatibilidade-schemas.md).
 - [Segurança e privacidade](docs/arquitetura/seguranca-privacidade.md), [padrões de código](docs/arquitetura/padroes-codigo.md) e [planejamento MCP](docs/arquitetura/integracoes-mcp.md).
 - [Leitura integral dos PDFs](docs/extracao/relatorio-leitura.md), [verificação NR-1](docs/conformidade/verificacao-nr1.md) e [pendências](docs/pendencias.md).
 - [Instruções do agente](AGENTS.md), [processo SDD](docs/desenvolvimento-sdd.md) e [validação documental](docs/validacao/relatorio.md).
@@ -114,7 +119,7 @@ docs/
   pendencias.md
 specs/
   produto.spec.md
-  camada-0/estrutura-organizacional.spec.md
+  camada-0/                   # estrutura-organizacional e usuarios-perfis
   m1-coleta/                  # 7 SPECs
   m2-avaliacao/               # 8 SPECs
   m3-inventario/              # 6 SPECs

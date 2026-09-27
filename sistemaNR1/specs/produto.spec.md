@@ -2,7 +2,7 @@
 
 ## Origem e autoridade
 
-[MISSÃO] Preparar e, em etapa posterior, desenvolver um SaaS acadêmico com foco em fatores psicossociais relacionados ao trabalho. Esta entrega é **exclusivamente documental**. Fontes: [M1](../docs/fontes/M1.pdf), [M2](../docs/fontes/M2.pdf), [M3](../docs/fontes/M3.pdf), integralmente processadas conforme [relatório](../docs/extracao/relatorio-leitura.md).
+[MISSÃO] SaaS acadêmico com foco em fatores psicossociais relacionados ao trabalho. A Missão 01 foi documental; E0 está concluída e há um recorte C0 parcial. A Missão A atual consolida arquitetura, sem implementar banco ou aplicar migrações. Fontes funcionais: [M1](../docs/fontes/M1.pdf), [M2](../docs/fontes/M2.pdf), [M3](../docs/fontes/M3.pdf), conforme [leitura](../docs/extracao/relatorio-leitura.md). O [PDF de schemas](../docs/fontes/arquitetura-schemas.pdf) é referência complementar, subordinada aos 21 RFs e às adaptações explícitas da missão.
 
 | Etiqueta | Significado | Tratamento |
 | --- | --- | --- |
@@ -11,6 +11,8 @@
 | [NORMA] | Complemento ou constatação da consulta oficial | Usar somente com fonte e limite da verificação |
 | [ARQ] | Decisão técnica do MVP | Pode evoluir com decisão registrada e atualização da SPEC |
 | [PEND] | Lacuna ou hipótese ainda não validada | Não apresentar como requisito original nem como resolvida |
+| [MOD] | Complemento de modelagem do novo PDF | Confrontar com RFs; registrar campos aproveitados/adaptados/descartados |
+| [FUT] | Proposta futura M4/M5/M6 | Não equivale a SPEC funcional nem autoriza implementação |
 
 A SPEC é a fonte de verdade da implementação. Os PDFs permanecem a fonte de origem do negócio. Conflito não permite ao agente escolher silenciosamente outra regra: registrar divergência, impacto e decisão na SPEC/ADR. As escolhas explicitamente acadêmicas podem ser implementadas no ambiente demonstrativo. Pendências de uso real bloqueiam produção ou avanço formal, não a preparação da estrutura técnica.
 
@@ -22,11 +24,11 @@ M4 plano de ação, M5 ciclo/acompanhamento e M6 comunicação têm especificaç
 
 ## Atores e limites
 
-Trabalhador fictício anônimo; gestor SST/RH; responsável técnico; consultoria vinculada a uma empresa por vez; leitor autorizado. Papéis de software e permissões são [ARQ], detalhados em [segurança](../docs/arquitetura/seguranca-privacidade.md). Autenticação administrativa não se aplica ao respondente. Não manter cadastro nominal de trabalhadores.
+Quatro papéis: trabalhador, gestor SST/RH, responsável técnico e consultoria. Uma pessoa possui identidade única e vínculos com papéis distintos ou combinados por empresa. Consultoria acessa carteira explicitamente autorizada, selecionando o contexto sem misturar clientes. Conta pessoal de trabalhador é separada do participante anônimo M1, que não precisa de login. “Leitor autorizado” dos RFs é capacidade restrita, não quinto papel funcional. [Identidade](../docs/arquitetura/modelo-identidade.md) e [matriz de autorização](../docs/arquitetura/matriz-permissoes.md).
 
 ## Escopo funcional
 
-21 requisitos individuais: 7 de M1, 8 de M2, 6 de M3. A [Camada 0](camada-0/estrutura-organizacional.spec.md) é suporte derivado e não um 22º RF documental. Ver [matriz de rastreabilidade](../docs/matriz-rastreabilidade.md) para fontes, dependências e testes. Todas as funcionalidades estão **pendentes** nesta entrega.
+21 requisitos individuais: 7 de M1, 8 de M2, 6 de M3, todos **pendentes**. A [estrutura C0](camada-0/estrutura-organizacional.spec.md) e [usuários/perfis](camada-0/usuarios-perfis.spec.md) são suporte adicional, não novos RFs documentais; seu código parcial ainda requer adaptação e prova real de isolamento. Ver [matriz](../docs/matriz-rastreabilidade.md).
 
 ## Critérios de aceitação do produto
 

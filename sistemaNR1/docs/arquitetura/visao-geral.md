@@ -2,7 +2,7 @@
 
 ## Decisão e escopo
 
-[MISSÃO] Monorepositório com pnpm workspaces. Frontend Next.js App Router, React, TypeScript strict, Tailwind CSS e shadcn/ui. Backend NestJS, TypeScript strict, API REST, Swagger/OpenAPI e Jest. Supabase PostgreSQL, Auth e Storage. Git/GitHub. Vercel para frontend e Render para API. **Essas escolhas são arquiteturais da missão, não exigências dos PDFs.** Versões exatas serão escolhidas e fixadas no lockfile no início da implementação após checar compatibilidade oficial; não há dependências instaladas do aplicativo nesta etapa.
+[MISSÃO] Monorepositório pnpm existente. Frontend Next.js App Router, React, TypeScript strict, Tailwind CSS e shadcn/ui. Backend NestJS, TypeScript strict, REST, Swagger e Jest. Supabase PostgreSQL/Auth/Storage; Git/GitHub; Vercel/Render planejados. **São escolhas arquiteturais, não exigências dos PDFs.** E0 concluída, dependências fixadas no lockfile; recorte C0 parcial preservado. Missão A consolida arquitetura e aguarda autorização para E1 revisada.
 
 [ARQ] Monólito modular NestJS: uma implantação e um banco, com limites internos explícitos. Sem microsserviços, Redis, broker ou servidor MCP próprio. Processos de exportação idempotentes podem usar registros duráveis no mesmo PostgreSQL; não depender da memória de uma instância gratuita.
 
@@ -49,7 +49,11 @@ Imports apontam para o interior. Módulo NestJS faz composição/injeção; não
 
 Autenticação/autorização são capacidades transversais de suporte; não acrescentam RF documental. Ações futuras M4–M6 não têm módulos implementados ou requisitos inventados.
 
-## Estrutura futura, ainda não criada
+Identidade única e quatro papéis são detalhados em [modelo de identidade](modelo-identidade.md), [matriz](matriz-permissoes.md) e [isolamento](isolamento-multiempresa.md). O [PDF complementar](compatibilidade-schemas.md) contribui com modelagem, sem substituir os 21 RFs. Ciclo é referência conceitual futura, não máquina M5 implementada na E1.
+
+## Organização futura por capacidades
+
+A árvore abaixo é proposta de evolução. Hoje existem `apps/web`, `apps/api` com camadas diretamente em `src`, contratos e uma migração C0 não aplicada. Não recriar o workspace nem mover código por mera preferência estrutural.
 
 ```text
 apps/
@@ -73,7 +77,7 @@ Não criar pacote compartilhado de domínio prematuramente. Em vez de importaç�
 
 ## Persistência e acesso
 
-[ARQ] Adaptador PostgreSQL com SQL parametrizado e transações explícitas; biblioteca `pg` é a proposta mínima, a confirmar por compatibilidade. Sem ORM obrigatório. Modelagem é conceitual nesta entrega. RLS e privilégios mínimos reforçam isolamento; conexões comuns não usam papel dono do banco nem BYPASSRLS. O NestJS valida JWT e resolve vínculo ativo no servidor. A rota anônima de coleta usa privilégio estrito de consumir código/gravar resposta, sem ler respostas. Ver [segurança](seguranca-privacidade.md).
+[ARQ] Adaptador PostgreSQL parcial já usa `pg`, SQL parametrizado e transações explícitas; conexão de runtime/RLS ainda não validada. Sem ORM obrigatório. Modelo alvo requer revisão da migração anterior, não aplicada. Login comum não pode ser proprietário ou BYPASSRLS. Nest verifica identidade e vínculo/atribuições ativos; RLS reforça capacidades por operação. Futura rota anônima de coleta terá privilégio estrito de consumir código/gravar resposta sem identificar pessoa. Ver [segurança](seguranca-privacidade.md).
 
 ## Publicação acadêmica futura
 
@@ -83,4 +87,4 @@ Render gratuito pode suspender por inatividade e perde arquivos locais em reinic
 
 Planejar exportação do banco e dos objetos separadamente: backup de banco não inclui bytes dos objetos Storage; plano gratuito requer estratégia própria de backup. A guarda por 20 anos continua pendência operacional. [Backups Supabase](https://supabase.com/docs/guides/platform/backups).
 
-Estas condições foram consultadas em 2026-09-26 e precisam ser reconferidas antes da publicação. Contas, credenciais, regiões, cotas, domínios, custos e deploy não foram configurados. Falhas de rede/PDF não devem avançar estados de negócio.
+Estas condições foram consultadas na preparação inicial e precisam ser reconferidas antes da publicação. O projeto Supabase já foi vinculado por autorização explícita, com credenciais somente nos ambientes locais ignorados; isso não constitui deploy nem validação de RLS. Regiões/cotas/termos, domínios, custos e publicação continuam pendentes. Falhas de rede/PDF não devem avançar estados de negócio.

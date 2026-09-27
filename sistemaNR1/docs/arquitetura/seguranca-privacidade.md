@@ -6,14 +6,7 @@
 
 `empresaId` pertence a todos os agregados e artefatos. Resolver empresa e vínculo ativo a partir da autenticação validada e da associação no servidor; nunca confiar em `empresaId` do corpo ou papel armazenado em metadados editáveis pelo usuário. Validar emissor, audiência, expiração e assinatura do JWT Supabase; não basta decodificar token. Toda relação entre recursos deve validar mesma empresa, inclusive referências de documento, grupo e revisão.
 
-| Papel proposto | Permissões |
-| --- | --- |
-| Gestor | Estrutura, campanhas, indicadores, leitura de agregados, rascunhos e exportação autorizada |
-| Responsável técnico | Critérios, avaliação, consequências, decisões, consolidação e futura assinatura dentro de atribuições verificadas |
-| Leitor | Agregados e documentos explicitamente permitidos |
-| Consultoria | Um dos papéis acima por vínculo de empresa; sem permissão implícita entre clientes |
-| Participante | Apenas instrumento e envio com token do grupo; sem acesso administrativo |
-| Processo de agregação | Leitura interna restrita de respostas para produzir projeções; não é papel navegável no produto |
+Modelo alvo: quatro papéis `trabalhador`, `gestor_sst_rh`, `responsavel_tecnico`, `consultoria`, atribuídos por vínculo e combináveis somente por concessão explícita. A [matriz de permissões](matriz-permissoes.md) define recurso, operação, escopo, restrições e etapa. O antigo papel `leitor` continua no código preservado, mas não é um quinto papel alvo nem recebe mapeamento automático. Participante anônimo e processo interno de agregação não são papéis Auth. Consulte [identidade](modelo-identidade.md) e [isolamento/revogação](isolamento-multiempresa.md).
 
 Privilégio mínimo no banco e RLS por empresa como defesa adicional. Proposta: backend transacional usa papel restrito, sem dono/BYPASSRLS, com contexto local à transação configurado somente depois da validação da sessão/vínculo; a conexão do pool não retém contexto de outro pedido. Data API não expõe schema de respostas/tokens. Navegador não acessa tabelas de negócio; Supabase Auth continua sendo a integração pública de autenticação. A [documentação Supabase](https://supabase.com/docs/guides/database/secure-data) explica RLS e a necessidade de proteger chaves privilegiadas; nosso desenho também exige testes da aplicação, pois RLS não neutraliza uma credencial que a ignora.
 
@@ -21,11 +14,11 @@ Testar via dois usuários de empresas diferentes, acesso por identificador conhe
 
 ### Perfis e matrículas da Camada 0
 
-Cadastro administrativo atualizado em 2026-09-26: nome completo no perfil; e-mail e senha exclusivamente no Supabase Auth; matrícula e lotação no vínculo por empresa. Um vínculo não herda papel de outra empresa. Metadados Auth editáveis não autorizam operações. O frontend mantém sessão em memória, sem persistir senha/token em localStorage/sessionStorage; limpa a senha após tentativa de envio e ao alternar o tipo de cadastro.
+Modelo alvo atualizado pela Missão A: nome/status/datas no perfil global; e-mail e senha exclusivamente no Supabase Auth; matrícula opcional por vínculo, lotação e atribuições em entidades próprias dependentes do vínculo. Conta de trabalhador não é cadastro de respondente. Um vínculo não herda papel de outra empresa. Metadados Auth editáveis não autorizam operações. O frontend existente mantém sessão em memória, sem persistir senha/token em localStorage/sessionStorage; limpa a senha após envio e ao alternar tipo de cadastro, mas ainda precisa adaptar papéis/matrícula.
 
 A chave secreta é usada somente pelo adaptador backend para criação controlada de identidade, depois da verificação de gestor ativo e lotação. A consulta de dados organizacionais usa PostgreSQL sob papel NOSUPERUSER/NOBYPASSRLS membro de `sistemanr1_api`, sem propriedade das tabelas. `DATABASE_URL` deve conter conexão desse login restrito e TLS validado; jamais usar a conexão administrativa por conveniência. Cada transação define contexto local a partir do identificador validado, faz commit/rollback e libera a conexão; rollback falho descarta a conexão.
 
-Schema `organizacao` não é acessível por `anon`/`authenticated` nem exposto no navegador. Migração preparada inclui RLS/FORCE RLS, funções estreitas de autorização, chaves compostas de empresa/lotação e unicidade de matrícula por empresa. Não há tabela própria de senha, nem relacionamento entre perfil/vínculo/matrícula e respostas ou tokens M1. **Políticas ainda não executadas no banco**: exigir testes reais antes de afirmar isolamento operacional concluído.
+No SQL preparado, schema `organizacao` tem grants revogados de `anon`/`authenticated`. A migração inclui RLS/FORCE RLS, funções estreitas, FKs compostas e unicidade de matrícula, mas ainda representa o modelo anterior e requer revisão de capacidades/estados. Não há tabela própria de senha nem relação com respostas/tokens M1. **Políticas ainda não executadas no banco**: exigir testes reais antes de afirmar isolamento operacional concluído. Perfil inativo bloqueará todas as empresas; vínculo inativo somente sua empresa. Gestor não altera estado global de outras pessoas.
 
 ## Coleta e tokens
 

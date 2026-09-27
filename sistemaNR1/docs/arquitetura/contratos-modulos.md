@@ -1,6 +1,6 @@
 # Contratos entre módulos e API proposta
 
-[ARQ] Contratos de dados conceituais versão `1`. Nomes em português; datas ISO 8601 com UTC, identificadores opacos e valores com unidades explícitas. Ainda não são código nem OpenAPI executável. Nenhum módulo deve ler diretamente tabelas privadas de outro.
+[ARQ] Contratos M1–M3 conceituais versão `1`. Nomes em português; datas ISO 8601 com UTC, identificadores opacos e unidades explícitas. C0 possui contrato parcial executável descrito abaixo, ainda sujeito à adaptação da Missão A. Nenhum módulo deve ler diretamente tabelas privadas de outro.
 
 ## C0 → M1: EscopoDeCampanha
 
@@ -11,11 +11,11 @@
 | hierarquia | Pai de cada grupo e partição disjunta dentro do escopo |
 | fusoHorario | Nome IANA para apresentação; instantes persistidos UTC |
 
-Congelar no momento de publicação. Rejeitar referências cruzadas entre empresas e grupos sobrepostos. Sem cadastro nominal de trabalhadores.
+Congelar na publicação. Rejeitar referências cruzadas e grupos sobrepostos. O contrato não contém cadastro nominal: perfil/vínculo/lotação de pessoas ficam restritos à C0, mesmo se a pessoa também for trabalhadora.
 
 ## C0 — Identidade, perfil e vínculo administrativo
 
-Atualização solicitada em 2026-09-26; tipos implementados em [contratos de usuários](../../packages/contratos/src/usuarios.ts), sem mudar os contratos M1–M3.
+Contrato anterior preservado em [tipos de usuários](../../packages/contratos/src/usuarios.ts). Ainda usa `papel` singular `gestor/tecnico/leitor`, matrícula obrigatória e lotação embutida. **Não é o contrato alvo da Missão A.** E1 deve adaptar em conjunto DTOs/Swagger, SDK/Zod, formulários, persistência e testes: matrícula opcional, atribuições separadas, lotação vinculada à empresa, perfil com status/datas e capacidades da matriz. Não promover `leitor` automaticamente.
 
 | Operação implementada | Entrada / saída e autorização |
 | --- | --- |
@@ -30,6 +30,8 @@ Atualização solicitada em 2026-09-26; tipos implementados em [contratos de usu
 Auth e PostgreSQL têm commits separados. Se Auth criou identidade, mas o vínculo não foi confirmado, a API retorna `CADASTRO_PARCIAL` e o identificador recém-criado para reconciliação controlada; não remove conta automaticamente, não concede papel por metadado e não afirma que o commit do vínculo foi revertido quando seu resultado é incerto. O endpoint de vínculo permite resolver sem trocar a senha global.
 
 Rotas preparadas dependem de migração aplicada e conexão de runtime restrita, ainda não autorizadas nesta entrega. Os testes HTTP usam portas substituídas e não comprovam RLS.
+
+O alvo inclui perfil próprio restrito, gestão de estrutura, concessão/revogação e carteira por vínculos autorizados; endpoints exatos serão fechados na E1. Ator verificado e empresa selecionada não vêm como privilégio do corpo. Conta sem vínculo pode ter perfil próprio, sem acesso empresarial. Nenhuma resposta de identidade entrega senha ou lista de empresas alheias. [Matriz de permissões](matriz-permissoes.md).
 
 ## M1 → M2: PacoteDeColetaAgregadaV1
 
@@ -57,7 +59,7 @@ Versão imutável, escalas/descritivos, fórmula identificada, mapeamento total 
 
 | Campo | Conteúdo |
 | --- | --- |
-| empresaId, estabelecimentoId, cicloReferencia | Escopo de negócio; ciclo é apenas agrupador, sem implementar M5 |
+| empresaId, estabelecimentoId, cicloReferencia | Escopo; referência opcional ao CicloReferencia da mesma empresa/unidade, sem implementar M5 ou antecipar tabela na E1 |
 | avaliacaoId, revisao, fechadoEm | Identidade, revisão e estado de fechamento demonstrativo |
 | origens | Fotografia M1, consulta, indicadores efetivamente utilizados, critério/documento/hash |
 | perigo | Descrição, fonte e circunstância, grupo efetivamente avaliado |
@@ -71,6 +73,8 @@ Versão imutável, escalas/descritivos, fórmula identificada, mapeamento total 
 
 Pré-condições: memória existente, consequências válidas, critérios aprovados antes do cálculo, preliminar sem trava de medida ausente, AEP/AET respondida, anonimato validado. M3 ainda valida a–i; pacote M2 sozinho não garante preenchimento do inventário. Mudança de S/P ocorre em nova revisão de M2, nunca dentro de M3.
 
+JSONB é detalhe de persistência selecionado para configuração versionada/memória e não relaxa este contrato, FKs ou validação. Inventário referencia estabelecimento/versão e, quando houver, ciclo coerente; artefatos privados mantêm hash/data/responsável e assinatura como estado separado. Nenhuma identidade nominal da C0 é anexada a grupo/fotografia como identidade de respondente.
+
 ## M3 → Documentos: SolicitacaoDeArtefatoV1
 
 Entrada: empresa autorizada, inventarioVersaoId, tipo de documento, versão do template e chave de idempotência. O gerador carrega fotografia imutável e confirma integração geral, completude e política de divulgação. Saída: artefatoId, situação, hash dos bytes, data, versão, estado de assinatura e rota protegida de download. Estado sem assinatura é independente de sucesso da geração.
@@ -81,24 +85,24 @@ Exportação aberta: manifesto JSON UTF-8, dicionário de campos, itens CSV, ver
 
 | Operação | Caso de uso / RF | Acesso e trava principal |
 | --- | --- | --- |
-| POST /v1/empresas e /v1/estabelecimentos | C0 | Conta administrativa autorizada |
-| POST /v1/campanhas | Criar rascunho RF-01.2 | Escopo da empresa |
-| POST /v1/campanhas/{id}/publicacao | Ativar RF-01.1/2/6 | Janela, população, instrumento e canal alternativo |
-| POST /v1/campanhas/{id}/lotes-de-codigos | Emitir códigos RF-01.1 | Limite da população; sem destinatários |
-| GET /v1/participacao/questionario | Carregar instrumento público | Campanha válida; sem resposta individual |
-| POST /v1/participacao/respostas | Receber RF-01.1/4/6 | Token no corpo, nunca em log; consumo atômico |
-| POST /v1/campanhas/{id}/encerramento | RF-01.2/5 | Meta/taxa e registro no mesmo caso de uso |
-| GET /v1/campanhas/{id}/agregados | RF-01.3 | Projeção protegida; filtros permitidos |
-| POST /v1/indicadores | RF-01.7 | Fonte/período/unidade/escopo |
-| POST /v1/criterios e /{id}/aprovacao-demonstrativa | RF-02.1/8 | Versão completa, documento e data |
-| POST /v1/avaliacoes e /{id}/calculo | RF-02.2/3/6/7 | Todas as pré-condições aplicáveis |
-| POST /v1/avaliacoes/{id}/decisao | RF-02.4 | Justificativa de override e revisão |
-| GET /v1/avaliacoes/mapa | RF-02.5 | Mesma política central de anonimato |
-| POST /v1/inventarios e /{id}/consolidacao | RF-03.1/3/4 | Nove alíneas, integração, travas M2 |
-| POST /v1/perigos | RF-03.2 | Fonte/circunstância/agravos |
-| GET /v1/inventarios/{id}/versoes | RF-03.4 | Histórico por empresa |
-| POST /v1/inventarios/versoes/{id}/exportacoes | RF-03.5/6 | Fotografia íntegra e idempotência |
-| GET /v1/documentos/{id}/download | RF-02.8/03.6 | Autorização por documento e empresa |
+| POST /api/v1/empresas e /api/v1/estabelecimentos | C0 | Conta administrativa autorizada |
+| POST /api/v1/campanhas | Criar rascunho RF-01.2 | Escopo da empresa |
+| POST /api/v1/campanhas/{id}/publicacao | Ativar RF-01.1/2/6 | Janela, população, instrumento e canal alternativo |
+| POST /api/v1/campanhas/{id}/lotes-de-codigos | Emitir códigos RF-01.1 | Limite da população; sem destinatários |
+| GET /api/v1/participacao/questionario | Carregar instrumento público | Campanha válida; sem resposta individual |
+| POST /api/v1/participacao/respostas | Receber RF-01.1/4/6 | Token no corpo, nunca em log; consumo atômico |
+| POST /api/v1/campanhas/{id}/encerramento | RF-01.2/5 | Meta/taxa e registro no mesmo caso de uso |
+| GET /api/v1/campanhas/{id}/agregados | RF-01.3 | Projeção protegida; filtros permitidos |
+| POST /api/v1/indicadores | RF-01.7 | Fonte/período/unidade/escopo |
+| POST /api/v1/criterios e /{id}/aprovacao-demonstrativa | RF-02.1/8 | Versão completa, documento e data |
+| POST /api/v1/avaliacoes e /{id}/calculo | RF-02.2/3/6/7 | Todas as pré-condições aplicáveis |
+| POST /api/v1/avaliacoes/{id}/decisao | RF-02.4 | Justificativa de override e revisão |
+| GET /api/v1/avaliacoes/mapa | RF-02.5 | Mesma política central de anonimato |
+| POST /api/v1/inventarios e /{id}/consolidacao | RF-03.1/3/4 | Nove alíneas, integração, travas M2 |
+| POST /api/v1/perigos | RF-03.2 | Fonte/circunstância/agravos |
+| GET /api/v1/inventarios/{id}/versoes | RF-03.4 | Histórico por empresa |
+| POST /api/v1/inventarios/versoes/{id}/exportacoes | RF-03.5/6 | Fotografia íntegra e idempotência |
+| GET /api/v1/documentos/{id}/download | RF-02.8/03.6 | Autorização por documento e empresa |
 
 Rotas são decisões técnicas propostas e serão materializadas no Swagger na etapa de implementação. Endpoints de assinatura real e expurgo não serão habilitados enquanto suas definições estiverem pendentes. Token do link deve ficar preferencialmente no fragmento do URL, lido pelo formulário e enviado no corpo por HTTPS; `Referrer-Policy: no-referrer`, sem analytics de coleta.
 

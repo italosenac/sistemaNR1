@@ -22,6 +22,8 @@ Registrar requisito/fonte afetados, motivo, tipo da mudança, critérios/testes 
 
 Matriz de rastreabilidade é índice, SPEC descreve comportamento, backlog define ordem. Evitar três definições divergentes do mesmo bloqueio. A validação documental desta fase verifica estrutura/cobertura/referências; não prova execução de testes do aplicativo.
 
+Validação atual: `python docs/validacao/validar-documentacao.py`. O verificador ignora dependências/saídas geradas, confere as 21 SPECs, suporte C0, quatro papéis documentados, hashes dos PDFs e links. `--fase-documental-inicial` preserva a checagem histórica de ausência de aplicativo, que deve falhar no workspace E0/C0 atual. Missão A é auditoria documental: código/SQL anteriores são preservados, lacunas ficam no backlog, e a próxima implementação exige novo prompt/permissão solicitados pelo usuário.
+
 ## Uso das Skills
 
 Implementação: `implementar-requisito`. Validação de travas/completude: `validar-regra-negocio`. Revisão/refatoração: `revisar-codigo-limpo`. Não carregar todas por padrão. Exemplo de próxima tarefa: implementar E0 do backlog mantendo dados fictícios, sem banco remoto ou deploy, e registrar testes efetivamente executados.
