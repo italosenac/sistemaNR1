@@ -1,0 +1,26 @@
+# Blueprint de apoio à implantação acadêmica. Selecionar este arquivo no Render.
+# A CA do Supabase deve ser criada manualmente como Secret File: supabase-ca.crt.
+services:
+  - type: web
+    name: sistemanr1-api-academico
+    runtime: node
+    branch: italo_SDD
+    rootDir: sistemaNR1
+    healthCheckPath: /health
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api build
+    startCommand: pnpm --filter @sistemanr1/api start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_CA_CERT_PATH
+        value: /etc/secrets/supabase-ca.crt

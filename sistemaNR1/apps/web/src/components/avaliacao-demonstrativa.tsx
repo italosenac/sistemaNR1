@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { MensagemDeErro } from './mensagem-de-erro';
+import Link from 'next/link';
 
 const campanha = z.object({
   id: z.uuid(),
@@ -37,11 +38,37 @@ const resultado = z.object({
   criterioId: z.uuid(),
   memoria: z.record(z.string(), z.unknown()),
 });
+const modeloSchema = z.object({
+  formula: z.string(),
+  severidades: z.array(z.number()),
+  probabilidades: z.array(z.number()),
+  celulas: z.array(
+    z.object({
+      severidade: z.number(),
+      probabilidade: z.number(),
+      faixa: z.string(),
+      decisao: z.string(),
+    }),
+  ),
+});
+const classeFaixa = (faixa: string) => {
+  const valor = faixa.toLowerCase();
+  if (valor.includes('crítico') || valor.includes('critico'))
+    return 'bg-[var(--color-risk-critical-bg)] text-[var(--color-risk-critical-text)]';
+  if (valor.includes('alto'))
+    return 'bg-[var(--color-risk-high-bg)] text-[var(--color-risk-high-text)]';
+  if (valor.includes('moderado'))
+    return 'bg-[var(--color-risk-moderate-bg)] text-[var(--color-risk-moderate-text)]';
+  return 'bg-[var(--color-risk-low-bg)] text-[var(--color-risk-low-text)]';
+};
 
 export function AvaliacaoDemonstrativa() {
   const { empresa, obterToken } = useSessao();
   const [campanhas, setCampanhas] = useState<z.infer<typeof campanha>[]>([]);
   const [criterios, setCriterios] = useState<z.infer<typeof criterio>[]>([]);
+  const [modelo, setModelo] = useState<z.infer<typeof modeloSchema> | null>(
+    null,
+  );
   const [campanhaId, setCampanhaId] = useState('');
   const [criterioId, setCriterioId] = useState('');
   const [particoes, setParticoes] = useState<z.infer<typeof parte>[]>([]);
@@ -57,12 +84,14 @@ export function AvaliacaoDemonstrativa() {
   const carregar = useCallback(async () => {
     if (!empresa) return;
     const token = await obterToken();
-    const [lista, versoes] = await Promise.all([
+    const [lista, versoes, matriz] = await Promise.all([
       consultarApi(`${base}/campanhas`, token, z.array(campanha)),
       consultarApi(`${base}/avaliacoes/criterios`, token, z.array(criterio)),
+      consultarApi(`${base}/avaliacoes/modelo`, token, modeloSchema),
     ]);
     setCampanhas(lista);
     setCriterios(versoes);
+    setModelo(matriz);
   }, [base, empresa, obterToken]);
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -153,6 +182,18 @@ export function AvaliacaoDemonstrativa() {
   if (!empresa) return <p>Selecione uma empresa.</p>;
   return (
     <div className="space-y-7">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-brand)]">
+          Módulo 2 · Avaliação
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold">
+          Matriz e análise de riscos
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          A avaliação usa somente partições agregadas que passaram pela proteção
+          M1.
+        </p>
+      </div>
       <p className="rounded-xl border border-border bg-[var(--color-bg-audit)] p-4 text-sm text-[var(--color-text-audit)]">
         Modelo acadêmico R = S × P. A média do questionário não define
         automaticamente a probabilidade. O responsável técnico escolhe e
@@ -160,6 +201,60 @@ export function AvaliacaoDemonstrativa() {
       </p>
       <section className="space-y-3 rounded-xl border p-4">
         <h2 className="font-semibold">Critérios versionados</h2>
+        {modelo && (
+          <div
+            className="overflow-x-auto"
+            aria-label="Matriz demonstrativa de severidade por probabilidade"
+          >
+            <div className="grid min-w-[360px] grid-cols-4 gap-2 text-center text-xs sm:text-sm">
+              <div className="rounded-lg bg-muted p-2 font-semibold">S × P</div>
+              {modelo.probabilidades.map((p) => (
+                <div
+                  key={`p-${p}`}
+                  className="rounded-lg bg-muted p-2 font-semibold"
+                >
+                  P {p}
+                </div>
+              ))}
+              {modelo.severidades.map((s) => (
+                <div key={`s-${s}`} className="contents">
+                  <div className="rounded-lg bg-muted p-2 font-semibold">
+                    S {s}
+                  </div>
+                  {modelo.probabilidades.map((p) => {
+                    const celula = modelo.celulas.find(
+                      (c) => c.severidade === s && c.probabilidade === p,
+                    );
+                    return (
+                      <div
+                        key={`${s}-${p}`}
+                        className={`rounded-lg p-2 font-medium ${classeFaixa(celula?.faixa ?? '')}`}
+                        title={celula?.decisao}
+                      >
+                        {celula ? (
+                          <>
+                            <span className="block font-semibold">
+                              {celula.faixa}
+                            </span>
+                            <span className="block text-xs">{s * p}</span>
+                          </>
+                        ) : (
+                          '—'
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {criterios.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            Nenhum critério publicado. O responsável técnico pode publicar a
+            versão demonstrativa abaixo.
+          </p>
+        )}
         <ul className="space-y-1 text-sm">
           {criterios.map((c) => (
             <li key={c.id}>
@@ -176,19 +271,7 @@ export function AvaliacaoDemonstrativa() {
                 const modelo = await consultarApi(
                   `${base}/avaliacoes/modelo`,
                   await obterToken(),
-                  z.object({
-                    formula: z.string(),
-                    severidades: z.array(z.number()),
-                    probabilidades: z.array(z.number()),
-                    celulas: z.array(
-                      z.object({
-                        severidade: z.number(),
-                        probabilidade: z.number(),
-                        faixa: z.string(),
-                        decisao: z.string(),
-                      }),
-                    ),
-                  }),
+                  modeloSchema,
                 );
                 const novo = await consultarApi(
                   `${base}/avaliacoes/criterios`,
@@ -209,6 +292,12 @@ export function AvaliacaoDemonstrativa() {
       </section>
       <section className="space-y-4">
         <h2 className="font-semibold">Avaliar agregado permitido</h2>
+        {!campanhas.some((c) => c.estado === 'encerrada') && (
+          <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+            Ainda não há campanha encerrada nesta empresa. Conclua a coleta M1
+            para obter agregados protegidos.
+          </p>
+        )}
         <div>
           <Label htmlFor="avaliacao-campanha">Campanha encerrada</Label>
           <select
@@ -367,15 +456,42 @@ export function AvaliacaoDemonstrativa() {
         )}
       </section>
       {resultadoAtual && (
-        <div role="status" className="rounded-xl border p-4">
-          <p className="font-semibold">
-            Resultado persistido: {resultadoAtual.valor} · faixa{' '}
-            {resultadoAtual.faixa} · decisão {resultadoAtual.decisaoEfetiva}
-          </p>
+        <div role="status" className="space-y-4 rounded-2xl border p-5">
+          <div>
+            <h3 className="font-semibold">Memória de cálculo</h3>
+            <p className="text-sm text-muted-foreground">
+              Resultado registrado com a versão selecionada dos critérios.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-muted p-3">
+              <span className="block text-xs text-muted-foreground">Regra</span>
+              <strong>
+                {String(resultadoAtual.memoria.operacao ?? 'S × P')}
+              </strong>
+            </div>
+            <div className="rounded-xl bg-muted p-3">
+              <span className="block text-xs text-muted-foreground">
+                Resultado
+              </span>
+              <strong>{resultadoAtual.valor}</strong>
+            </div>
+            <div
+              className={`rounded-xl p-3 ${classeFaixa(resultadoAtual.faixa)}`}
+            >
+              <span className="block text-xs">Classificação</span>
+              <strong>{resultadoAtual.faixa}</strong>
+            </div>
+          </div>
           <p className="text-sm">
-            Memória: {String(resultadoAtual.memoria.operacao)}. Critério{' '}
-            {resultadoAtual.criterioId}.
+            Decisão: <strong>{resultadoAtual.decisaoEfetiva}</strong>
           </p>
+          <Link
+            href="/inventarios"
+            className="inline-flex rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          >
+            Continuar para o inventário M3 →
+          </Link>
         </div>
       )}
       {aviso && (

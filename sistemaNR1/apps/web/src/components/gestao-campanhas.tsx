@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { MensagemDeErro } from './mensagem-de-erro';
+import Link from 'next/link';
 
 const campanhaSchema = z.object({
   id: z.uuid(),
@@ -40,6 +41,9 @@ export function GestaoCampanhas() {
   const { empresa, obterToken } = useSessao();
   const [campanhas, setCampanhas] = useState<Campanha[]>([]);
   const [grupos, setGrupos] = useState<z.infer<typeof esquemaEstrutura>[]>([]);
+  const [estabelecimentos, setEstabelecimentos] = useState<
+    z.infer<typeof esquemaEstrutura>[]
+  >([]);
   const [fotografias, setFotografias] = useState<
     z.infer<typeof esquemaSnapshot>[]
   >([]);
@@ -58,21 +62,28 @@ export function GestaoCampanhas() {
   const carregar = useCallback(async () => {
     if (!empresa) return;
     const token = await obterToken();
-    const [lista, gruposRecebidos, fotos] = await Promise.all([
-      consultarApi(`${base}/campanhas`, token, z.array(campanhaSchema)),
-      consultarApi(
-        `${base}/estrutura/grupos`,
-        token,
-        z.array(esquemaEstrutura),
-      ),
-      consultarApi(
-        `${base}/estruturas-congeladas`,
-        token,
-        z.array(esquemaSnapshot),
-      ),
-    ]);
+    const [lista, gruposRecebidos, estabelecimentosRecebidos, fotos] =
+      await Promise.all([
+        consultarApi(`${base}/campanhas`, token, z.array(campanhaSchema)),
+        consultarApi(
+          `${base}/estrutura/grupos`,
+          token,
+          z.array(esquemaEstrutura),
+        ),
+        consultarApi(
+          `${base}/estrutura/estabelecimentos`,
+          token,
+          z.array(esquemaEstrutura),
+        ),
+        consultarApi(
+          `${base}/estruturas-congeladas`,
+          token,
+          z.array(esquemaSnapshot),
+        ),
+      ]);
     setCampanhas(lista);
     setGrupos(gruposRecebidos);
+    setEstabelecimentos(estabelecimentosRecebidos);
     setFotografias(fotos);
   }, [base, empresa, obterToken]);
   useEffect(() => {
@@ -128,6 +139,16 @@ export function GestaoCampanhas() {
   if (!empresa) return <p>Selecione uma empresa para consultar campanhas.</p>;
   return (
     <div className="space-y-7">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-brand)]">
+          Módulo 1 · Coleta
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold">Campanhas e resultados</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Crie a campanha, associe grupos, publique e acompanhe somente os
+          agregados permitidos.
+        </p>
+      </div>
       <div className="rounded-xl border border-[var(--color-border-privacy)] bg-[var(--color-bg-privacy)] p-4 text-sm text-[var(--color-text-privacy)]">
         Coleta anônima demonstrativa. O gestor vê somente agregados liberados
         após o encerramento; grupos com menos de sete respostas permanecem
@@ -136,7 +157,7 @@ export function GestaoCampanhas() {
       {gestor && (
         <form
           onSubmit={criar}
-          className="grid gap-4 rounded-xl border p-4 sm:grid-cols-2"
+          className="grid gap-4 rounded-2xl border bg-[var(--color-bg-canvas)] p-5 sm:grid-cols-2"
         >
           <h2 className="font-semibold sm:col-span-2">Nova campanha</h2>
           <div>
@@ -152,9 +173,9 @@ export function GestaoCampanhas() {
               className="h-10 w-full rounded-lg border bg-card px-3"
             >
               <option value="">Selecione</option>
-              {fotografias.map((f) => (
-                <option key={f.id} value={f.estabelecimentoId}>
-                  {f.estabelecimentoId}
+              {estabelecimentos.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.nome}
                 </option>
               ))}
             </select>
@@ -204,13 +225,30 @@ export function GestaoCampanhas() {
               minLength={10}
             />
           </div>
-          <Button type="submit" disabled={ocupado}>
+          <Button
+            type="submit"
+            disabled={ocupado || estabelecimentos.length === 0}
+          >
             Criar rascunho
           </Button>
         </form>
       )}
+      {gestor && estabelecimentos.length === 0 && (
+        <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          Cadastre um estabelecimento na estrutura antes de criar a campanha.{' '}
+          <Link href="/estabelecimentos" className="font-medium underline">
+            Abrir estabelecimentos
+          </Link>
+        </p>
+      )}
       <section className="space-y-4">
         <h2 className="text-lg font-semibold">Campanhas da empresa</h2>
+        {campanhas.length === 0 && (
+          <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+            Nenhuma campanha nesta empresa. Use o formulário acima para criar o
+            primeiro rascunho.
+          </p>
+        )}
         <select
           aria-label="Campanha selecionada"
           value={campanhaId}
@@ -300,6 +338,18 @@ export function GestaoCampanhas() {
                 >
                   Publicar
                 </Button>
+                {fotografias.length === 0 && (
+                  <p className="text-sm text-muted-foreground sm:col-span-2">
+                    Ainda não há fotografia da estrutura. Prepare os grupos e
+                    congele a estrutura antes da publicação.{' '}
+                    <Link
+                      href="/grupos"
+                      className="font-medium text-primary underline"
+                    >
+                      Abrir grupos
+                    </Link>
+                  </p>
+                )}
                 <Button
                   variant="outline"
                   disabled={ocupado || !grupoId}
@@ -360,13 +410,35 @@ export function GestaoCampanhas() {
           </div>
         )}
         {codigo && (
-          <p role="status" className="break-all rounded-lg border p-3 text-sm">
-            Código de uso único: <code>{codigo}</code>. Informe-o em{' '}
-            <a className="underline" href="/questionario">
-              /questionario
-            </a>
-            . Não associe o código ao nome de quem responde.
-          </p>
+          <div
+            role="status"
+            className="space-y-3 rounded-xl border border-[var(--color-border-privacy)] bg-[var(--color-bg-privacy)] p-4 text-sm text-[var(--color-text-privacy)]"
+          >
+            <p className="font-semibold">Código individual de uso único</p>
+            <code className="block break-all rounded-lg bg-white p-3 font-mono text-base">
+              {codigo}
+            </code>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  void navigator.clipboard
+                    .writeText(codigo)
+                    .then(() => setAviso('Código copiado.'))
+                }
+              >
+                Copiar código
+              </Button>
+              <Link href="/questionario" className="font-medium underline">
+                Abrir questionário
+              </Link>
+            </div>
+            <p>
+              Compartilhe somente com participante fictício. Não associe o
+              código ao nome de quem responde.
+            </p>
+          </div>
         )}
         {pacote && (
           <div role="status" className="rounded-xl border p-4">
@@ -382,9 +454,18 @@ export function GestaoCampanhas() {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm">
-                Nenhuma partição divulgável. Não é risco zero.
+              <p className="mt-2 rounded-lg border border-[var(--color-border-privacy)] bg-[var(--color-bg-privacy)] p-3 text-sm text-[var(--color-text-privacy)]">
+                Resultado indisponível para preservar o anonimato deste grupo.
+                Não é risco zero.
               </p>
+            )}
+            {pacote.resultado.particoes.length > 0 && (
+              <Link
+                href="/avaliacoes"
+                className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+              >
+                Avaliar riscos em M2 →
+              </Link>
             )}
           </div>
         )}

@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import type { EmpresaPermitida, PerfilUsuario } from '@sistemanr1/contratos';
@@ -14,7 +15,7 @@ import { criarClientePublico } from '@/lib/supabase-publico';
 import { consultarApi, esquemaEmpresas } from '@/lib/usuarios';
 import { esquemaPerfil } from '@/lib/esquemas-c0';
 type ContextoSessao = {
-  cliente: ReturnType<typeof criarClientePublico>;
+  cliente: ReturnType<typeof criarClientePublico> | undefined;
   sessao: Session | null | undefined;
   perfil: PerfilUsuario | null;
   empresas: EmpresaPermitida[];
@@ -29,8 +30,17 @@ type ContextoSessao = {
   sair: () => Promise<void>;
 };
 const Contexto = createContext<ContextoSessao | null>(null);
+const semAssinatura = () => () => {};
 export function SessaoProvider({ children }: { children: React.ReactNode }) {
-  const cliente = useMemo(() => criarClientePublico(), []);
+  const navegadorPronto = useSyncExternalStore(
+    semAssinatura,
+    () => true,
+    () => false,
+  );
+  const cliente = useMemo(
+    () => (navegadorPronto ? criarClientePublico() : undefined),
+    [navegadorPronto],
+  );
   const [sessao, definirSessao] = useState<Session | null | undefined>(
     undefined,
   );
@@ -43,7 +53,8 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
   const [carregando, definirCarregando] = useState(false);
   const [revisao, definirRevisao] = useState(0);
   const obterToken = useCallback(async () => {
-    const { data, error } = await cliente!.auth.getSession();
+    if (!cliente) throw new Error('A autenticação ainda não está disponível.');
+    const { data, error } = await cliente.auth.getSession();
     if (error || !data.session)
       throw new Error('Sua sessão expirou. Entre novamente.');
     return data.session.access_token;

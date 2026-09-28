@@ -122,6 +122,8 @@ export function FormularioAuth({
       definirOcupado(false);
     }
   }
+  if (cliente === undefined)
+    return <p role="status">Preparando autenticação...</p>;
   if (!cliente)
     return (
       <MensagemDeErro mensagem="A autenticação ainda não está configurada neste ambiente." />

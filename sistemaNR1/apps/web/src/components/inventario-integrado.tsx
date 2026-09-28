@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { MensagemDeErro } from './mensagem-de-erro';
+import { esquemaEstrutura } from '@/lib/esquemas-c0';
 
 const avaliacao = z.object({
   id: z.uuid(),
@@ -53,6 +54,9 @@ export function InventarioIntegrado() {
   const { empresa, obterToken } = useSessao();
   const [avaliacoes, setAvaliacoes] = useState<z.infer<typeof avaliacao>[]>([]);
   const [versoes, setVersoes] = useState<z.infer<typeof versao>[]>([]);
+  const [estabelecimentos, setEstabelecimentos] = useState<
+    z.infer<typeof esquemaEstrutura>[]
+  >([]);
   const [avaliacaoId, setAvaliacaoId] = useState('');
   const [erro, setErro] = useState('');
   const [aviso, setAviso] = useState('');
@@ -62,12 +66,18 @@ export function InventarioIntegrado() {
   const carregar = useCallback(async () => {
     if (!empresa) return;
     const token = await obterToken();
-    const [resultados, inventarios] = await Promise.all([
+    const [resultados, inventarios, unidades] = await Promise.all([
       consultarApi(`${base}/avaliacoes/resultados`, token, z.array(avaliacao)),
       consultarApi(`${base}/inventarios`, token, z.array(versao)),
+      consultarApi(
+        `${base}/estrutura/estabelecimentos`,
+        token,
+        z.array(esquemaEstrutura),
+      ),
     ]);
     setAvaliacoes(resultados);
     setVersoes(inventarios);
+    setEstabelecimentos(unidades);
   }, [base, empresa, obterToken]);
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -163,12 +173,28 @@ export function InventarioIntegrado() {
   if (!empresa) return <p>Selecione uma empresa.</p>;
   return (
     <div className="space-y-7">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-brand)]">
+          Módulo 3 · Inventário
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold">Inventário integrado</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Consolide a avaliação existente e gere um PDF de rascunho não
+          assinado.
+        </p>
+      </div>
       <div className="rounded-xl border border-[var(--color-border-privacy)] bg-[var(--color-bg-privacy)] p-4 text-sm text-[var(--color-text-privacy)]">
         Integração demonstrativa ao inventário geral. Não são inferidos riscos
         ausentes. O PDF fica como RASCUNHO NÃO ASSINADO e não permite avanço
         formal.
       </div>
-      {tecnico && (
+      {tecnico && avaliacoes.length === 0 && (
+        <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+          Nenhuma avaliação M2 disponível. Registre uma avaliação antes de
+          consolidar o inventário.
+        </p>
+      )}
+      {tecnico && avaliacoes.length > 0 && (
         <form onSubmit={consolidar} className="space-y-6">
           <div>
             <Label htmlFor="inventario-avaliacao">Avaliação M2 de origem</Label>
@@ -182,7 +208,10 @@ export function InventarioIntegrado() {
               <option value="">Selecione</option>
               {avaliacoes.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.perigo} · risco {a.valor} / {a.faixa}
+                  {a.perigo} ·{' '}
+                  {estabelecimentos.find((e) => e.id === a.estabelecimentoId)
+                    ?.nome ?? 'Estabelecimento da empresa'}{' '}
+                  · risco {a.valor} / {a.faixa}
                 </option>
               ))}
             </select>
@@ -279,8 +308,9 @@ export function InventarioIntegrado() {
                   Versão {v.versao} · Rascunho não assinado
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Hash PDF: {v.hashPdf.slice(0, 16)}… · Estabelecimento{' '}
-                  {v.estabelecimentoId}
+                  Hash PDF: {v.hashPdf.slice(0, 16)}… ·{' '}
+                  {estabelecimentos.find((e) => e.id === v.estabelecimentoId)
+                    ?.nome ?? 'Estabelecimento da empresa'}
                 </p>
               </div>
               <Button
