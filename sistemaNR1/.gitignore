@@ -4,6 +4,7 @@ node_modules/
 .next-integracao/
 .next-remoto/
 .e1/
+apps/etc/secrets/
 dist/
 coverage/
 *.tsbuildinfo
