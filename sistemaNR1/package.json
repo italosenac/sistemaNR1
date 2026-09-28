@@ -33,6 +33,7 @@
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\"",
     "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\"",
     "test:rls": "node scripts/testar-rls.mjs",
+    "test:coleta:local": "node scripts/testar-coleta-local.mjs",
     "preparar:integracao": "node scripts/preparar-integracao.mjs"
   }
 }

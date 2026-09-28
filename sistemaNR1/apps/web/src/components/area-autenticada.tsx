@@ -102,6 +102,15 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
           <Link href="/empresas">Empresas</Link>
           <Link href="/empresas/nova">Nova empresa</Link>
           <Link href="/meus-vinculos">Meus vínculos</Link>
+          {sessao.empresa &&
+            (sessao.empresa.papeis.includes('gestor_sst_rh') ||
+              sessao.empresa.papeis.includes('responsavel_tecnico')) && (
+              <>
+                <Link href="/campanhas">Coleta M1</Link>
+                <Link href="/avaliacoes">Avaliação M2</Link>
+                <Link href="/inventarios">Inventário M3</Link>
+              </>
+            )}
           {sessao.empresas.some((e) => e.papeis.includes('consultoria')) && (
             <Link href="/consultoria">Carteira da consultoria</Link>
           )}

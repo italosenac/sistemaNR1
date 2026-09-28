@@ -77,6 +77,51 @@ export class BancoOrganizacao implements OnModuleDestroy {
   async onModuleDestroy() {
     await this.pool?.end();
   }
+  async transacaoAnonima<T>(
+    executar: (cliente: PoolClient) => Promise<T>,
+  ): Promise<T> {
+    const cliente = await this.obterPool().connect();
+    let descartar = false;
+    try {
+      await cliente.query('BEGIN');
+      const papel = await cliente.query<{ seguro: boolean }>(
+        `SELECT NOT r.rolsuper AND NOT r.rolbypassrls AND NOT r.rolcreaterole
+          AND pg_has_role(current_user,'sistemanr1_api','member')
+          AND NOT EXISTS(SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('organizacao','coleta') AND pg_has_role(current_user,c.relowner,'member')) AS seguro
+          FROM pg_roles r WHERE r.rolname=current_user`,
+      );
+      if (!papel.rows[0]?.seguro)
+        throw new ErroDeUsuario(
+          'SERVICO_INDISPONIVEL',
+          'A persistência exige um login restrito de aplicação.',
+        );
+      await cliente.query(
+        "SELECT set_config('request.jwt.claim.sub','',true), set_config('request.jwt.claims','{}',true), set_config('statement_timeout','15000',true)",
+      );
+      const resultado = await executar(cliente);
+      await cliente.query('COMMIT');
+      return resultado;
+    } catch (erro) {
+      try {
+        await cliente.query('ROLLBACK');
+      } catch {
+        descartar = true;
+      }
+      if (erro instanceof ErroDeUsuario) throw erro;
+      const codigo =
+        typeof erro === 'object' && erro !== null && 'code' in erro
+          ? erro.code
+          : '';
+      throw new ErroDeUsuario(
+        codigo === '23514' ? 'DADOS_INVALIDOS' : 'SERVICO_INDISPONIVEL',
+        codigo === '23514'
+          ? 'Não foi possível registrar a resposta. Verifique o código e a janela da campanha.'
+          : 'Não foi possível registrar a resposta neste momento.',
+      );
+    } finally {
+      cliente.release(descartar);
+    }
+  }
   async transacao<T>(
     atorId: string,
     executar: (cliente: PoolClient) => Promise<T>,

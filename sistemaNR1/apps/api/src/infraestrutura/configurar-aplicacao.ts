@@ -32,7 +32,7 @@ export function configurarAplicacao(aplicacao: INestApplication): void {
     const opcoes = new DocumentBuilder()
       .setTitle('SistemaNR1 — API')
       .setDescription(
-        'Camada 0: identidade, empresas, estrutura e autorização. M1–M6 ainda não implementados.',
+        'Camada 0 e jornada acadêmica M1–M3 parcialmente implementadas, exclusivamente com dados fictícios. M4–M6 pendentes.',
       )
       .setVersion('0.1.0')
       .addBearerAuth()

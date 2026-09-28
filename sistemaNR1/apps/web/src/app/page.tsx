@@ -9,18 +9,21 @@ const modulos = [
     titulo: 'Coleta',
     descricao: 'Um ponto de partida para ouvir e compreender o trabalho.',
     icone: ClipboardList,
+    caminho: '/campanhas',
   },
   {
     codigo: 'M2',
     titulo: 'Avaliação',
     descricao: 'Informações que apoiam a análise dos riscos ocupacionais.',
     icone: ScanLine,
+    caminho: '/avaliacoes',
   },
   {
     codigo: 'M3',
     titulo: 'Inventário',
     descricao: 'Uma visão organizada dos riscos e de seu histórico.',
     icone: FileStack,
+    caminho: '/inventarios',
   },
 ];
 
@@ -61,6 +64,12 @@ export default function PaginaInicial() {
             Criar conta
           </Link>
           <Link
+            href="/questionario"
+            className="text-sm font-medium text-[var(--color-text-brand)] underline underline-offset-4"
+          >
+            Questionário demonstrativo
+          </Link>
+          <Link
             href="/usuarios"
             className="text-sm font-medium text-[var(--color-text-brand)] underline underline-offset-4"
           >
@@ -94,38 +103,48 @@ export default function PaginaInicial() {
                 Módulos do sistema
               </h2>
             </div>
-            <span className="text-sm text-slate-500">Em preparação</span>
+            <span className="text-sm text-slate-500">
+              Demonstração local em desenvolvimento
+            </span>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
-            {modulos.map(({ codigo, titulo, descricao, icone: Icone }) => (
-              <Card
-                key={codigo}
-                className="rounded-2xl border border-slate-200 bg-white py-0 shadow-none"
-              >
-                <CardContent className="p-6 sm:p-7">
-                  <div className="mb-8 flex items-center justify-between">
-                    <span className="rounded-xl bg-secondary p-3 text-[var(--color-text-brand)]">
-                      <Icone className="size-6" aria-hidden="true" />
-                    </span>
-                    <span className="font-mono text-xs text-slate-400">
-                      {codigo}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold">
-                    {codigo} — {titulo}
-                  </h3>
-                  <p className="mt-3 min-h-14 text-sm leading-6 text-slate-600">
-                    {descricao}
-                  </p>
-                  <div className="mt-7 border-t border-slate-100 pt-5">
-                    <span className="inline-flex items-center gap-2 text-xs font-medium text-slate-500">
-                      <span className="size-1.5 rounded-full bg-slate-400" />
-                      Ainda não implementado
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {modulos.map(
+              ({ codigo, titulo, descricao, caminho, icone: Icone }) => (
+                <Card
+                  key={codigo}
+                  className="rounded-2xl border border-slate-200 bg-white py-0 shadow-none"
+                >
+                  <CardContent className="p-6 sm:p-7">
+                    <div className="mb-8 flex items-center justify-between">
+                      <span className="rounded-xl bg-secondary p-3 text-[var(--color-text-brand)]">
+                        <Icone className="size-6" aria-hidden="true" />
+                      </span>
+                      <span className="font-mono text-xs text-slate-400">
+                        {codigo}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold">
+                      {codigo} — {titulo}
+                    </h3>
+                    <p className="mt-3 min-h-14 text-sm leading-6 text-slate-600">
+                      {descricao}
+                    </p>
+                    <div className="mt-7 border-t border-slate-100 pt-5">
+                      <span className="inline-flex items-center gap-2 text-xs font-medium text-slate-500">
+                        <span className="size-1.5 rounded-full bg-slate-400" />
+                        Parcialmente implementado
+                      </span>
+                      <Link
+                        href={caminho}
+                        className="ml-3 text-xs font-medium text-[var(--color-text-brand)] underline underline-offset-4"
+                      >
+                        Abrir
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ),
+            )}
           </div>
         </section>
         <div className="mt-8">
@@ -144,7 +163,7 @@ export default function PaginaInicial() {
       </main>
       <footer className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 border-t border-slate-200 px-6 py-6 text-xs text-slate-500 sm:px-10">
         <span>SISNR1</span>
-        <span>Base inicial · E0</span>
+        <span>MVP acadêmico · M1–M3 em validação</span>
       </footer>
     </div>
   );
