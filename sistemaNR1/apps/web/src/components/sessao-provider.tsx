@@ -61,10 +61,19 @@ export function SessaoProvider({ children }: { children: React.ReactNode }) {
   }, [cliente]);
   useEffect(() => {
     if (!cliente) return;
+    let ativo = true;
+    let eventoRecebido = false;
     const { data } = cliente.auth.onAuthStateChange((_evento, nova) => {
-      definirSessao(nova);
+      eventoRecebido = true;
+      if (ativo) definirSessao(nova);
     });
-    return () => data.subscription.unsubscribe();
+    void cliente.auth.getSession().then(({ data: atual, error }) => {
+      if (ativo && !eventoRecebido) definirSessao(error ? null : atual.session);
+    });
+    return () => {
+      ativo = false;
+      data.subscription.unsubscribe();
+    };
   }, [cliente]);
   useEffect(() => {
     const cancelamento = new AbortController();
