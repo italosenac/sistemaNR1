@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Empresa | UUID, razão social/fantasia sintéticas, CNPJ/contatos opcionais, status e datas | 1:N estabelecimentos; fronteira do tenant |
 | IdentidadeAuth | Identificador, e-mail e credencial gerenciados pelo Supabase Auth | Sem senha/hash/e-mail duplicados em tabelas próprias; verificação de sessão no servidor |
-| PerfilUsuario | usuarioId referenciando Auth, nomeCompleto, status e datas | Um perfil por identidade; sem empresa global, credencial, matrícula, papel ou lotação |
+| PerfilUsuario | id referenciando Auth, nomeCompleto, status e datas | Um perfil por identidade; sem empresa global, credencial, matrícula, papel ou lotação |
 | VinculoOrganizacional | UUID, usuário, empresa, matrícula opcional, status e datas | Um vínculo por usuário/empresa; matrícula preenchida única na empresa; nulo permitido |
 | AtribuicaoPapel | Vínculo/empresa, papel, estado, concedente e datas | Catálogo de quatro papéis; múltiplos por vínculo, sem autoelevação |
 | LotacaoUsuario | Vínculo/empresa, estabelecimento/setor/função/turno opcionais | Uma atual por vínculo; FKs da mesma empresa, setor do estabelecimento; histórico auditado |
@@ -70,7 +70,7 @@ erDiagram
 
 Não existe aresta Token → Resposta ou Trabalhador → Resposta. Grupo/campanha são atributos compartilhados necessários à agregação, mas não autorizam consulta individual nem eliminam risco de correlação operacional.
 
-Matrícula textual pertence ao vínculo, permite valores diferentes entre empresas e preserva zeros iniciais. No alvo revisado ela é opcional. Lotação não define automaticamente população de campanha e nunca é copiada para resposta individual. A [migração anterior](../../supabase/migrations/20260926000100_c0_usuarios_e_vinculos.sql) continua **não aplicada e requer adaptação**: ainda tem três papéis, matrícula obrigatória e lotação embutida. Chaves, índices e transição em [modelo de identidade](modelo-identidade.md).
+Matrícula textual pertence ao vínculo, permite valores diferentes entre empresas e preserva zeros iniciais. No alvo revisado ela é opcional. Lotação não define automaticamente população de campanha e nunca é copiada para resposta individual. A [migração anterior](historico/20260926000100_c0_usuarios_e_vinculos.sql) foi arquivada como referência após confirmar sua ausência no remoto; não deve ser executada. Chaves, índices e transição em [modelo de identidade](modelo-identidade.md).
 
 ## Configuração, resultados e versões
 

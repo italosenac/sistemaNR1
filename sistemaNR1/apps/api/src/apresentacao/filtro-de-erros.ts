@@ -5,6 +5,9 @@ import { randomUUID } from 'node:crypto';
 import { ErroDeUsuario } from '../dominio/usuario.js';
 
 const statusPorErroUsuario = {
+  DADOS_INVALIDOS: 400,
+  CONFLITO: 409,
+  NAO_ENCONTRADO: 404,
   NAO_AUTENTICADO: 401,
   SEM_PERMISSAO: 403,
   LOTACAO_INVALIDA: 400,

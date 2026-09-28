@@ -22,12 +22,13 @@ const esquema = z
     email: z.string(),
     senha: z.string(),
     usuarioId: z.string(),
-    matriculaFuncional: z
+    matriculaFuncional: z.string().trim().max(50, 'Use até 50 caracteres.'),
+    papeis: z.array(z.enum(PAPEIS_USUARIO)),
+    motivo: z
       .string()
       .trim()
-      .min(1, 'Informe a matrícula funcional.')
-      .max(50, 'Use até 50 caracteres.'),
-    papel: z.enum(PAPEIS_USUARIO),
+      .min(3, 'Informe o motivo da associação.')
+      .max(500),
     estabelecimentoId: z.string(),
     setorId: z.string(),
     funcaoId: z.string(),
@@ -109,7 +110,8 @@ export function FormularioUsuario({
       senha: '',
       usuarioId: '',
       matriculaFuncional: '',
-      papel: 'leitor',
+      papeis: ['trabalhador'],
+      motivo: 'Cadastro autorizado',
       estabelecimentoId: '',
       setorId: '',
       funcaoId: '',
@@ -134,8 +136,9 @@ export function FormularioUsuario({
     definirErro('');
     definirSucesso('');
     const vinculo = {
-      matriculaFuncional: dados.matriculaFuncional,
-      papel: dados.papel,
+      matriculaFuncional: dados.matriculaFuncional || null,
+      papeis: dados.papeis,
+      motivo: dados.motivo,
       ...(dados.estabelecimentoId
         ? { estabelecimentoId: dados.estabelecimentoId }
         : {}),
@@ -156,7 +159,7 @@ export function FormularioUsuario({
       );
       definirSucesso(
         dados.modo === 'novo'
-          ? 'Conta e vínculo cadastrados. A ativação do e-mail segue o procedimento de administração.'
+          ? 'Conta e vínculo cadastrados. Confirme o e-mail pelo fluxo de recuperação antes do primeiro acesso.'
           : 'Vínculo cadastrado sem alterar as credenciais da conta.',
       );
     } catch (erro) {
@@ -261,13 +264,28 @@ export function FormularioUsuario({
           {mensagem('matriculaFuncional')}
         </div>
         <div>
-          <Label htmlFor="papel">Papel nesta empresa</Label>
-          <select id="papel" className={estiloSelect} {...register('papel')}>
-            <option value="leitor">Leitor</option>
-            <option value="tecnico">Responsável técnico</option>
-            <option value="gestor">Gestor</option>
-          </select>
+          <fieldset className="space-y-2">
+            <legend className="font-medium">Papéis nesta empresa</legend>
+            {PAPEIS_USUARIO.map((papel) => (
+              <label key={papel} className="flex gap-2 text-sm">
+                <input type="checkbox" value={papel} {...register('papeis')} />
+                {
+                  {
+                    trabalhador: 'Trabalhador',
+                    gestor_sst_rh: 'Gestor SST/RH',
+                    responsavel_tecnico: 'Responsável técnico',
+                    consultoria: 'Consultoria',
+                  }[papel]
+                }
+              </label>
+            ))}
+          </fieldset>
         </div>
+      </div>
+      <div>
+        <Label htmlFor="motivo">Motivo da associação</Label>
+        <Input id="motivo" {...register('motivo')} />
+        {mensagem('motivo')}
       </div>
       <fieldset className="space-y-4 rounded-xl border border-slate-200 p-4">
         <legend className="px-2 font-medium">Lotação, quando aplicável</legend>

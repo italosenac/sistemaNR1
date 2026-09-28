@@ -71,3 +71,13 @@ As conferências locais foram repetidas sem imprimir valores: URL e chave public
 `DATABASE_URL` de runtime ainda não está configurada. A conexão via CLI/Management API não substitui a validação futura do pool PostgreSQL restrito, transações e RLS. Não foram aplicadas migrações nem executados testes SQL, seeds ou criação de contas. A migração preparada anteriormente permanece local e requer revisão para os quatro papéis, atribuições separadas, matrícula opcional e lotação por vínculo.
 
 O [relatório da auditoria](relatorio-auditoria-arquitetural.md) consolida documentação, limpeza e testes locais. A próxima ação depende de **permissão e novo prompt E1 enviados pelo usuário**, conforme sua orientação expressa. A proibição de aplicar migrações permanece vigente.
+
+## Atualização E1 — 2026-09-27
+
+O prompt E1 foi recebido e a implementação local foi concluída. Consulta de metadados somente leitura confirmou de novo a referência vinculada, ausência do schema `organizacao` e ausência do histórico remoto de migrações. O dry-run `db push --linked --dry-run --skip-vault` listou exclusivamente `20260927000100_camada_zero.sql`, sem seeds ou roles. O comando não aplicou SQL, alterou Vault, Auth, usuários ou dados.
+
+Os ambientes locais continuam ignorados; chave secreta continua somente no backend. A migração, o login PostgreSQL runtime, ajustes remotos de Auth e testes remotos permanecem bloqueados até aprovação explícita. A evidência completa está no [relatório E1](relatorio-e1.md).
+
+## Aplicação autorizada e interrupção — 2026-09-27
+
+Após aprovação explícita, o histórico remoto, o checksum e o dry-run foram reconfirmados. A única migração aprovada foi aplicada; leitura posterior confirmou 13 tabelas, 34 políticas, 23 gatilhos e a versão no histórico. O login PostgreSQL remoto restrito foi criado e auditado. A tentativa de conexão pelo endpoint real do pooler com TLS `verify-full` e verificação de certificado falhou; a execução foi interrompida sem alterar a configuração do Nest e sem rodar testes remotos de usuários. Estado e pendências detalhados no [relatório E1](relatorio-e1.md).

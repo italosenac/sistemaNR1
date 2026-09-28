@@ -10,7 +10,7 @@ Uma identidade por pessoa, com vínculo e matrícula independentes por empresa, 
 
 ## Atores
 
-Trabalhador, gestor SST/RH, responsável técnico e consultoria. Provisionamento interno segregado cria primeiro gestor/empresa; não é um quinto papel funcional.
+Trabalhador, gestor SST/RH, responsável técnico e consultoria. A Missão E1 autoriza bootstrap autenticado de empresa nova e seu primeiro gestor em uma transação; não é um quinto papel funcional nem ingresso livre em empresa existente.
 
 ## Entradas
 
@@ -70,7 +70,7 @@ CA-USU-11 tem verificação estrutural/contratual na E1 e jornada de coleta na E
 
 ## Estado de implementação
 
-**Parcialmente implementado.** Auth/guard, perfil com nome, vínculos com matrícula e formulário existentes são base reutilizável, mas ainda seguem três papéis anteriores, matrícula obrigatória e lotação embutida. Nenhum CA-USU foi declarado concluído nesta auditoria. [Evidência histórica do recorte](../../docs/evidencias/c0-usuarios.md); [auditoria atual](../../docs/validacao/relatorio-auditoria-arquitetural.md). E1 atualizada depende do novo prompt e permissão do usuário; nenhuma migração foi aplicada.
+**Parcialmente implementado.** A Missão E1 implementa identidade Auth, perfil global, vínculos/matrículas opcionais, quatro papéis, lotação separada, empresas e estrutura. Migração consolidada aplicada somente no Supabase local; autorização/RLS, Auth e navegação estão em validação real. Aplicação/configuração remota e seus testes dependem da aprovação específica exigida na seção 12 do prompt. Evidências e critérios em [relatório E1](../../docs/validacao/relatorio-e1.md). M1–M6 permanecem fora desta implementação.
 
 ## Observações
 

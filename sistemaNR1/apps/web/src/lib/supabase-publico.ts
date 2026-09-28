@@ -13,7 +13,7 @@ export function criarClientePublico() {
     auth: {
       persistSession: false,
       autoRefreshToken: true,
-      detectSessionInUrl: false,
+      detectSessionInUrl: true,
     },
   });
   if (typeof window !== 'undefined') clienteDoNavegador = cliente;

@@ -11,7 +11,7 @@ from urllib.parse import unquote
 
 
 def documentos_do_projeto(raiz):
-    ignorados = {"node_modules", ".git", ".next", ".next-e2e", "dist", "coverage", "test-results", "playwright-report", ".temp", ".codex", "__pycache__"}
+    ignorados = {"node_modules", ".git", ".next", ".next-e2e", ".next-integracao", ".e1", "dist", "coverage", "test-results", "playwright-report", ".temp", ".codex", "__pycache__"}
     documentos = []
     for pasta, diretorios, arquivos in os.walk(raiz, followlinks=False):
         diretorios[:] = [nome for nome in diretorios if nome not in ignorados and not nome.startswith(".e0-diagnostico-")]

@@ -19,8 +19,9 @@ const entrada = {
   nomeCompleto: 'Pessoa Fictícia',
   email: 'pessoa@example.invalid',
   senha: 'Senha-Ficticia-2026',
+  motivo: 'Cadastro fictício autorizado',
   matriculaFuncional: '001',
-  papel: 'leitor',
+  papeis: ['trabalhador'],
 };
 const identidades = {
   autenticar: jest.fn<Identidades['autenticar']>(),
@@ -56,11 +57,13 @@ describe('C0 — contrato HTTP e autorização (portas substituídas; não prova
     identidades.criarUsuario.mockResolvedValue(novoId);
     repositorio.validarCadastro.mockResolvedValue(undefined);
     repositorio.vincular.mockResolvedValue({
+      id: novoId,
+      status: 'ativo',
       usuarioId: novoId,
       empresaId,
       nomeCompleto: entrada.nomeCompleto,
       matriculaFuncional: '001',
-      papel: 'leitor',
+      papeis: ['trabalhador'],
     });
   });
 
@@ -89,7 +92,7 @@ describe('C0 — contrato HTTP e autorização (portas substituídas; não prova
     { email: 'invalido' },
     { senha: 'curta' },
     { senha: 'x'.repeat(129) },
-    { matriculaFuncional: '   ' },
+    { papeis: ['trabalhador', 'trabalhador'] },
     { matriculaFuncional: 'x'.repeat(51) },
     { papel: 'admin' },
     { setorId: 'invalido' },
@@ -114,6 +117,22 @@ describe('C0 — contrato HTTP e autorização (portas substituídas; não prova
       .send({ ...entrada, setorId: novoId })
       .expect(400);
     expect(identidades.criarUsuario).not.toHaveBeenCalled();
+  });
+  it('aceita matrícula vazia e normaliza para NULL no vínculo', async () => {
+    await request(aplicacao.getHttpServer())
+      .post(rota)
+      .set('Authorization', 'Bearer ficticio')
+      .send({ ...entrada, matriculaFuncional: '   ' })
+      .expect(201);
+    expect(repositorio.vincular).toHaveBeenCalledWith(
+      usuarioId,
+      empresaId,
+      novoId,
+      expect.objectContaining({
+        matriculaFuncional: null,
+        papeis: ['trabalhador'],
+      }),
+    );
   });
   it('nega gestor sem vínculo ativo na empresa alvo antes de criar conta', async () => {
     repositorio.validarCadastro.mockRejectedValue(
@@ -156,7 +175,7 @@ describe('C0 — contrato HTTP e autorização (portas substituídas; não prova
       .send({
         usuarioId: novoId,
         matriculaFuncional: '072',
-        papel: 'leitor',
+        papeis: ['trabalhador'],
         senha: entrada.senha,
       })
       .expect(400);

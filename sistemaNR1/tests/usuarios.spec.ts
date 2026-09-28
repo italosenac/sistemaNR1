@@ -48,12 +48,44 @@ async function preparar(page: Page, gestor = true) {
   });
   await page.route('http://localhost:3101/api/v1/**', async (rota) => {
     const url = rota.request().url();
-    if (url.endsWith('/minhas-empresas'))
+    if (url.endsWith('/meu-perfil'))
+      await rota.fulfill({
+        json: {
+          id: usuario,
+          nomeCompleto: 'Gestor Fictício',
+          status: 'ativo',
+          criadoEm: '2026-09-27T00:00:00Z',
+          atualizadoEm: '2026-09-27T00:00:00Z',
+        },
+      });
+    else if (url.endsWith('/minhas-empresas'))
       await rota.fulfill({
         json: gestor
           ? [
-              { id: empresaA, nome: 'Empresa fictícia A', papel: 'gestor' },
-              { id: empresaB, nome: 'Empresa fictícia B', papel: 'gestor' },
+              {
+                id: empresaA,
+                nome: 'Empresa fictícia A',
+                papeis: ['gestor_sst_rh'],
+                capacidades: [
+                  'empresa:ler',
+                  'empresa:editar',
+                  'estrutura:ler',
+                  'estrutura:gerenciar',
+                  'usuarios:gerenciar',
+                ],
+              },
+              {
+                id: empresaB,
+                nome: 'Empresa fictícia B',
+                papeis: ['gestor_sst_rh'],
+                capacidades: [
+                  'empresa:ler',
+                  'empresa:editar',
+                  'estrutura:ler',
+                  'estrutura:gerenciar',
+                  'usuarios:gerenciar',
+                ],
+              },
             ]
           : [],
       });
@@ -98,7 +130,7 @@ test('cadastro exibe os quatro campos, valida e não persiste senha no navegador
   await expect(
     page.getByText('Use uma senha de 12 a 128 caracteres.'),
   ).toBeVisible();
-  await expect(page.getByText('Informe a matrícula funcional.')).toBeVisible();
+  await expect(page.getByText('Informe a matrícula funcional.')).toHaveCount(0);
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
   expect(await page.evaluate(() => Object.keys(sessionStorage))).toEqual([]);
 });
@@ -115,11 +147,13 @@ test('envia cadastro à empresa selecionada, limpa senha e preserva anonimato na
       await rota.fulfill({
         status: 201,
         json: {
+          id: usuario,
+          status: 'ativo',
           usuarioId: usuario,
           empresaId: empresaA,
           nomeCompleto: 'Pessoa Fictícia',
           matriculaFuncional: '001',
-          papel: 'leitor',
+          papeis: ['trabalhador'],
         },
       });
     },
@@ -134,7 +168,8 @@ test('envia cadastro à empresa selecionada, limpa senha e preserva anonimato na
     email: 'pessoa@example.invalid',
     senha: senhaFicticia,
     matriculaFuncional: '001',
-    papel: 'leitor',
+    papeis: ['trabalhador'],
+    motivo: 'Cadastro autorizado',
   });
   await expect(page.getByLabel('Senha', { exact: true })).toHaveValue('');
   await expect(
@@ -191,11 +226,13 @@ test('vínculo existente envia matrícula da outra empresa sem e-mail/senha/nome
       await rota.fulfill({
         status: 201,
         json: {
+          id: usuario,
+          status: 'ativo',
           usuarioId: usuario,
           empresaId: empresaB,
           nomeCompleto: 'Pessoa Fictícia',
           matriculaFuncional: '072',
-          papel: 'leitor',
+          papeis: ['trabalhador'],
         },
       });
     },
@@ -207,7 +244,8 @@ test('vínculo existente envia matrícula da outra empresa sem e-mail/senha/nome
   expect(recebido).toEqual({
     usuarioId: usuario,
     matriculaFuncional: '072',
-    papel: 'leitor',
+    papeis: ['trabalhador'],
+    motivo: 'Cadastro autorizado',
   });
   await expect(page.getByLabel('Senha', { exact: true })).toHaveCount(0);
 });

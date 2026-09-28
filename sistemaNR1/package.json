@@ -23,12 +23,16 @@
     "dev:web": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/web dev",
     "dev:api": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api dev",
     "build": "pnpm -r --sort run build",
-    "lint": "pnpm -r run lint && eslint tests playwright.config.ts",
+    "lint": "pnpm -r run lint && eslint tests playwright.config.ts playwright.integracao.config.ts playwright.remoto.config.ts",
     "typecheck": "pnpm --filter @sistemanr1/contratos build && pnpm -r run typecheck && tsc -p tsconfig.testes.json",
     "test": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api test && pnpm test:e2e",
     "test:api": "pnpm --filter @sistemanr1/contratos build && pnpm --filter @sistemanr1/api test",
     "test:e2e": "playwright test",
+    "test:integracao": "playwright test --config playwright.integracao.config.ts",
+    "test:remoto:e1": "playwright test --config playwright.remoto.config.ts",
     "format": "prettier --write \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\"",
-    "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\""
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,js,mjs,cjs,json,css}\" \"packages/**/*.{ts,json}\" \"tests/**/*.ts\" \"*.{json,yaml,mjs,ts}\"",
+    "test:rls": "node scripts/testar-rls.mjs",
+    "preparar:integracao": "node scripts/preparar-integracao.mjs"
   }
 }

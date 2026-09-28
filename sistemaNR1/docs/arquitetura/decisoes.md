@@ -97,3 +97,15 @@ Rejeitadas: autenticação por tipo de pessoa, hash próprio, tenant único no p
 CicloReferencia contém empresa/estabelecimento, início, encerramento previsto e status para futura associação opcional do inventário. Não calcular vencimento de 2/3 anos por inferência do PDF nem implementar máquina M5 na E1. Ação/evidência, aferição, comunicado/recibo e área pessoal são propostas futuras. Auditoria administrativa necessária à autorização/histórico pode existir sem implementar M5. Nenhum dado nominal desses futuros módulos será ligado a respostas M1.
 
 Impacto explícito: C0 estrutura/cadastro e SPEC do produto atualizados; CA-C0-09 revisto, CA-C0-13–16 e CA-USU-01–16 acrescentados. Os 21 arquivos de RF e PDFs originais são preservados. Backlog E1 separa adaptação do recorte, migrações revisadas, autorização e prova real; M1–M3 e ciclo funcional não entram na E1.
+
+## ADR-15 — Migração inicial consolidada, bootstrap autenticado e execução local
+
+2026-09-27, [MISSÃO E1]/[ARQ]. A inspeção remota confirmou que a migração anterior nunca foi aplicada e que o schema `organizacao` não existe no projeto vinculado. Ela foi preservada em `docs/arquitetura/historico/`; a migração inicial consolidada passa a ser `20260927000100_camada_zero.sql`. Não reescrever esta decisão em ambiente que já possua histórico: ali a evolução deve ser incremental.
+
+Usuário autenticado e ativo pode criar apenas empresa nova, vínculo e primeiro gestor em uma transação de banco. Isso não dá ingresso livre em empresa existente. Associação, concessão e revogação dependem de gestor já autorizado; não existe mapeamento automático do antigo `leitor`. Auth não participa de transação distribuída: falha após a identidade produz cadastro parcial reconciliável, nunca acesso permissivo.
+
+O CNPJ opcional aceita formato numérico ou alfanumérico com dígitos verificadores, seguindo a mudança divulgada pela Receita Federal em 2026, e é normalizado antes da persistência. A regra é técnica do MVP; dados usados nos testes são fictícios. [Manual de dígitos verificadores](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf) e [notícia sobre CNPJ alfanumérico](https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/julho/receita-federal-gera-o-primeiro-cnpj-em-formato-alfanumerico).
+
+O schema organizacional é privado para a Data API. Nest conecta como login sem privilégios administrativos, define o contexto do ator somente na transação e ainda toma decisão por capacidade; RLS é uma defesa adicional testada separadamente. Sessão do navegador fica em memória, com confirmação/recuperação processada pelo Auth e sem tokens persistentes. Isso favorece minimização de dados, ao custo de novo login após recarga.
+
+Migração remota, configuração de Auth e provisionamento da credencial runtime seguem bloqueados até aprovação explícita. Dry-run aprovado lista apenas a migração consolidada; não houve alteração remota. Detalhes e testes em [relatório E1](../validacao/relatorio-e1.md).

@@ -1,8 +1,8 @@
 # sistemaNR1 — MVP
 
-SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcial:** cadastro de usuários/perfis/vínculos preparado, com migração ainda não aplicada. Os 21 requisitos M1–M3 continuam pendentes.
+SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcialmente implementada:** Camada 0 funcional e validada no Supabase local; a migração remota foi aplicada e o cliente conectou ao pooler com TLS verificado, mas `pg_stat_ssl` indicou TLS inativo na conexão backend. Os testes funcionais remotos permanecem pendentes. Os 21 requisitos M1–M3 continuam pendentes.
 
-**Missão A: arquitetura consolidada para quatro papéis.** Modelo alvo com identidade única Auth, perfil global, vínculos por empresa, atribuições de papéis e lotação separadas. Matrícula opcional e única quando preenchida. O código/SQL anterior foi preservado e ainda precisa dessas adaptações; a E1 revisada aguarda novo prompt e permissão. [Relatório da auditoria](docs/validacao/relatorio-auditoria-arquitetural.md).
+**Missão E1: Camada 0 implementada.** A identidade usa Auth, perfil global, vínculos por empresa, atribuições de papéis e lotação separada. Matrícula é opcional e única quando preenchida. Após aprovação, a migração consolidada foi aplicada no projeto remoto. O diagnóstico confirmou login restrito e TLS verificado até o pooler, com pendência sobre o trecho pooler → PostgreSQL. [Relatório E1](docs/validacao/relatorio-e1.md).
 
 ## Executar localmente
 
@@ -40,6 +40,9 @@ pnpm.cmd lint
 pnpm.cmd test          # API e navegador com dados fictícios
 pnpm.cmd test:api
 pnpm.cmd test:e2e
+pnpm.cmd preparar:integracao # somente Supabase local isolado
+pnpm.cmd test:rls           # somente Supabase local, rollback das fixtures
+pnpm.cmd test:integracao    # Auth, API, banco e navegador locais
 pnpm.cmd build        # contratos antes das aplicações
 pnpm.cmd format
 pnpm.cmd format:check
@@ -70,20 +73,20 @@ apps/api/src/
   apresentacao/              # saúde, DTOs, autenticação e controllers
 packages/contratos/          # saúde e contratos de usuários, compilados em dist/
 supabase/config.toml         # configuração local da CLI
-supabase/migrations/         # migração C0 preparada, não aplicada
-supabase/tests/              # testes SQL preparados, não executados
-tests/                      # integração no navegador
+supabase/migrations/         # migração C0 consolidada, aplicada no projeto autorizado
+supabase/tests/              # testes SQL de RLS locais
+tests/                       # regressão e integração de navegador
 ```
 
-Supabase CLI e SDKs instalados; projeto remoto vinculado e conexão confirmada por consulta SQL constante, sem aplicar migrações. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Relatório da conexão](docs/validacao/conexao-supabase.md). A atualização posterior autorizou preparar o cadastro C0, mantendo a proibição de aplicar migrações. A ausência de chaves continua não impedindo E0; procedimento em [instalação](docs/ambiente/instalacao.md).
+Supabase CLI e SDKs instalados; projeto remoto vinculado, migração autorizada aplicada e schema verificado. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Conexão](docs/validacao/conexao-supabase.md) e [validação E1](docs/validacao/relatorio-e1.md) registram o escopo. A `DATABASE_URL` remota ainda não foi configurada devido à divergência entre TLS validado no cliente e `pg_stat_ssl.ssl = false` no backend; a validação local continua reproduzível.
 
-### Cadastro C0 preparado
+### Cadastro C0 implementado localmente
 
 Nome completo no perfil; e-mail/senha no Supabase Auth; matrícula, papel e lotação no vínculo por empresa. Gestor autorizado cria conta ou associa conta existente com matrícula independente. Credenciais existentes não são alteradas ao criar outro vínculo. Respostas anônimas M1 não recebem identidade nominal.
 
-A funcionalidade ainda precisa da migração revisada, bootstrap controlado de empresa/gestor e `DATABASE_URL` de um login PostgreSQL NOSUPERUSER/NOBYPASSRLS, membro de `sistemanr1_api`, com TLS validado e sem propriedade das tabelas. **Não executar migrações sem autorização.** Não usar `postgres` ou chave de serviço como acesso geral ao banco. Novas contas Auth são criadas sem confirmar artificialmente o e-mail; ativação deve seguir procedimento administrativo controlado. [Evidências e limites do recorte](docs/evidencias/c0-usuarios.md).
+A funcionalidade usa bootstrap controlado de empresa/gestor e um login PostgreSQL NOSUPERUSER/NOBYPASSRLS membro de `sistemanr1_api`, sem propriedade das tabelas. O login remoto foi criado, mas sua conexão TLS verificada ainda não foi validada. Não repetir a migração remota nem usar `postgres` ou chave de serviço como acesso geral ao banco. Novas contas Auth recebem confirmação real de e-mail; contas criadas por gestor usam recuperação de senha para o primeiro acesso. [Execução da Camada 0](docs/arquitetura/execucao-camada-zero.md).
 
-A interface atual ainda usa `gestor/tecnico/leitor`, matrícula obrigatória e uma lotação embutida no vínculo. O alvo `trabalhador/gestor_sst_rh/responsavel_tecnico/consultoria` está especificado em [usuários e perfis](specs/camada-0/usuarios-perfis.spec.md), com [permissões](docs/arquitetura/matriz-permissoes.md) e [isolamento](docs/arquitetura/isolamento-multiempresa.md). Consultoria acessará somente sua carteira autorizada. Conta pessoal de trabalhador não identifica respostas anônimas.
+A interface usa `trabalhador`, `gestor_sst_rh`, `responsavel_tecnico` e `consultoria`, com matrícula opcional e lotação separada. [Permissões](docs/arquitetura/matriz-permissoes.md) e [isolamento](docs/arquitetura/isolamento-multiempresa.md) são reforçados no Nest e no banco local. Consultoria só acessa sua carteira autorizada. Conta pessoal de trabalhador não identifica respostas anônimas.
 
 Evidências: [diagnóstico e versões](docs/ambiente/diagnostico.md), [instalação detalhada](docs/ambiente/instalacao.md), [SPEC E0](specs/fundacao/e0.spec.md) e [relatório dos testes e builds](docs/validacao/relatorio-e0.md).
 
@@ -125,4 +128,4 @@ specs/
   m3-inventario/              # 6 SPECs
 ```
 
-Histórico: a Missão 01 entregou a estrutura documental acima; a Missão 02 acrescentou a fundação E0 sem alterar as 21 SPECs. Próxima etapa: E1, banco de dados, autenticação e isolamento entre empresas conforme a Camada 0. Assinatura real, metodologia para uso real, custódia de longo prazo e validação profissional permanecem pendentes. M4–M6 não foram especificados. Este projeto não constitui certificação jurídica ou PGR completo.
+Histórico: a Missão 01 entregou a estrutura documental acima; a Missão 02 acrescentou a fundação E0 sem alterar as 21 SPECs. A E1 implementou a Camada 0 e foi validada localmente; a validação remota permanece interrompida após a falha de conexão TLS verificada. Assinatura real, metodologia para uso real, custódia de longo prazo e validação profissional permanecem pendentes. M4–M6 não foram especificados. Este projeto não constitui certificação jurídica ou PGR completo.

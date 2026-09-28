@@ -3,6 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import { IdentidadesSupabase } from '../src/infraestrutura/identidades-supabase.js';
 
 const usuarioId = '10000000-0000-4000-8000-000000000001';
+const tokenFicticio =
+  'cabecalho.' +
+  Buffer.from(
+    JSON.stringify({
+      sub: usuarioId,
+      aud: 'authenticated',
+      iss: 'https://projeto-ficticio.example.invalid/auth/v1',
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    }),
+  ).toString('base64url') +
+  '.assinatura-ficticia';
 const configuracao = new ConfigService({
   SUPABASE_URL: 'https://projeto-ficticio.example.invalid',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_ficticia',
@@ -28,10 +39,10 @@ describe('Adaptador Auth — HTTP substituído, sem usuários remotos', () => {
       ),
     );
     const adaptador = new IdentidadesSupabase(configuracao);
-    expect(await adaptador.autenticar('token-ficticio')).toBe(usuarioId);
+    expect(await adaptador.autenticar(tokenFicticio)).toBe(usuarioId);
     const cabecalhos = new Headers(chamada.mock.calls[0][1]?.headers);
     expect(cabecalhos.get('apikey')).toBe('sb_publishable_ficticia');
-    expect(cabecalhos.get('Authorization')).toBe('Bearer token-ficticio');
+    expect(cabecalhos.get('Authorization')).toBe('Bearer ' + tokenFicticio);
   });
 
   it('não reproduz erro interno do provedor ao recusar token', async () => {

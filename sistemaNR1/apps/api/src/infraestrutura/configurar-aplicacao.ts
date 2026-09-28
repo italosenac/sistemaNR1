@@ -32,7 +32,7 @@ export function configurarAplicacao(aplicacao: INestApplication): void {
     const opcoes = new DocumentBuilder()
       .setTitle('SistemaNR1 — API')
       .setDescription(
-        'Fundação técnica E0. Módulos de negócio ainda não implementados.',
+        'Camada 0: identidade, empresas, estrutura e autorização. M1–M6 ainda não implementados.',
       )
       .setVersion('0.1.0')
       .addBearerAuth()

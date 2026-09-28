@@ -1,12 +1,12 @@
 # Backlog do MVP
 
-Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; **E1 está parcialmente implementada no recorte de usuários**, e E2–E8 e os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
+Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; **E1 está parcialmente implementada, com Camada 0 integrada ao Supabase local e migração aplicada no projeto remoto. A conexão TLS verificada do login restrito falhou, interrompendo os testes funcionais remotos.** E2–E8 e os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
 
-## Registro de execução — E1 / usuários
+## Registro de execução — E1
 
-**Missão A — arquitetura consolidada, implementação revisada aguardando novo prompt/permissão.** O recorte abaixo foi preservado; seus três papéis e matrícula obrigatória não atendem ao alvo novo. Não aplicar a migração anterior sem revisar compatibilidade. [Relatório da auditoria](validacao/relatorio-auditoria-arquitetural.md).
+**Parcialmente implementado — 2026-09-27.** Prompt E1 recebido e implementação autorizada. Quatro papéis, perfil global, matrícula opcional, atribuições/lotação separadas, bootstrap, empresas/estrutura/grupos/snapshots, autenticação e interface implementados. Migração anterior nunca aplicada no projeto remoto; SQL/testes anteriores arquivados. Migração consolidada aplicada somente no Supabase local, com testes reais em andamento. [Relatório E1](validacao/relatorio-e1.md).
 
-Atualização explícita do usuário em 2026-09-26 autorizou nome completo, e-mail/senha Auth, matrícula por empresa e lotação em estabelecimento/setor/função/turno. SPEC, modelo, DTOs, formulário `/usuarios`, endpoints de gestão, adaptadores e migração local preparados. [Evidências e limites](evidencias/c0-usuarios.md). Matrícula não é identidade de resposta M1. E1 permanece **Parcialmente implementado**: não foram aplicadas migrações, não há prova real de RLS/persistência nem conclusão dos critérios de estrutura/grupos/revisões C0-01 a 05. A autorização desta atualização não revogou a proibição de aplicar migrações.
+Aplicação remota exige aprovação específica da seção 12 do prompt; não executar antes dela. Identidades/estruturas de teste são fictícias. Os 21 RFs e M1–M6 permanecem pendentes; nenhuma associação nominal a resposta foi criada.
 
 ## Registro de execução — E0
 
@@ -47,7 +47,7 @@ As quatro categorias são **essencial para o MVP**, **implementação complement
 | Etapa | Trabalho autorizado em prompt futuro | Dependências reais | Saída verificável |
 | --- | --- | --- | --- |
 | E0 — Fundação | Inicializar Git se ausente, pnpm workspace, Next App Router/Nest strict, lint/typecheck/Jest; fixar versões; contratos básicos; configuração de exemplo sem segredos | Documentação atual | Builds mínimos, testes realmente executados e instruções locais; sem dados reais |
-| E1 — C0 e autorização | Conexão Supabase, migrações revisadas C0, Auth/perfis/vínculos/atribuições/lotação, quatro papéis, empresas/estrutura/grupos, Nest/RLS e interface administrativa | E0; novo prompt/permissão e autorização separada para aplicar migração em teste | Dois tenants sintéticos, quatro papéis, concessão/revogação testadas, estrutura congelável; sem implementar M1–M3 ou ciclo M5 |
+| E1 — C0 e autorização | Conexão Supabase, migrações revisadas C0, Auth/perfis/vínculos/atribuições/lotação, quatro papéis, empresas/estrutura/grupos, Nest/RLS e interface administrativa | E0; prompt E1 recebido; aprovação separada para aplicar migração remota | Dois tenants sintéticos, quatro papéis, concessão/revogação testadas, estrutura congelável; sem implementar M1–M3 ou ciclo M5 |
 | E2 — Campanha/coleta | Rascunho RF-01.2; canal RF-01.6; instrumento demo; códigos RF-01.1; publicar/enviar; RF-01.3 e RF-01.5 no encerramento | E1; regras de população e transação | Link/QR e alternativa geram respostas fictícias únicas; consulta documentada; agregado seguro |
 | E3 — Critérios/avaliação | Rascunho RF-02.1 → PDF RF-02.8 → aprovação demo → cálculo RF-02.2/3 → classificação RF-02.4; incluir RF-02.6/7 antes de fechar | E2; P-01/P-02 adotados somente em modo demo | Memória reproduzível, maior consequência, AEP/AET respondida, risco evidente sem medida bloqueado |
 | E4 — Inventário integrado | Base geral RF-03.3; rascunho a–i RF-03.1; mecanismo RF-03.4 antes de consolidar; guardas RF-03.5 | E3; referências e conteúdo geral completos | Versão consolidada imutável com diferenças e origem |
@@ -58,7 +58,7 @@ As quatro categorias são **essencial para o MVP**, **implementação complement
  
 Não há prazo em dias inventado: estimar após E0, considerando capacidade e tempo disponível. M4–M6 permanecem fora do backlog implementável até receber requisitos.
 
-## Plano de adaptação E1 após autorização
+## Plano de adaptação E1 — execução autorizada
 
 | Ordem | Reutilização / ajuste necessário | Critério de saída e testes |
 | --- | --- | --- |
@@ -71,9 +71,9 @@ Não há prazo em dias inventado: estimar após E0, considerando capacidade e te
 | E1.7 — interface/contratos | Adaptar `papel` para atribuições, matrícula opcional e lotação separada; perfil próprio, gestão de empresas/estrutura, carteira autorizada da consultoria | E2E troca de contexto, perfis, ausência de privilégio herdado; atualização coordenada Zod/DTO/SDK/Swagger |
 | E1.8 — fechamento | Executar cenários e registrar evidências com SPEC/matriz; preservar 21 RFs e fronteira anônima | E1 só concluída com banco real de teste e critérios atendidos; nada de M1/M2/M3 implementado por inferência |
 
-Migrações futuras necessárias: evolução da identidade/vínculos/roles, extração da lotação, campos organizacionais/grupos/revisões, trilha de concessões e grants/RLS. Nenhum desses scripts novos foi criado ou aplicado nesta auditoria. Não usar reset, excluir conta ou mapear `leitor` automaticamente. Contratos `papel` singular e `matriculaFuncional: string` são incompatibilidades deliberadamente registradas para atualização conjunta.
+A migração consolidada e os contratos atuais já implementam as adaptações acima. Banco remoto continua sem alteração; aplicar somente após aprovação específica. Não usar reset remoto nem mapear `leitor` automaticamente. Papéis são uma lista de atribuições e matrícula é nullable.
 
-Testes existentes a adaptar: `apps/api/test/usuarios.spec.ts`, `usuarios-http.spec.ts`, `identidades-supabase.spec.ts`, `tests/usuarios.spec.ts` e `supabase/tests/usuarios_rls.sql`. Preservar testes de separação de credenciais/falha parcial; trocar exigência de matrícula pelo comportamento NULL/única quando preenchida e ampliar quatro papéis/atribuições. Regressões E0 continuam obrigatórias.
+Testes existentes a adaptar: `apps/api/test/usuarios.spec.ts`, `usuarios-http.spec.ts`, `identidades-supabase.spec.ts`, `tests/usuarios.spec.ts` e `supabase/tests/camada-zero.sql`. Preservar testes de separação de credenciais/falha parcial; trocar exigência de matrícula pelo comportamento NULL/única quando preenchida e ampliar quatro papéis/atribuições. Regressões E0 continuam obrigatórias.
 
 M1 recebe somente estrutura/grupos congelados, nunca lotações nominais; M2 usa autorização técnica por empresa e mantém critérios/memória/versionamento; M3 valida responsável e acesso a versões sem recalcular. Ciclo é dependência conceitual futura E3/E4, sem tabela/fluxo funcional em E1. Área pessoal M4, aferições M5 e recibos M6 dependem de SPECs futuras.
 

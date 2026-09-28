@@ -53,7 +53,19 @@ export default function PaginaInicial() {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-12 sm:px-10 sm:py-20">
-        <div className="mb-8">
+        <div className="mb-8 flex flex-wrap gap-5">
+          <Link
+            href="/dashboard"
+            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+          >
+            Acessar painel
+          </Link>
+          <Link
+            href="/cadastro"
+            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+          >
+            Criar conta
+          </Link>
           <Link
             href="/usuarios"
             className="text-sm font-medium text-teal-800 underline underline-offset-4"

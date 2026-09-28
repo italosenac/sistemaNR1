@@ -6,6 +6,34 @@ import type { CadastroUsuario } from '@sistemanr1/contratos';
 import { Identidades } from '../aplicacao/portas-usuarios.js';
 import { ErroDeUsuario } from '../dominio/usuario.js';
 
+// Complementa a verificação criptográfica/remota de getUser; nunca autoriza
+// pela simples decodificação de um JWT ou por seus metadados editáveis.
+function contextoDoTokenValido(
+  token: string,
+  usuarioId: string,
+  url: string,
+): boolean {
+  try {
+    const partes = token.split('.');
+    if (partes.length !== 3) return false;
+    const claims: Record<string, unknown> = JSON.parse(
+      Buffer.from(partes[1], 'base64url').toString('utf8'),
+    );
+    const agora = Math.floor(Date.now() / 1000);
+    return (
+      claims.sub === usuarioId &&
+      claims.aud === 'authenticated' &&
+      claims.iss === url.replace(/\/$/, '') + '/auth/v1' &&
+      typeof claims.exp === 'number' &&
+      claims.exp > agora &&
+      (claims.nbf === undefined ||
+        (typeof claims.nbf === 'number' && claims.nbf <= agora))
+    );
+  } catch {
+    return false;
+  }
+}
+
 @Injectable()
 export class IdentidadesSupabase extends Identidades {
   constructor(
@@ -40,7 +68,16 @@ export class IdentidadesSupabase extends Identidades {
   async autenticar(token: string): Promise<string> {
     try {
       const { data, error } = await this.cliente(false).auth.getUser(token);
-      if (error || !data.user || data.user.aud !== 'authenticated')
+      if (
+        error ||
+        !data.user ||
+        data.user.aud !== 'authenticated' ||
+        !contextoDoTokenValido(
+          token,
+          data.user.id,
+          this.configuracao.get<string>('SUPABASE_URL')!,
+        )
+      )
         throw new ErroDeUsuario(
           'NAO_AUTENTICADO',
           'Sessão inválida ou expirada. Entre novamente.',

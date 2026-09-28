@@ -1,6 +1,6 @@
 # Isolamento multiempresa e revogação
 
-[ARQ] Modelo alvo, ainda sem migração aplicada. Empresa é a fronteira. Perfil é global; cada operação empresarial seleciona e valida um vínculo. Não usar empresa única em perfil, cargo global no JWT ou consultoria como superusuário.
+[ARQ] Modelo implementado em E1, com migração somente local e validação remota pendente. Empresa é a fronteira. Perfil é global; cada operação empresarial seleciona e valida um vínculo. Não usar empresa única em perfil, cargo global no JWT ou consultoria como superusuário.
 
 ## Caminho de autorização
 
@@ -11,7 +11,7 @@
 5. Em escrita sensível, serializar/revalidar autorização e revogação antes da confirmação. E1 deve testar revogação concorrente: operação após revogação confirmada é negada; operações em andamento seguem ordenação transacional explícita, não continuam autorizadas apenas pelo token antigo.
 6. Commit/rollback no mesmo cliente; erro de rollback descarta conexão. Nunca compartilhar contexto entre requisições do pool. Registrar evento administrativo sanitizado sem corpo de senha, token ou resposta.
 
-## Privilégios e políticas planejadas
+## Privilégios e políticas implementadas
 
 Navegador acessa Auth com chave publicável. Nest usa segredo exclusivamente para operações controladas de identidade, após autorização. Dados empresariais usam login PostgreSQL NOSUPERUSER/NOBYPASSRLS, sem propriedade de tabelas nem associação a papéis administrativos, com TLS validado. Login/credencial de migração é segregado e não integra o runtime.
 
@@ -29,7 +29,7 @@ Grants determinam as operações possíveis; RLS limita linhas. `service_role`, 
 
 Revogar grants padrões indevidos de `public`, `anon` e `authenticated`; proteger também funções, views e futuras tabelas. Funções SECURITY DEFINER devem ter `search_path` fixo, objetos qualificados, proprietário segregado, EXECUTE mínimo e resultado estreito. Não criar função de escrita arbitrária que aceite usuário/empresa como prova de autorização. A política deve considerar todos os caminhos, inclusive acesso direto ao banco sob o login restrito.
 
-O SQL parcial atual possui leitura organizacional para qualquer vínculo ativo e um papel único de gestor para INSERT. Isso não basta para o trabalhador nem para a matriz de atribuições proposta. Revisar grants/políticas antes de habilitar o modelo novo; não ampliar grants para contornar teste que falhe. A documentação oficial recomenda testar triggers de perfil porque sua falha afeta criação de contas. [Gestão de usuários](https://supabase.com/docs/guides/auth/managing-user-data).
+A migração E1 substitui as permissões amplas do recorte anterior por capacidades explícitas e SELECT restrito do trabalhador. Grants de escrita no schema privado são exclusivos do grupo runtime; `authenticated` não pode promover usuários e o schema não é exposto na Data API. A suíte SQL executa os pares permitir/negar sob papéis comuns. Evidências atuais no [relatório E1](../validacao/relatorio-e1.md). A documentação oficial recomenda testar triggers de perfil porque sua falha afeta criação de contas. [Gestão de usuários](https://supabase.com/docs/guides/auth/managing-user-data).
 
 ## Revogação e consulta da carteira
 

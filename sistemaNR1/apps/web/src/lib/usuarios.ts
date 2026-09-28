@@ -3,7 +3,19 @@ import { PAPEIS_USUARIO } from '@sistemanr1/contratos';
 
 const referencia = z.object({ id: z.uuid(), nome: z.string() });
 export const esquemaEmpresas = z.array(
-  referencia.extend({ papel: z.enum(PAPEIS_USUARIO) }),
+  referencia.extend({
+    papeis: z.array(z.enum(PAPEIS_USUARIO)),
+    capacidades: z.array(
+      z.enum([
+        'empresa:ler',
+        'empresa:editar',
+        'estrutura:ler',
+        'estrutura:gerenciar',
+        'usuarios:gerenciar',
+        'carteira:ler',
+      ]),
+    ),
+  }),
 );
 export const esquemaOpcoes = z.object({
   estabelecimentos: z.array(referencia),
@@ -12,13 +24,24 @@ export const esquemaOpcoes = z.object({
   turnos: z.array(referencia),
 });
 export const esquemaVinculo = z.object({
+  id: z.uuid(),
   usuarioId: z.uuid(),
   empresaId: z.uuid(),
   nomeCompleto: z.string(),
-  matriculaFuncional: z.string(),
-  papel: z.enum(PAPEIS_USUARIO),
+  matriculaFuncional: z.string().nullable(),
+  status: z.enum(['ativo', 'inativo']),
+  papeis: z.array(z.enum(PAPEIS_USUARIO)),
+  estabelecimentoId: z.uuid().nullable().optional(),
+  setorId: z.uuid().nullable().optional(),
+  funcaoId: z.uuid().nullable().optional(),
+  turnoId: z.uuid().nullable().optional(),
+  lotacaoStatus: z.enum(['ativo', 'inativo']).nullable().optional(),
 });
 const mensagensPorCodigo: Record<string, string> = {
+  DADOS_INVALIDOS:
+    'Confira os dados, as referências da empresa e os gestores ativos.',
+  CONFLITO: 'Já existe um cadastro com esses dados ou há grupos sobrepostos.',
+  NAO_ENCONTRADO: 'Registro não encontrado no contexto autorizado.',
   NAO_AUTENTICADO: 'Sua sessão expirou. Entre novamente.',
   SEM_PERMISSAO:
     'Você não tem permissão para gerenciar usuários nesta empresa.',
@@ -39,12 +62,12 @@ export async function consultarApi<T>(
   caminho: string,
   token: string,
   esquema: z.ZodType<T>,
-  opcoes?: { corpo?: unknown; sinal?: AbortSignal },
+  opcoes?: { corpo?: unknown; sinal?: AbortSignal; metodo?: 'POST' | 'PATCH' },
 ): Promise<T> {
   const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   try {
     const resposta = await fetch(`${url.replace(/\/$/, '')}/api/v1${caminho}`, {
-      method: opcoes?.corpo ? 'POST' : 'GET',
+      method: opcoes?.metodo ?? (opcoes?.corpo ? 'POST' : 'GET'),
       headers: {
         Authorization: `Bearer ${token}`,
         ...(opcoes?.corpo ? { 'Content-Type': 'application/json' } : {}),

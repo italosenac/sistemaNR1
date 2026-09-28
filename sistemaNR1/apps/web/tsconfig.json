@@ -30,7 +30,11 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next-e2e/types/**/*.ts",
-    ".next-e2e/dev/types/**/*.ts"
+    ".next-e2e/dev/types/**/*.ts",
+    ".next-integracao/types/**/*.ts",
+    ".next-integracao/dev/types/**/*.ts",
+    ".next-remoto/types/**/*.ts",
+    ".next-remoto/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", ".next-e2e"]
 }

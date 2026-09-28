@@ -1,4 +1,5 @@
--- Preparada localmente. NÃO aplicada. Somente dados fictícios.
+-- HISTÓRICO: migração anterior nunca aplicada; retirada do diretório executável na E1.
+-- Catálogo remoto conferido em 2026-09-27. Preservada para comparação, não executar.
 -- Senhas/e-mail pertencem a auth.users; nenhum cadastro nominal integra M1.
 begin;
 

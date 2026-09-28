@@ -1,6 +1,6 @@
 # Identidade única e vínculos por empresa
 
-Modelo alvo da Missão A, 2026-09-26. [MISSÃO] Supabase Auth é o provedor exclusivo. [ARQ] Este documento detalha a solução, não cria banco nem substitui os RFs. A implementação parcial anterior continua preservada e requer as adaptações do [backlog E1](../backlog-mvp.md).
+Modelo consolidado e implementado na E1, 2026-09-27. [MISSÃO] Supabase Auth é o provedor exclusivo. [ARQ] Estrutura física e execução em [Camada 0](execucao-camada-zero.md); aplicação local não equivale à aplicação remota. Os RFs originais permanecem intactos.
 
 ## Responsabilidades e cardinalidades
 
@@ -24,18 +24,18 @@ A sequência ilustrativa do prompt não significa que a lotação dependa de um 
 
 ## Chaves, atributos e restrições planejadas
 
-Nomes físicos abaixo são alvo de E1, ainda não materializados. UUID é identificador interno, não documento civil.
+Nomes físicos abaixo correspondem à migração consolidada, aplicada somente no ambiente local. UUID é identificador interno, não documento civil.
 
 | Entidade | Identificação e dados | Restrições e índices |
 | --- | --- | --- |
 | `auth.users` | UUID, e-mail, credenciais e estado de autenticação sob responsabilidade Auth | Reutilizar a conta ao adicionar empresa; não copiar hash/senha para schema próprio; não tentar identificar pessoa por igualdade de nome |
-| `perfis` | `usuario_id` PK/FK para Auth; nome completo; status `pendente/ativo/inativo`; `criado_em`, `atualizado_em` UTC | Sem empresa, matrícula, lotação, papel ou credenciais; nome 3–150 caracteres; status nunca alterável pelo próprio usuário para ganhar acesso |
+| `perfis` | `id` PK/FK para Auth; nome completo; status `pendente/ativo/inativo`; `criado_em`, `atualizado_em` UTC | Sem empresa, matrícula, lotação, papel ou credenciais; nome 3–150 caracteres; status nunca alterável pelo próprio usuário para ganhar acesso |
 | `vinculos_organizacionais` | UUID PK; `empresa_id`, `usuario_id`, matrícula opcional, status e datas UTC | FK para empresa e perfil; UNIQUE(empresa, usuário), UNIQUE(empresa,id); índice por usuário/status/empresa; vínculo histórico inativo é reativado de modo autorizado, não duplicado |
 | `atribuicoes_papel` | UUID PK; empresa, vínculo, papel, status, concedente, datas de concessão/revogação e motivo | FK(empresa,vínculo) para vínculo; papel limitado ao catálogo fechado; UNIQUE parcial(empresa,vínculo,papel) quando ativo; índice por empresa/vínculo/status; revogação preserva evento e histórico |
 | `lotacoes_usuario` | UUID PK; empresa, vínculo; estabelecimento/setor/função/turno opcionais; datas UTC | Uma lotação atual por vínculo: UNIQUE(empresa,vínculo); FKs compostas da mesma empresa, setor também do estabelecimento; setor exige estabelecimento; alterações auditadas, sem recalcular população ou campanhas antigas |
 | `identificacoes_profissionais` | UUID PK; usuário; conselho/órgão, número e UF quando aplicáveis; datas e estado de verificação separado | FK para perfil; dados opcionais e acesso restrito; ausência não impede conta; possuir registro não prova habilitação; não criar CPF público ou obrigatório |
 
-Matrícula é string de até 50 caracteres; preservar zeros iniciais, aparar espaços externos e normalizar vazio para NULL. Índice único parcial planejado `(empresa_id, lower(matricula)) WHERE matricula IS NOT NULL`. Permitir múltiplas contas sem matrícula na mesma empresa e valores iguais em empresas diferentes. Conta inicial pode existir sem vínculo; isso não concede acesso empresarial. Não fundir identidades existentes automaticamente por e-mail/nome: reconciliação é controlada.
+Matrícula é string de até 50 caracteres; preservar zeros iniciais, aparar espaços externos e normalizar vazio para NULL. Índice único parcial implementado `(empresa_id, lower(matricula)) WHERE matricula IS NOT NULL`. Permitir múltiplas contas sem matrícula na mesma empresa e valores iguais em empresas diferentes. Conta inicial pode existir sem vínculo; isso não concede acesso empresarial. Não fundir identidades existentes automaticamente por e-mail/nome: reconciliação é controlada.
 
 Empresa, estabelecimento, setor, função, turno e grupo possuem UUID PK; entidades empresariais também oferecem UNIQUE(empresa,id) para FKs compostas. Setor oferece UNIQUE(empresa,estabelecimento,id). Índices nos lados filhos acompanham os caminhos de empresa/pai usados nas consultas. Detalhes de estrutura na [SPEC C0](../../specs/camada-0/estrutura-organizacional.spec.md).
 
@@ -60,6 +60,6 @@ Catálogo: `trabalhador`, `gestor_sst_rh`, `responsavel_tecnico`, `consultoria`.
 | DTOs e frontend exigem matrícula e um papel | Atualizar contratos, validação, formulário, seleção de empresa e testes juntos; não renomear apenas o banco |
 | Trigger exige nome nos metadados em toda criação Auth | Testar criação controlada, contas anteriores e falha/reconciliação; metadados nunca concedem privilégios |
 
-O SQL já preparado continua sem aplicação e descreve o modelo anterior. Não executá-lo como se implementasse esta revisão. Antes da E1, verificar histórico remoto de migrações em modo de leitura; se não aplicado, revisar a migração inicial com comparação explícita; se aplicado externamente, criar evolução incremental, sem reset ou reescrita de histórico.
+A inspeção remota confirmou que o SQL anterior não foi aplicado. Ele e seus testes foram arquivados em `historico/`; a pasta de migrações contém somente a inicial consolidada E1. O código foi adaptado ao modelo acima, sem conversão automática de `leitor`. Em outro ambiente já migrado, exigir evolução incremental. Ver ADR-15.
 
 Auth e banco de negócio não têm commit distribuído. Preservar tratamento de cadastro parcial, identificador para reconciliação e ausência de compensação que conceda acesso. Ativação da conta e confirmação de e-mail precisam de fluxo controlado, sem marcar confirmação artificialmente.

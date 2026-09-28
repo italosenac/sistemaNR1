@@ -1,4 +1,4 @@
--- NÃO EXECUTADO. Exige autorização para aplicar a migração num Supabase de teste descartável.
+-- HISTÓRICO do modelo anterior, não executar. Suíte vigente: supabase/tests/camada-zero.sql.
 -- Rodar como administrador SOMENTE em ambiente sintético. Todas as linhas abaixo sofrem rollback.
 begin;
 

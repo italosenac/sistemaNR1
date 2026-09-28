@@ -6,11 +6,13 @@ import type {
 } from '@sistemanr1/contratos';
 import type { Identidades, RepositorioUsuarios } from './portas-usuarios.js';
 import { ErroDeUsuario, validarLotacao } from '../dominio/usuario.js';
+import { normalizarMatricula } from '../dominio/organizacao.js';
 
 function obterDadosDoVinculo(entrada: EntradaVinculo): EntradaVinculo {
   return {
-    matriculaFuncional: entrada.matriculaFuncional,
-    papel: entrada.papel,
+    matriculaFuncional: normalizarMatricula(entrada.matriculaFuncional),
+    papeis: entrada.papeis,
+    motivo: entrada.motivo,
     ...(entrada.estabelecimentoId
       ? { estabelecimentoId: entrada.estabelecimentoId }
       : {}),

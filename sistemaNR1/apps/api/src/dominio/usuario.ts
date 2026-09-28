@@ -1,6 +1,9 @@
 import type { LotacaoUsuario } from '@sistemanr1/contratos';
 
 export type CodigoErroUsuario =
+  | 'DADOS_INVALIDOS'
+  | 'CONFLITO'
+  | 'NAO_ENCONTRADO'
   | 'NAO_AUTENTICADO'
   | 'SEM_PERMISSAO'
   | 'LOTACAO_INVALIDA'

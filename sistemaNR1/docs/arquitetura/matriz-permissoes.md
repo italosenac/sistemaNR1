@@ -7,7 +7,7 @@
 | Perfil próprio | Ler/alterar nome básico | W, G, T, C; identidade sem vínculo acessa somente o próprio perfil | Próprio usuarioId | Não alterar status, empresa, papel ou credenciais no DTO de perfil; e-mail/senha passam por Auth | E1 |
 | Empresas vinculadas | Listar/selecionar | W, G, T, C | Somente vínculos ativos próprios | Metadados mínimos; seleção não concede operação adicional | E1 |
 | Carteira de clientes | Listar contexto empresarial | C | Empresas explicitamente vinculadas | Nenhuma busca global; não agregar dados de clientes distintos | E1 |
-| Empresa | Provisionar primeira empresa/primeiro gestor | Procedimento interno segregado | Empresa explicitamente autorizada | Fora do autoatendimento; não cria superadministrador funcional | E1 |
+| Empresa | Criar empresa nova e primeiro gestor | Identidade autenticada com perfil ativo | Somente empresa criada nesta transação | Missão E1, itens 5/9: bootstrap atômico; não aceita ID de empresa existente; não concede administração global | E1 |
 | Empresa | Ler cadastro mínimo | G, T, C | Empresa do vínculo | W recebe apenas identificação mínima do próprio vínculo | E1 |
 | Empresa e estrutura | Cadastrar/editar/arquivar estabelecimento, setor, função, turno, grupo; editar empresa existente | G | Empresa autorizada | Mesma empresa em todas as FKs; sem exclusão de referências; não alterar snapshots | E1 |
 | Estrutura | Consultar referências | G, T | Empresa autorizada | Somente escopo necessário; C precisa de atribuição adicional para operação técnica/gestão | E1 |

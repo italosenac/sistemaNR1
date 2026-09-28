@@ -18,8 +18,9 @@ const entrada: CadastroUsuario = {
   nomeCompleto: 'Pessoa Fictícia',
   email: 'pessoa@example.invalid',
   senha: 'Senha-Ficticia-2026',
+  motivo: 'Cadastro fictício autorizado',
   matriculaFuncional: '001',
-  papel: 'leitor',
+  papeis: ['trabalhador'],
 };
 
 function preparar() {
@@ -32,9 +33,11 @@ function preparar() {
   const vinculo: VinculoUsuario = {
     usuarioId: usuario,
     empresaId: empresa,
+    id: usuario,
+    status: 'ativo',
     nomeCompleto: entrada.nomeCompleto,
     matriculaFuncional: '001',
-    papel: 'leitor',
+    papeis: ['trabalhador'],
   };
   const repositorio = {
     listarEmpresas: jest.fn<RepositorioUsuarios['listarEmpresas']>(),
@@ -66,7 +69,8 @@ describe('C0 — cadastro administrativo de usuários', () => {
     const dadosPersistidos = repositorio.vincular.mock.calls[0][3];
     expect(dadosPersistidos).toEqual({
       matriculaFuncional: '001',
-      papel: 'leitor',
+      papeis: ['trabalhador'],
+      motivo: entrada.motivo,
     });
     expect(JSON.stringify(dadosPersistidos)).not.toContain(entrada.senha);
     expect(saida).not.toHaveProperty('senha');
@@ -122,13 +126,18 @@ describe('C0 — cadastro administrativo de usuários', () => {
     await servico.vincularExistente(ator, outraEmpresa, {
       usuarioId: usuario,
       matriculaFuncional: '072',
-      papel: 'tecnico',
+      papeis: ['responsavel_tecnico'],
+      motivo: entrada.motivo,
     });
     expect(repositorio.vincular).toHaveBeenCalledWith(
       ator,
       outraEmpresa,
       usuario,
-      { matriculaFuncional: '072', papel: 'tecnico' },
+      {
+        matriculaFuncional: '072',
+        papeis: ['responsavel_tecnico'],
+        motivo: entrada.motivo,
+      },
     );
     expect(identidades.criarUsuario).not.toHaveBeenCalled();
   });
@@ -145,6 +154,10 @@ describe('C0 — cadastro administrativo de usuários', () => {
       senha: 'Outro-Segredo-Ficticio',
     });
     const dados: EntradaVinculo = repositorio.vincular.mock.calls[0][3];
-    expect(Object.keys(dados).sort()).toEqual(['matriculaFuncional', 'papel']);
+    expect(Object.keys(dados).sort()).toEqual([
+      'matriculaFuncional',
+      'motivo',
+      'papeis',
+    ]);
   });
 });

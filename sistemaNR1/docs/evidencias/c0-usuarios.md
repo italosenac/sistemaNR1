@@ -62,7 +62,7 @@ Arquivos de testes: [aplicação](../../apps/api/test/usuarios.spec.ts), [HTTP](
 
 ## Banco preparado, sem execução
 
-[Migração C0](../../supabase/migrations/20260926000100_c0_usuarios_e_vinculos.sql) e [testes SQL](../../supabase/tests/usuarios_rls.sql) estão disponíveis para revisão. Nenhum `db push`, `migration up`, `db reset`, seed, DDL remoto ou teste SQL de C0 foi executado. Sintaxe/compatibilidade da migração e comportamento das políticas ainda dependem de execução no ambiente de teste autorizado.
+[Migração C0](../arquitetura/historico/20260926000100_c0_usuarios_e_vinculos.sql) e [testes SQL](../arquitetura/historico/usuarios_rls.sql) estão disponíveis para revisão. Nenhum `db push`, `migration up`, `db reset`, seed, DDL remoto ou teste SQL de C0 foi executado. Sintaxe/compatibilidade da migração e comportamento das políticas ainda dependem de execução no ambiente de teste autorizado.
 
 Os testes SQL preparados cobrem trigger de perfil, matrículas por empresa, unicidade sem distinguir caixa, acesso a perfis compartilhados, cadastro válido por gestor, referências de outras empresas/estabelecimentos, tentativa de cadastro em outra empresa, leitor com metadado de papel forjado e vínculo inativo. Usam transação com rollback e somente identidades fictícias. Procedimento e limites no [guia dos testes SQL](../../supabase/tests/README.md).
 

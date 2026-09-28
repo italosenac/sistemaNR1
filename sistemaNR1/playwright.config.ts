@@ -15,6 +15,7 @@ const ambienteTeste = {
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: ['**/integracao/**', '**/remoto/**'],
   fullyParallel: false,
   workers: 1,
   retries: 0,

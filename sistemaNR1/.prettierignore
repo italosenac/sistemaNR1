@@ -1,6 +1,8 @@
 node_modules
 .next
 .next-e2e
+.next-integracao
+.next-remoto
 dist
 coverage
 pnpm-lock.yaml
