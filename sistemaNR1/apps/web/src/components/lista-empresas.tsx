@@ -7,7 +7,7 @@ export function ListaEmpresas({
 }: {
   consultoria?: boolean;
 }) {
-  const { empresas, selecionarEmpresa } = useSessao();
+  const { empresas, empresa, selecionarEmpresa } = useSessao();
   const lista = consultoria
     ? empresas.filter((e) => e.papeis.includes('consultoria'))
     : empresas;
@@ -21,8 +21,16 @@ export function ListaEmpresas({
       )}
       <ul className="space-y-3">
         {lista.map((e) => (
-          <li key={e.id} className="rounded-xl border p-4">
+          <li
+            key={e.id}
+            className="rounded-2xl border border-border bg-card p-4 shadow-[0_1px_3px_#1118270f]"
+          >
             <p className="font-medium">{e.nome}</p>
+            {empresa?.id === e.id && (
+              <p className="mt-1 text-sm font-medium text-[var(--color-text-success)]">
+                Empresa selecionada
+              </p>
+            )}
             <p className="mt-1 text-sm text-slate-600">
               {e.papeis
                 .map(
@@ -39,6 +47,7 @@ export function ListaEmpresas({
             <Button
               className="mt-3"
               variant="outline"
+              aria-pressed={empresa?.id === e.id}
               onClick={() => selecionarEmpresa(e.id)}
             >
               Selecionar {e.nome}
@@ -46,7 +55,10 @@ export function ListaEmpresas({
           </li>
         ))}
       </ul>
-      <Link href="/empresas/nova" className="text-teal-800 underline">
+      <Link
+        href="/empresas/nova"
+        className="text-[var(--color-text-brand)] underline underline-offset-4"
+      >
         Cadastrar nova empresa
       </Link>
     </div>

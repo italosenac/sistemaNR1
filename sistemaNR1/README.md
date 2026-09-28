@@ -1,8 +1,8 @@
 # sistemaNR1 — MVP
 
-SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcialmente implementada:** Camada 0 funcional e validada no Supabase local; a migração remota foi aplicada e o cliente conectou ao pooler com TLS verificado, mas `pg_stat_ssl` indicou TLS inativo na conexão backend. Os testes funcionais remotos permanecem pendentes. Os 21 requisitos M1–M3 continuam pendentes.
+SaaS acadêmico: **estrutura organizacional → coleta protegida → avaliação fundamentada → inventário integrado, PDF e histórico**. Exclusivamente dados fictícios. **E0 concluída e testada. E1 parcialmente implementada:** Camada 0 funcional no Supabase local e remoto; cinco cenários remotos com fixtures passaram, mas o cadastro público e a entrega de e-mail remoto não foram validados. O cliente usa TLS verificado até o pooler; `pg_stat_ssl` indicou TLS inativo na conexão backend. Os 21 requisitos M1–M3 continuam pendentes.
 
-**Missão E1: Camada 0 implementada.** A identidade usa Auth, perfil global, vínculos por empresa, atribuições de papéis e lotação separada. Matrícula é opcional e única quando preenchida. Após aprovação, a migração consolidada foi aplicada no projeto remoto. O diagnóstico confirmou login restrito e TLS verificado até o pooler, com pendência sobre o trecho pooler → PostgreSQL. [Relatório E1](docs/validacao/relatorio-e1.md).
+**Missão E1: Camada 0 implementada.** A identidade usa Auth, perfil global, vínculos por empresa, atribuições de papéis e lotação separada. Matrícula é opcional e única quando preenchida. A migração consolidada foi aplicada no projeto remoto. O usuário aceitou TLS verificado até o pooler apenas para o MVP fictício; isso não comprova TLS de ponta a ponta nem autoriza dados pessoais reais. [Relatório E1](docs/validacao/relatorio-e1.md).
 
 ## Executar localmente
 
@@ -78,13 +78,13 @@ supabase/tests/              # testes SQL de RLS locais
 tests/                       # regressão e integração de navegador
 ```
 
-Supabase CLI e SDKs instalados; projeto remoto vinculado, migração autorizada aplicada e schema verificado. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta fica somente no backend. [Conexão](docs/validacao/conexao-supabase.md) e [validação E1](docs/validacao/relatorio-e1.md) registram o escopo. A `DATABASE_URL` remota ainda não foi configurada devido à divergência entre TLS validado no cliente e `pg_stat_ssl.ssl = false` no backend; a validação local continua reproduzível.
+Supabase CLI e SDKs instalados; projeto remoto vinculado, migração autorizada aplicada e schema verificado. Variáveis locais estão nos arquivos ignorados pelo Git, e a chave secreta e `DATABASE_URL` ficam somente no backend. [Conexão](docs/validacao/conexao-supabase.md) e [validação E1](docs/validacao/relatorio-e1.md) registram os testes e limites. A validação local continua reproduzível.
 
 ### Cadastro C0 implementado localmente
 
 Nome completo no perfil; e-mail/senha no Supabase Auth; matrícula, papel e lotação no vínculo por empresa. Gestor autorizado cria conta ou associa conta existente com matrícula independente. Credenciais existentes não são alteradas ao criar outro vínculo. Respostas anônimas M1 não recebem identidade nominal.
 
-A funcionalidade usa bootstrap controlado de empresa/gestor e um login PostgreSQL NOSUPERUSER/NOBYPASSRLS membro de `sistemanr1_api`, sem propriedade das tabelas. O login remoto foi criado, mas sua conexão TLS verificada ainda não foi validada. Não repetir a migração remota nem usar `postgres` ou chave de serviço como acesso geral ao banco. Novas contas Auth recebem confirmação real de e-mail; contas criadas por gestor usam recuperação de senha para o primeiro acesso. [Execução da Camada 0](docs/arquitetura/execucao-camada-zero.md).
+A funcionalidade usa bootstrap controlado de empresa/gestor e um login PostgreSQL NOSUPERUSER/NOBYPASSRLS membro de `sistemanr1_api`, sem propriedade das tabelas. A conexão remota desse login foi validada com TLS, CA e hostname até o pooler; a conexão backend observada retornou `pg_stat_ssl.ssl = false`. Não repetir a migração remota nem usar `postgres` ou chave de serviço como acesso geral ao banco. A confirmação Auth por link de fixture foi testada remotamente; o cadastro público e a entrega de e-mail ainda não foram validados no remoto. [Execução da Camada 0](docs/arquitetura/execucao-camada-zero.md).
 
 A interface usa `trabalhador`, `gestor_sst_rh`, `responsavel_tecnico` e `consultoria`, com matrícula opcional e lotação separada. [Permissões](docs/arquitetura/matriz-permissoes.md) e [isolamento](docs/arquitetura/isolamento-multiempresa.md) são reforçados no Nest e no banco local. Consultoria só acessa sua carteira autorizada. Conta pessoal de trabalhador não identifica respostas anônimas.
 
@@ -128,4 +128,4 @@ specs/
   m3-inventario/              # 6 SPECs
 ```
 
-Histórico: a Missão 01 entregou a estrutura documental acima; a Missão 02 acrescentou a fundação E0 sem alterar as 21 SPECs. A E1 implementou a Camada 0 e foi validada localmente; a validação remota permanece interrompida após a falha de conexão TLS verificada. Assinatura real, metodologia para uso real, custódia de longo prazo e validação profissional permanecem pendentes. M4–M6 não foram especificados. Este projeto não constitui certificação jurídica ou PGR completo.
+Histórico: a Missão 01 entregou a estrutura documental acima; a Missão 02 acrescentou a fundação E0 sem alterar as 21 SPECs. A E1 implementou a Camada 0 e passou nos testes remotos de negócio com fixtures, mas o cadastro público/entrega de e-mail remoto e o encerramento limpo da regressão Playwright permanecem sem evidência suficiente para conclusão. Assinatura real, metodologia para uso real, custódia de longo prazo e validação profissional permanecem pendentes. M4–M6 não foram especificados. Este projeto não constitui certificação jurídica ou PGR completo.

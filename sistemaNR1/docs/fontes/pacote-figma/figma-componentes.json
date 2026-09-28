@@ -1,0 +1,62 @@
+{
+  "source": {
+    "provider": "Figma MCP",
+    "file_key": "cGW4JPUdRYtAME048NAU5I",
+    "url": "https://www.figma.com/design/cGW4JPUdRYtAME048NAU5I/Plataforma-NR-1?node-id=46-9",
+    "inspection_date": "2026-09-28",
+    "available_pages": [
+      {"id":"0:1","name":"00 — Cover & Guidelines"},
+      {"id":"3:247","name":"03 — Components / Core"},
+      {"id":"3:249","name":"05 — Components / Feedback & Security"}
+    ],
+    "other_pages_described_but_not_accessible": true
+  },
+  "components": [
+    {"node_id":"46:2","name":"Cover"},
+    {"node_id":"46:131","name":"Guidelines"},
+    {"node_id":"7:184","name":"Button/Primary","sizes":["S","M","L"],"states":["Default","Hover","Pressed","Focus","Disabled","Loading"]},
+    {"node_id":"7:366","name":"Button/Secondary"},
+    {"node_id":"7:548","name":"Button/Ghost"},
+    {"node_id":"7:730","name":"Button/Destructive"},
+    {"node_id":"7:912","name":"Button/Link"},
+    {"node_id":"7:1094","name":"Button/Icon Only"},
+    {"node_id":"8:389","name":"Input/Field","sizes":["M","L"],"states":["Default","Hover","Focus","Filled","Error","Warning","Success","Disabled","Read-only"]},
+    {"node_id":"8:426","name":"Input/Textarea"},
+    {"node_id":"8:520","name":"Input/OTP"},
+    {"node_id":"9:215","name":"Control/Checkbox"},
+    {"node_id":"9:249","name":"Control/Radio"},
+    {"node_id":"9:275","name":"Control/Switch"},
+    {"node_id":"12:377","name":"Navigation/Sidebar Item","states":["Default","Hover","Active","Focus","Disabled"]},
+    {"node_id":"12:409","name":"Navigation/Top Tab"},
+    {"node_id":"12:421","name":"Navigation/Segmented Control"},
+    {"node_id":"12:428","name":"Navigation/Breadcrumb"},
+    {"node_id":"12:465","name":"Navigation/Pagination"},
+    {"node_id":"12:513","name":"Navigation/Stepper Step"},
+    {"node_id":"15:355","name":"Card/Metric"},
+    {"node_id":"15:376","name":"Card/Action"},
+    {"node_id":"15:560","name":"Card/Risk"},
+    {"node_id":"15:614","name":"Card/Campaign"},
+    {"node_id":"15:754","name":"Card/Organization"},
+    {"node_id":"15:787","name":"Card/Evidence"},
+    {"node_id":"15:806","name":"Card/Document"},
+    {"node_id":"17:701","name":"Overlay/Modal"},
+    {"node_id":"17:913","name":"Overlay/Confirmation Modal"},
+    {"node_id":"10:52","name":"Badge/Status"},
+    {"node_id":"10:170","name":"Badge/Risk","levels":["Low","Moderate","High","Critical"],"styles":["Subtle","Solid"],"sizes":["S","M"]},
+    {"node_id":"10:274","name":"Badge/Context"},
+    {"node_id":"10:294","name":"Badge/Confidence"},
+    {"node_id":"11:278","name":"Alert/Inline"},
+    {"node_id":"11:466","name":"Toast"},
+    {"node_id":"11:528","name":"Security/Anonymity Banner","states":["Collapsed","Expanded","Threshold blocked"]}
+  ],
+  "implementation_overrides_from_sistemaNR1_specs": {
+    "minimum_aggregate_group_size": 7,
+    "figma_example_group_size": 5,
+    "implemented_role_count": 4,
+    "figma_cover_role_count": 8,
+    "planned_functional_requirements": {"M1":7,"M2":8,"M3":6},
+    "figma_cover_stories": 66,
+    "no_automatic_business_rule_adoption_from_figma": true,
+    "no_hash_as_signature": true
+  }
+}

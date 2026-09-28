@@ -1,12 +1,14 @@
 # Backlog do MVP
 
-Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; **E1 está parcialmente implementada, com Camada 0 integrada ao Supabase local e migração aplicada no projeto remoto. A conexão TLS verificada do login restrito falhou, interrompendo os testes funcionais remotos.** E2–E8 e os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
+Prioridade: uma demonstração completa **C0 → M1 → M2 → M3 → PDF → nova versão**, com dados fictícios e travas efetivas. A Missão 01 entregou somente documentação. Em 2026-09-26, a Missão 02 concluiu e testou **E0**; **E1 está parcialmente implementada**: a migração e cinco cenários de negócio remotos passaram, mas o cadastro público/entrega de e-mail remoto e a regressão Playwright com encerramento limpo seguem sem comprovação. E2–E8 e os 21 RFs continuam pendentes. Escopo detalhado permanece nas SPECs.
 
 ## Registro de execução — E1
 
-**Parcialmente implementado — 2026-09-27.** Prompt E1 recebido e implementação autorizada. Quatro papéis, perfil global, matrícula opcional, atribuições/lotação separadas, bootstrap, empresas/estrutura/grupos/snapshots, autenticação e interface implementados. Migração anterior nunca aplicada no projeto remoto; SQL/testes anteriores arquivados. Migração consolidada aplicada somente no Supabase local, com testes reais em andamento. [Relatório E1](validacao/relatorio-e1.md).
+**Parcialmente implementado — atualizado em 2026-09-28.** Quatro papéis, perfil global, matrícula opcional, atribuições/lotação separadas, bootstrap, empresas/estrutura/grupos/snapshots, autenticação e interface implementados. A migração consolidada foi aplicada no Supabase local e no projeto remoto autorizado. Cinco cenários remotos de Auth por link de fixture, API, RLS, isolamento e navegador passaram; cadastro público remoto bloqueado pelo serviço de e-mail. [Relatório E1](validacao/relatorio-e1.md).
 
-Aplicação remota exige aprovação específica da seção 12 do prompt; não executar antes dela. Identidades/estruturas de teste são fictícias. Os 21 RFs e M1–M6 permanecem pendentes; nenhuma associação nominal a resposta foi criada.
+A aplicação remota ocorreu após aprovação específica; não repetir migrações. Identidades/estruturas de teste são fictícias. O usuário aceitou TLS validado até o pooler apenas para este MVP; `pg_stat_ssl.ssl = false` no backend não comprova TLS de ponta a ponta. Os 21 RFs e M1–M6 permanecem pendentes; nenhuma associação nominal a resposta foi criada.
+
+Checkpoint de 2026-09-28: a E1 foi encerrada provisoriamente como **Parcialmente implementada**, com cinco cenários funcionais remotos aprovados. Seguem pendentes cadastro público e entrega de e-mail remoto, encerramento limpo do Playwright, verificação de TLS pooler → PostgreSQL e duas possíveis contas de fixture órfãs. O usuário autorizou iniciar Design System + E2 + E3 + E4 com dados fictícios e migrações somente locais; a aplicação de novas migrações remotas exige autorização específica.
 
 ## Registro de execução — E0
 

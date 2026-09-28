@@ -86,7 +86,7 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
   const capacidades = sessao.empresa?.capacidades ?? [];
   return (
     <div className="space-y-6">
-      <header className="space-y-4 border-b border-slate-200 pb-5">
+      <header className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p>{sessao.perfil.nomeCompleto}</p>
           <Button variant="outline" onClick={() => void sessao.sair()}>
@@ -95,7 +95,7 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
         </div>
         <nav
           aria-label="Navegação da conta"
-          className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-teal-800 underline underline-offset-4"
+          className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-[var(--color-text-brand)] underline-offset-4 [&_a:hover]:underline"
         >
           <Link href="/dashboard">Painel</Link>
           <Link href="/meu-perfil">Meu perfil</Link>
@@ -133,7 +133,7 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
               id="empresa"
               value={sessao.empresa?.id ?? ''}
               onChange={(e) => sessao.selecionarEmpresa(e.target.value)}
-              className="h-10 w-full rounded-lg border bg-white px-3"
+              className="h-10 w-full rounded-[10px] border border-input bg-card px-3 focus-visible:border-primary"
             >
               {sessao.empresas.map((e) => (
                 <option key={e.id} value={e.id}>
@@ -145,7 +145,10 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
         )}
       </header>
       {sessao.aviso && (
-        <p role="status" className="rounded-lg bg-teal-50 p-3 text-teal-900">
+        <p
+          role="status"
+          className="rounded-lg bg-[var(--color-bg-success)] p-3 text-[var(--color-text-success)]"
+        >
           {sessao.aviso}
         </p>
       )}

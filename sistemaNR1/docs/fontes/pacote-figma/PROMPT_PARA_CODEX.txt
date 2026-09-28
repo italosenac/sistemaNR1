@@ -1,0 +1,9 @@
+Leia o arquivo FIGMA_HANDOFF_SISTEMANR1.md anexado e utilize o CSS e o JSON do pacote como referências visuais extraídas do meu Figma: https://www.figma.com/design/cGW4JPUdRYtAME048NAU5I/Plataforma-NR-1?node-id=46-9
+
+Implemente o Design System no frontend atual do sistemaNR1 (Next.js, React, Tailwind e shadcn/ui), sem recriar o projeto. Inspecione primeiro os componentes e estilos existentes e reaproveite-os. Crie tokens semânticos e componentes compartilhados; aplique-os inicialmente ao layout global, autenticação, dashboard e seleção de empresa, preservando a E1. Depois, utilize-os nas novas telas M1, M2 e M3 conforme as SPECs originais.
+
+CRÍTICO: o Figma traz o exemplo de 5 respostas, mas as regras do projeto exigem mínimo de 7. O Figma menciona 8 perfis, mas a E1 possui 4 papéis. Preserve o sistema implementado e nunca amplie autorizações ou afrouxe o anonimato para reproduzir exemplos visuais.
+
+Se seu Figma MCP estiver conectado, use os node IDs do Markdown para obter screenshots e assets oficiais; não deixe URLs temporárias de assets no código. Se não estiver disponível, trabalhe com os valores confirmados no handoff, explicite as partes não acessíveis e não invente fidelidade visual.
+
+Não altere migrações remotas, Auth, RLS, segurança, grants ou produção sem autorização. Rode testes focados, typecheck, lint e build. Ao final, liste mudanças, testes reais e pendências de fidelidade visual.

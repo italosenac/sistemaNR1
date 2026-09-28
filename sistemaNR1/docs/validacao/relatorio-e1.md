@@ -1,10 +1,10 @@
 # Relatório de validação — E1 / Camada 0
 
-Data: 2026-09-27. Escopo: identidade, autorização e estrutura organizacional da Camada 0. Todos os dados de teste foram fictícios. Esta evidência não implementa nem conclui M1, M2, M3, M4, M5 ou M6.
+Data inicial: 2026-09-27. Atualização remota: 2026-09-28. Escopo: identidade, autorização e estrutura organizacional da Camada 0. Todos os dados de teste foram fictícios. Esta evidência não implementa nem conclui M1, M2, M3, M4, M5 ou M6.
 
 ## Estado
 
-**Parcialmente implementado.** A E1 está funcional e validada contra o Supabase local isolado. O usuário autorizou a migração remota, que foi aplicada com êxito. O login remoto restrito foi criado e auditado. Em diagnóstico posterior, a conexão do driver `pg` ao pooler foi autenticada com TLS, CA e hostname validados; a consulta `pg_stat_ssl` retornou `false` para a conexão entre o pooler e o backend PostgreSQL. Essa distinção permanece como pendência de segurança antes da validação funcional remota. `DATABASE_URL` não foi configurada no Nest e não foram criados dados de teste remotos. Os 21 RFs originais permanecem pendentes e inalterados.
+**Parcialmente implementado.** A E1 está funcional e validada no Supabase local. A migração remota foi aplicada e cinco cenários funcionais remotos com fixtures fictícias passaram, incluindo Auth por link de fixture, Nest, PostgreSQL restrito, RLS, isolamento e navegador. O cadastro público remoto e a entrega de e-mail não passaram por validação: duas tentativas retornaram HTTP 400 sem causa sanitizada preservada, e a seguinte retornou `over_email_send_rate_limit` (HTTP 429). A regressão de navegador concluiu seus 13 cenários, mas o processo Playwright travou no encerramento e foi interrompido. Por essas lacunas, **E1 ainda não atende ao critério de “Concluído e testado”**. Os 21 RFs originais permanecem pendentes e inalterados. A decisão acadêmica de usar TLS validado até o pooler não comprova TLS de ponta a ponta nem autoriza dados pessoais reais.
 
 ## Entrega implementada
 
@@ -53,6 +53,20 @@ Com a CA indicada, DNS e TCP passaram, o endpoint do pooler aceitou TLS e a cade
 
 O resultado de `pg_stat_ssl` **não mede o canal cliente → pooler**: a [documentação do PostgreSQL](https://www.postgresql.org/docs/current/monitoring-stats.html) define essa visão por processo backend; a [documentação do Supabase sobre o pooler](https://supabase.com/docs/guides/troubleshooting/supavisor-and-connection-terminology-explained-9pr_ZO) distingue a conexão do cliente da conexão que o pooler abre com o banco. O [Supavisor documenta `upstream_ssl` separadamente de `enforce_ssl`](https://github.com/supabase/supavisor/blob/main/docs/configuration/tenants.md). Assim, os testes comprovam TLS verificado até o pooler e mostram que a conexão backend observada não usa TLS. A interpretação de que o pooler encerra TLS e abre outra conexão sem TLS é **inferência** compatível com esses resultados, não confirmação da configuração interna do serviço. Nenhuma configuração de segurança foi alterada para investigar. Como o requisito pedido incluía confirmar TLS ativo em `pg_stat_ssl`, esta verificação **não foi aprovada integralmente**. Permanecem pendentes a decisão sobre aceitar a terminação TLS no pooler ou exigir outro endpoint/caminho de conexão com TLS também visível no backend, e os testes funcionais remotos.
 
+### Decisão acadêmica e execução funcional remota (2026-09-28)
+
+O usuário autorizou explicitamente, **somente para este MVP com dados fictícios**, a conexão NestJS → pooler oficial com TLS, CA e hostname validados. A decisão aceita a evidência `pg_stat_ssl.ssl = false` para a conexão observada entre pooler e PostgreSQL; **não afirma TLS de ponta a ponta nem prontidão para produção**. Não houve alteração na configuração TLS do Supabase, migração adicional, recriação de login ou mudança de permissões.
+
+`DATABASE_URL` do login `sistemanr1_runtime_e1` e `DATABASE_CA_CERT_PATH` foram adicionados exclusivamente ao `.env` privado do NestJS, com cópia anterior em `.e1/`, ambos ignorados pelo Git. O Next.js permaneceu apenas com chave publicável e URL pública; a verificação confirmou ausência de chave secreta e URL PostgreSQL no seu ambiente. O driver manteve `rejectUnauthorized: true` e `servername` do endpoint oficial. Valores de credenciais, strings completas e conteúdo da CA não foram registrados.
+
+Consulta à configuração Auth pela API oficial mostrou `Site URL` já em `http://localhost:3000`, cadastro habilitado e confirmação de e-mail exigida. Foram adicionadas e reconfirmadas as quatro URLs **exatas** de confirmação e atualização de senha para `localhost:3000` e `localhost:3200`, preservando as demais configurações. Não foram alterados SMTP, limites de envio ou templates. Ver [orientação oficial de Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).
+
+`pnpm.cmd test:remoto:e1` passou nos **cinco cenários** com cinco contas e duas empresas sintéticas identificadas por prefixo `E1REMOTO-` e manifesto local ignorado pelo Git. A suíte validou criação Auth por `admin/generate_link` de fixture, confirmação por token real, login/senha incorreta, perfil, bootstrap, quatro papéis, vínculos e matrículas distintos por empresa, estrutura, lotação, referências cruzadas bloqueadas, acesso negado, revogação imediata com o mesmo JWT, RLS de leitura e jornada Next.js → NestJS → Supabase em navegador real. A chave secreta foi usada somente para criar links Auth das fixtures, nunca como credencial geral de banco ou execução da aplicação. `node scripts/testar-rls-remoto.mjs` comprovou, com login restrito e transação revertida, que gestor de A lê A e não lê nem altera B.
+
+O cadastro público com endereços de exemplo fictícios retornou HTTP 400 em duas tentativas sem código de causa preservado; novas tentativas alcançaram HTTP 429, `over_email_send_rate_limit`. Nenhuma resposta dessas tentativas confirmou criação de conta ou entrega de e-mail. A [documentação oficial do SMTP padrão](https://supabase.com/docs/guides/auth/auth-smtp) informa restrição a membros da organização e limite baixo de mensagens; não se usou endereço real para contornar a restrição. Portanto o link administrativo prova criação/confirmação Auth para fixtures, **mas não prova o fluxo público de cadastro nem envio/recebimento de e-mail remoto**. A conclusão acadêmica da E1 depende dessa validação ou de um critério de aceitação revisto explicitamente.
+
+Duas contas de fixture podem ter sido criadas nas primeiras tentativas de `generate_link` antes de o teste aceitar o formato plano da resposta remota; elas mantêm prefixo fictício `E1REMOTO-`, mas seus IDs não foram incluídos no manifesto. Não foram alteradas ou consultadas contas de terceiros. O inventário geral de usuários Auth não foi executado porque a revisão automática rejeitou uma consulta que poderia ler contas fora do escopo das fixtures.
+
 ## Testes executados
 
 | Comando / verificação | Resultado |
@@ -72,15 +86,23 @@ O resultado de `pg_stat_ssl` **não mede o canal cliente → pooler**: a [docume
 | Diagnóstico segregado autorizado de DNS, TCP e TLS | DNS/TCP aprovados; TLS falhou com `SELF_SIGNED_CERT_IN_CHAIN`; autenticação não tentada |
 | Correção da configuração `pg` e verificações locais | CA obrigatória e `ssl` explícito preservados; typecheck, lint e format:check aprovados |
 | Diagnóstico com CA oficial e login restrito, somente leitura | CA válida, DNS/TCP, TLS/hostname e autenticação aprovados; `current_user` restrito confirmado; `pg_stat_ssl.ssl = false` no backend, logo o critério de TLS ativo nessa visão não foi atendido |
-| Testes remotos de Auth, persistência, autorização, RLS e isolamento | **Não executados**, por interrupção após a falha de conexão |
+| Testes remotos até 2026-09-27 | **Não executados** naquela data, por interrupção após a falha inicial de conexão |
+| `pnpm.cmd test:remoto:e1` — 2026-09-28 | Aprovado: 5/5 cenários de fixtures Auth, API, persistência, autorização, RLS, isolamento e navegador |
+| `node scripts/testar-rls-remoto.mjs` — 2026-09-28 | Aprovado: leitura A, bloqueio de leitura/escrita B; transação revertida |
+| Cadastro público remoto — 2026-09-28 | **Não aprovado**: HTTP 400 em duas tentativas; depois HTTP 429 `over_email_send_rate_limit`; entrega de e-mail não verificada |
+| `pnpm.cmd typecheck`, `pnpm.cmd lint`, `pnpm.cmd format:check`, `pnpm.cmd build` — 2026-09-28 | Aprovados; build Nest/contratos e 27 rotas estáticas Next |
+| `pnpm.cmd test:api` — 2026-09-28 | Aprovado com código 0: 52 testes Jest em cinco suítes |
+| `pnpm.cmd test` — 2026-09-28 | 52 Jest e 13 Playwright passaram, porém o processo não encerrou após os cenários; interrompido manualmente, sem código final 0 |
 
 Os 10 cenários de integração real cobriram: cadastro e confirmação de e-mail, rejeição de senha/token inválido e expirado, bootstrap, vínculos em duas empresas, matrícula NULL/duplicada/em empresas distintas, quatro papéis, carteira da consultoria, estrutura e lotação, FKs cruzadas, sobreposição de grupos, snapshots e concorrência, revogação, Data API, perfil parcial/legado, inativação, concorrência de CNPJ/matrícula, fluxo completo do navegador, recuperação de senha e preservação do último gestor.
 
-Todas as verificações locais planejadas para a E1 foram executadas. A aplicação da migração remota ocorreu após aprovação explícita; a validação funcional remota continua pendente da resolução da conexão segura.
+As verificações locais e os cenários remotos de negócio acima foram executados. A aplicação da migração remota ocorreu após aprovação explícita. O cadastro público/entrega de e-mail e o encerramento limpo da regressão Playwright ainda carecem de evidência para declarar a E1 concluída.
 
 ## Limites e pendências
 
-- O canal cliente → pooler está autenticado com TLS/CA/hostname validados, mas `pg_stat_ssl.ssl = false` no backend. Avaliar esse limite do pooler frente ao requisito de TLS fim a fim antes de configurar `DATABASE_URL`. Ajustes remotos de redirects/Auth e testes funcionais remotos ainda não foram feitos.
+- O canal NestJS → pooler usa TLS/CA/hostname validados; `pg_stat_ssl.ssl = false` no backend. Esta limitação foi aceita apenas para o MVP fictício, sem comprovar TLS de ponta a ponta ou permitir dados pessoais reais.
+- O SMTP padrão não permitiu validar cadastro público e entrega de e-mail com endereços fictícios. Não há evidência remota suficiente para concluir esse critério sem caixa de teste/SMTP apropriado ou decisão explícita sobre escopo de aceitação.
+- A regressão Jest passou e os 13 cenários Playwright passaram. Uma repetição após liberar explicitamente a requisição interceptada no teste de timeout também executou os 13 cenários, mas o comando Playwright continuou travando no encerramento no Windows; o código final não foi 0.
 - O limite elevado de e-mails no `supabase/config.toml` serve somente ao Mailpit local e não deve ser promovido ao projeto remoto.
 - Sessão web fica somente em memória: recarregar a página ou abrir nova aba exige autenticar novamente. É uma decisão de minimização documentada, não persistência de token no navegador.
 - O papel de consultoria isolado não recebe capacidade técnica ou administrativa. `leitor` não é migrado automaticamente.
@@ -88,4 +110,4 @@ Todas as verificações locais planejadas para a E1 foram executadas. A aplicaç
 
 ## Próxima etapa após tratar a falha
 
-Decidir, com base no requisito de segurança, se TLS verificado até o pooler e conexão interna sem TLS são aceitáveis; caso seja exigido TLS fim a fim, avaliar um endpoint direto acessível que apresente `pg_stat_ssl.ssl = true`, mantendo CA/hostname validados e o login restrito. Somente após resolver essa divergência, configurar `DATABASE_URL` e `DATABASE_CA_CERT_PATH` no backend e planejar testes remotos de Auth, persistência, RLS e isolamento com identidades fictícias. Não usar `db reset` remoto, conexão administrativa no runtime ou `rejectUnauthorized: false`. O login remoto já existe: não repetir `CREATE ROLE` nem girar a senha por tentativa cega.
+Encerramento provisório autorizado em 2026-09-28: **Parcialmente implementada**, com cinco cenários funcionais remotos aprovados. Permanecem pendentes o cadastro público e a entrega de e-mail remoto, o encerramento limpo do Playwright, a verificação de TLS no trecho pooler → PostgreSQL e a identificação segura de duas possíveis contas de fixture órfãs. Não repetir envios de e-mail, não fazer inventário geral Auth e não consultar, alterar ou excluir contas de terceiros. Os manifestos das fixtures devem ser preservados. A missão conjunta Design System + E2 + E3 + E4 foi autorizada em seguida, com novas migrações somente locais até aprovação remota específica. Para qualquer uso futuro com dados reais, reavaliar a conexão pooler → PostgreSQL e demais pendências de segurança; esta validação acadêmica não autoriza produção.

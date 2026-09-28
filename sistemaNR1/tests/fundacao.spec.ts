@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { Route } from '@playwright/test';
 
 const enderecoSaude = 'http://localhost:3101/health';
 
@@ -107,7 +108,10 @@ for (const cenario of [
 test('encerra espera excessiva e mantém a página utilizável', async ({
   page,
 }) => {
-  await page.route(enderecoSaude, () => {});
+  let requisicaoPendente: Route | undefined;
+  await page.route(enderecoSaude, (rota) => {
+    requisicaoPendente = rota;
+  });
   await page.goto('/');
   await expect(page.getByRole('status')).toHaveText('Verificando conexão...');
   await expect(page.getByRole('status')).toHaveText('API indisponível', {
@@ -116,6 +120,7 @@ test('encerra espera excessiva e mantém a página utilizável', async ({
   await expect(
     page.getByRole('button', { name: 'Verificar novamente' }),
   ).toBeEnabled();
+  await requisicaoPendente?.abort('failed');
 });
 
 test('celular exibe os módulos e controles sem rolagem horizontal', async ({

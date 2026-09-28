@@ -1,11 +1,5 @@
 import Link from 'next/link';
-import {
-  ClipboardList,
-  FileStack,
-  Leaf,
-  ScanLine,
-  ShieldCheck,
-} from 'lucide-react';
+import { ClipboardList, FileStack, ScanLine, ShieldCheck } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { EstadoDaApi } from '@/components/estado-da-api';
 
@@ -32,22 +26,22 @@ const modulos = [
 
 export default function PaginaInicial() {
   return (
-    <div className="min-h-screen bg-[#f6f7f3] text-slate-900">
-      <header className="border-b border-slate-200 bg-white/80">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5 sm:px-10">
           <Link
             href="/"
             aria-label="SISNR1 — página inicial"
             className="flex items-center gap-3 font-semibold tracking-tight"
           >
-            <span className="rounded-xl bg-teal-900 p-2.5 text-white">
-              <Leaf className="size-5" aria-hidden="true" />
+            <span className="rounded-xl bg-primary p-2.5 text-white">
+              <ShieldCheck className="size-5" aria-hidden="true" />
             </span>
             <span>
-              SIS<span className="text-teal-700">NR1</span>
+              SIS<span className="text-primary">NR1</span>
             </span>
           </Link>
-          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">
+          <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
             Ambiente demonstrativo
           </span>
         </div>
@@ -56,25 +50,25 @@ export default function PaginaInicial() {
         <div className="mb-8 flex flex-wrap gap-5">
           <Link
             href="/dashboard"
-            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+            className="text-sm font-medium text-[var(--color-text-brand)] underline underline-offset-4"
           >
             Acessar painel
           </Link>
           <Link
             href="/cadastro"
-            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+            className="text-sm font-medium text-[var(--color-text-brand)] underline underline-offset-4"
           >
             Criar conta
           </Link>
           <Link
             href="/usuarios"
-            className="text-sm font-medium text-teal-800 underline underline-offset-4"
+            className="text-sm font-medium text-[var(--color-text-brand)] underline underline-offset-4"
           >
             Usuários e vínculos
           </Link>
         </div>
-        <div className="mb-4 flex items-center gap-2 text-xs font-semibold tracking-[0.15em] text-teal-800 uppercase">
-          <span className="h-px w-8 bg-teal-700" /> Cuidado que começa no
+        <div className="mb-4 flex items-center gap-2 text-xs font-semibold tracking-[0.15em] text-[var(--color-text-brand)] uppercase">
+          <span className="h-px w-8 bg-primary" /> Cuidado que começa no
           trabalho
         </div>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">
@@ -110,7 +104,7 @@ export default function PaginaInicial() {
               >
                 <CardContent className="p-6 sm:p-7">
                   <div className="mb-8 flex items-center justify-between">
-                    <span className="rounded-xl bg-teal-50 p-3 text-teal-800">
+                    <span className="rounded-xl bg-secondary p-3 text-[var(--color-text-brand)]">
                       <Icone className="size-6" aria-hidden="true" />
                     </span>
                     <span className="font-mono text-xs text-slate-400">
@@ -139,7 +133,7 @@ export default function PaginaInicial() {
         </div>
         <div className="mt-8 flex items-start gap-3 text-sm leading-6 text-slate-500">
           <ShieldCheck
-            className="mt-0.5 size-5 shrink-0 text-teal-700"
+            className="mt-0.5 size-5 shrink-0 text-primary"
             aria-hidden="true"
           />
           <p>

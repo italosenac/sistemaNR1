@@ -81,3 +81,7 @@ Os ambientes locais continuam ignorados; chave secreta continua somente no backe
 ## Aplicação autorizada e interrupção — 2026-09-27
 
 Após aprovação explícita, o histórico remoto, o checksum e o dry-run foram reconfirmados. A única migração aprovada foi aplicada; leitura posterior confirmou 13 tabelas, 34 políticas, 23 gatilhos e a versão no histórico. O login PostgreSQL remoto restrito foi criado e auditado. A tentativa de conexão pelo endpoint real do pooler com TLS `verify-full` e verificação de certificado falhou; a execução foi interrompida sem alterar a configuração do Nest e sem rodar testes remotos de usuários. Estado e pendências detalhados no [relatório E1](relatorio-e1.md).
+
+## Retomada acadêmica — 2026-09-28
+
+O certificado CA oficial foi validado e configurado no Nest com o login restrito. A conexão cliente → pooler passou com TLS, CA e hostname verificados; `pg_stat_ssl.ssl = false` na conexão backend observada. O usuário autorizou esse limite exclusivamente para o MVP com dados fictícios, sem afirmar TLS de ponta a ponta ou permitir uso com dados reais. `DATABASE_URL` e `DATABASE_CA_CERT_PATH` estão apenas no ambiente privado do Nest. As URLs Auth de desenvolvimento foram configuradas e cinco cenários remotos com fixtures passaram. O cadastro público/entrega de e-mail remoto não foi validado devido às restrições do serviço de e-mail padrão. Ver [relatório E1](relatorio-e1.md).

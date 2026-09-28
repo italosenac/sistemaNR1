@@ -183,19 +183,22 @@ export function FormularioAuth({
             />
           </div>
         )}
-        <Button type="submit" disabled={ocupado}>
+        <Button type="submit" disabled={ocupado} className="w-full sm:w-auto">
           {ocupado ? 'Aguarde...' : titulo}
         </Button>
       </form>
       {erro && <MensagemDeErro mensagem={erro} />}
       {sucesso && (
-        <p role="status" className="rounded-lg bg-teal-50 p-3 text-teal-900">
+        <p
+          role="status"
+          className="rounded-lg bg-[var(--color-bg-success)] p-3 text-[var(--color-text-success)]"
+        >
           {sucesso}
         </p>
       )}
       <nav
         aria-label="Acesso à conta"
-        className="flex flex-wrap gap-4 text-sm text-teal-800 underline"
+        className="flex flex-wrap gap-4 text-sm text-[var(--color-text-brand)] underline underline-offset-4"
       >
         {modo !== 'login' && <Link href="/login">Entrar</Link>}
         {modo !== 'cadastro' && <Link href="/cadastro">Criar conta</Link>}

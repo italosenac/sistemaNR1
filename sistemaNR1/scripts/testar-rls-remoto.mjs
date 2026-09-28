@@ -5,7 +5,9 @@ import { resolve } from 'node:path';
 const requireApi = createRequire(resolve('apps/api/package.json'));
 const { Client } = requireApi('pg');
 const ref = 'sfutycdmcjsvmfrvtxam';
-const manifesto = JSON.parse(readFileSync('.e1/fixtures-remotas.local.json', 'utf8'));
+const manifesto = JSON.parse(
+  readFileSync('.e1/fixtures-remotas.local.json', 'utf8'),
+);
 const ambiente = Object.fromEntries(
   readFileSync('apps/api/.env', 'utf8')
     .split(/\r?\n/)
