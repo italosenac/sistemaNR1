@@ -11,7 +11,7 @@ export function criarClientePublico() {
   if (!url || !chave) return null;
   const cliente = createClient(url, chave, {
     auth: {
-      persistSession: false,
+      persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
     },
