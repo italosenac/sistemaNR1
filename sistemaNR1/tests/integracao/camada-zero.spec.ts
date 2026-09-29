@@ -506,11 +506,9 @@ test('navegador real: login, perfil, empresa, estrutura, gestão e alternância 
       .filter({ hasText: 'Empresa Navegador ' + sufixo }),
   ).toHaveCount(1);
   await page
-    .getByLabel('Empresa', { exact: true })
+    .getByLabel('Empresa ativa', { exact: true })
     .selectOption({ label: 'Empresa Navegador ' + sufixo });
-  await page
-    .getByRole('link', { name: 'Estabelecimentos', exact: true })
-    .click();
+  await page.getByRole('link', { name: 'Estrutura', exact: true }).click();
   await page.getByLabel('Nome', { exact: true }).fill('Unidade Navegador');
   await page
     .getByRole('button', { name: 'Salvar cadastro', exact: true })
@@ -521,7 +519,7 @@ test('navegador real: login, perfil, empresa, estrutura, gestão e alternância 
   await expect(
     page.getByText('Unidade Navegador', { exact: true }),
   ).toBeVisible();
-  await page.getByLabel('Empresa', { exact: true }).selectOption(a);
+  await page.getByLabel('Empresa ativa', { exact: true }).selectOption(a);
   await expect(page.getByText('Unidade A', { exact: true })).toBeVisible();
   await expect(
     page.getByText('Unidade Navegador', { exact: true }),
@@ -537,13 +535,99 @@ test('navegador real: login, perfil, empresa, estrutura, gestão e alternância 
   await page.getByLabel('E-mail', { exact: true }).fill(consultoria.email);
   await page.getByLabel('Senha', { exact: true }).fill(senha);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-  await page
-    .getByRole('link', { name: 'Carteira da consultoria', exact: true })
-    .click();
-  await expect(page.getByLabel('Empresa', { exact: true })).toHaveValue(b);
+  await page.getByRole('link', { name: 'Consultoria', exact: true }).click();
+  await expect(page.getByLabel('Empresa ativa', { exact: true })).toHaveValue(
+    b,
+  );
   await expect(
     page.getByRole('link', { name: 'Usuários', exact: true }),
   ).toHaveCount(0);
+});
+
+test('inspeção autenticada das páginas E1 em desktop e celular', async ({
+  page,
+}) => {
+  test.setTimeout(240000);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/login');
+  await expect(page.getByLabel('E-mail', { exact: true })).toBeVisible();
+  await page.screenshot({ path: '.e1/visual-e1-login-desktop.png' });
+  await page.getByLabel('E-mail', { exact: true }).fill(gestor.email);
+  await page.getByLabel('Senha', { exact: true }).fill(senha);
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Sair', exact: true }),
+  ).toBeVisible();
+  const rotas = [
+    '/dashboard',
+    '/meu-perfil',
+    '/empresas',
+    '/usuarios',
+    '/estabelecimentos',
+    '/setores',
+    '/funcoes',
+    '/turnos',
+    '/grupos',
+    '/lotacoes',
+  ];
+  for (const rota of rotas) {
+    await page.goto(rota);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Sair', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText('Carregando sua conta...')).toHaveCount(0);
+    if (rota === '/dashboard')
+      await expect(page.getByLabel('Dados da empresa')).toBeVisible();
+    if (rota === '/usuarios')
+      await expect(
+        page.getByRole('button', { name: 'Cadastrar usuário' }),
+      ).toBeVisible();
+    if (rota === '/estabelecimentos')
+      await expect(
+        page.getByRole('button', { name: 'Salvar cadastro' }),
+      ).toBeVisible();
+    if (
+      rota === '/dashboard' ||
+      rota === '/usuarios' ||
+      rota === '/estabelecimentos'
+    )
+      await page.screenshot({
+        path: `.e1/visual-e1-${rota.slice(1)}-desktop.png`,
+      });
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const rota of [
+    '/dashboard',
+    '/meu-perfil',
+    '/usuarios',
+    '/estabelecimentos',
+  ]) {
+    await page.goto(rota);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Sair', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText('Carregando sua conta...')).toHaveCount(0);
+    if (rota === '/dashboard')
+      await expect(page.getByLabel('Dados da empresa')).toBeVisible();
+    if (rota === '/usuarios')
+      await expect(
+        page.getByRole('button', { name: 'Cadastrar usuário' }),
+      ).toBeVisible();
+    if (rota === '/estabelecimentos')
+      await expect(
+        page.getByRole('button', { name: 'Salvar cadastro' }),
+      ).toBeVisible();
+    await page.screenshot({
+      path: `.e1/visual-e1-${rota.slice(1)}-mobile.png`,
+    });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+  }
 });
 
 test('navegador real: cadastro com confirmação e recuperação de senha pelo Mailpit', async ({

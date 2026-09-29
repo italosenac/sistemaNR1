@@ -187,6 +187,7 @@ export function AreaAutenticada({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 text-sm">
             <Link
               href="/meu-perfil"
+              aria-label="Meu perfil"
               className="inline-flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-muted"
             >
               <UserRound aria-hidden="true" className="size-4" />

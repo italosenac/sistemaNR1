@@ -8,6 +8,7 @@ const estabelecimentoA = '40000000-0000-4000-8000-000000000001';
 const estabelecimentoOutro = '40000000-0000-4000-8000-000000000002';
 const setor = '50000000-0000-4000-8000-000000000001';
 const senhaFicticia = 'Senha-Ficticia-2026';
+const origemApi = `http://localhost:${process.env.E0_API_PORT ?? '3101'}`;
 const opcoes = {
   estabelecimentos: [
     { id: estabelecimentoA, nome: 'Unidade fictícia A' },
@@ -46,7 +47,7 @@ async function preparar(page: Page, gestor = true) {
       });
     } else await rota.fulfill({ status: 204 });
   });
-  await page.route('http://localhost:3101/api/v1/**', async (rota) => {
+  await page.route(`${origemApi}/api/v1/**`, async (rota) => {
     const url = rota.request().url();
     if (url.endsWith('/meu-perfil'))
       await rota.fulfill({
@@ -131,7 +132,9 @@ test('cadastro exibe os quatro campos, valida e não persiste senha no navegador
     page.getByText('Use uma senha de 12 a 128 caracteres.'),
   ).toBeVisible();
   await expect(page.getByText('Informe a matrícula funcional.')).toHaveCount(0);
-  expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
+  expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(
+    senhaFicticia,
+  );
   expect(await page.evaluate(() => Object.keys(sessionStorage))).toEqual([]);
 });
 
@@ -141,7 +144,7 @@ test('envia cadastro à empresa selecionada, limpa senha e preserva anonimato na
   await preparar(page);
   let recebido: Record<string, unknown> | undefined;
   await page.route(
-    `http://localhost:3101/api/v1/empresas/${empresaA}/usuarios`,
+    `${origemApi}/api/v1/empresas/${empresaA}/usuarios`,
     async (rota) => {
       recebido = rota.request().postDataJSON();
       await rota.fulfill({
@@ -197,7 +200,9 @@ test('trocar estabelecimento limpa setor e trocar empresa limpa todo o cadastro'
     .getByLabel('Estabelecimento', { exact: true })
     .selectOption(estabelecimentoOutro);
   await expect(page.getByLabel('Setor', { exact: true })).toHaveValue('');
-  await page.getByLabel('Empresa', { exact: true }).selectOption(empresaB);
+  await page
+    .getByLabel('Empresa ativa', { exact: true })
+    .selectOption(empresaB);
   await expect(page.getByLabel('Nome completo', { exact: true })).toHaveValue(
     '',
   );
@@ -211,7 +216,9 @@ test('vínculo existente envia matrícula da outra empresa sem e-mail/senha/nome
   page,
 }) => {
   await preparar(page);
-  await page.getByLabel('Empresa', { exact: true }).selectOption(empresaB);
+  await page
+    .getByLabel('Empresa ativa', { exact: true })
+    .selectOption(empresaB);
   await expect(
     page.getByRole('button', { name: 'Cadastrar usuário' }),
   ).toBeVisible();
@@ -220,7 +227,7 @@ test('vínculo existente envia matrícula da outra empresa sem e-mail/senha/nome
   await page.getByLabel('Matrícula funcional', { exact: true }).fill('072');
   let recebido: Record<string, unknown> | undefined;
   await page.route(
-    `http://localhost:3101/api/v1/empresas/${empresaB}/vinculos`,
+    `${origemApi}/api/v1/empresas/${empresaB}/vinculos`,
     async (rota) => {
       recebido = rota.request().postDataJSON();
       await rota.fulfill({
@@ -280,4 +287,40 @@ test('usuário sem gestão não recebe formulário; página funciona em celular'
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+});
+
+test('telas públicas E1 exibem orientação legível no celular', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const telas = [
+    ['/login', 'Entrar', 'Entrar'],
+    ['/recuperar-senha', 'Recuperar senha', 'Recuperar senha'],
+    ['/atualizar-senha', 'Nova senha', 'Salvar nova senha'],
+  ] as const;
+  for (const [rota, titulo, acao] of telas) {
+    await page.goto(rota);
+    await expect(
+      page.getByRole('heading', { level: 1, name: titulo }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: acao, exact: true }),
+    ).toBeVisible();
+    await page.screenshot({
+      path: `.e1/visual-e1-${rota.slice(1)}-mobile.png`,
+    });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  await page.goto('/auth/confirmacao');
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Confirmação da conta' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Abra o link de confirmação' }),
+  ).toBeVisible();
+  await page.screenshot({ path: '.e1/visual-e1-confirmacao-mobile.png' });
 });

@@ -49,6 +49,9 @@ select pg_temp.afirmar((select sum(quantidade_estimada_trabalhadores)=20 from or
 select pg_temp.negar($q$insert into organizacao.grupos(empresa_id,estabelecimento_id,setor_id,nome,quantidade_estimada_trabalhadores) values(current_setting('e1.empresa_a')::uuid,'40000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001','Sobreposição',20)$q$,'23514');
 select pg_temp.negar($q$insert into organizacao.lotacoes_usuario(empresa_id,vinculo_organizacional_id,estabelecimento_id,setor_id) values(current_setting('e1.empresa_a')::uuid,'20000000-0000-4000-8000-000000000003','40000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001')$q$,'23514');
 insert into organizacao.lotacoes_usuario(empresa_id,vinculo_organizacional_id,estabelecimento_id,setor_id) values(current_setting('e1.empresa_a')::uuid,'20000000-0000-4000-8000-000000000003','40000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001');
+update organizacao.perfis set nome_completo='Gestor Fictício A Atualizado' where id=organizacao.usuario_atual();
+insert into organizacao.identificacoes_profissionais(usuario_id,conselho,numero_registro,uf) values(organizacao.usuario_atual(),'Conselho Fictício','FICT-001','SP');
+insert into organizacao.estruturas_congeladas(empresa_id,estabelecimento_id,revisao,populacao_total,conteudo,criado_por) values(current_setting('e1.empresa_a')::uuid,'40000000-0000-4000-8000-000000000001',1,20,'{}'::jsonb,organizacao.usuario_atual());
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',true);
@@ -94,5 +97,8 @@ select pg_temp.afirmar(not organizacao.tem_vinculo(current_setting('e1.empresa_b
 reset role;
 select pg_temp.afirmar(organizacao.cnpj_valido('12ABC34501DE35') and not organizacao.cnpj_valido('12ABC34501DE34'),'Dígitos CNPJ inválidos');
 select pg_temp.afirmar((select count(*)>0 from organizacao.eventos_auditoria),'Auditoria vazia');
+select pg_temp.afirmar((select count(*)=1 from organizacao.eventos_auditoria where entidade='perfis' and operacao='UPDATE' and registro_id='10000000-0000-4000-8000-000000000001' and ator_id='10000000-0000-4000-8000-000000000001'),'Edição de perfil sem auditoria');
+select pg_temp.afirmar((select count(*)=1 from organizacao.eventos_auditoria where entidade='identificacoes_profissionais' and operacao='INSERT' and ator_id='10000000-0000-4000-8000-000000000001'),'Identificação profissional sem auditoria');
+select pg_temp.afirmar((select count(*)=1 from organizacao.eventos_auditoria where entidade='estruturas_congeladas' and operacao='INSERT' and empresa_id=current_setting('e1.empresa_a')::uuid and ator_id='10000000-0000-4000-8000-000000000001'),'Snapshot sem auditoria empresarial');
 select pg_temp.negar('delete from organizacao.eventos_auditoria','42501');
 rollback;

@@ -96,7 +96,8 @@ export function FormularioAuth({
           'Se houver confirmação pendente, as instruções serão enviadas ao e-mail informado.',
         );
       } else {
-        if (!sessao)
+        const { data: recuperacao } = await cliente.auth.getSession();
+        if (!recuperacao.session)
           throw new Error('Abra o link de recuperação recebido por e-mail.');
         const { error } = await cliente.auth.updateUser({ password: senha });
         if (error)

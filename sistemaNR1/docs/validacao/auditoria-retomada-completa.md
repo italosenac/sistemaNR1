@@ -88,7 +88,15 @@ Fontes: `specs/camada-0/usuarios-perfis.spec.md`, `specs/camada-0/estrutura-orga
 | Bootstrap, associação de conta existente e snapshots | PARCIAL | Fluxos, motivo de associação, congelamento e revisão estrutural aparecem no código e nos testes; faltam evidências ampliadas de revisão/revogação/concorrência e de conta pública existente. |
 | Eventos de auditoria | PARCIAL | Tabelas/gatilhos C0 e consulta restrita existem; política operacional de retenção, cobertura de todas as mutações e inspeção de logs ainda não comprovadas. |
 | RLS, FORCE RLS, runtime restrito e TLS | PARCIAL | Migração aplica RLS/FORCE, grants estreitos e login restrito; testes local/remoto fictícios de isolamento passaram. Cliente→pooler validado com CA/hostname; `pg_stat_ssl.ssl=false` no backend observado não comprova TLS ponta a ponta. Aceite acadêmico limitado a dados fictícios. |
-| Regressão E1 em navegador | PARCIAL | Treze cenários passaram historicamente, mas processo Playwright não encerrou limpo; inspeção visual autenticada integral segue pendente. |
+| Regressão E1 em navegador | COMPROVADA localmente na retomada | Falha histórica de encerramento superada: 7 Playwright de usuários e 11 de integração local passaram com saída 0; rotas E1 percorridas em desktop/mobile. Signup/entrega remotos continuam pendentes. |
+
+### Retomada E1 — 2026-09-29
+
+Em `italo_dev`, HEAD inicial `32496e348d725542a7585dcc63c827af5b20364b` e árvore limpa, a E1 foi repetida com dados sintéticos **somente locais**. Jest E1 passou 38/38; SQL/RLS local passou após acrescentar asserções de auditoria; Playwright de usuários passou 7/7 com saída 0. A integração C0 passou 11/11 após a correção incremental, incluindo inspeção autenticada de rotas E1 desktop/mobile e saída 0. As capturas privadas foram revisadas depois do carregamento das páginas; resultados e limites no [relatório E1](relatorio-e1.md). O encerramento limpo do Playwright E1 foi comprovado localmente, superando o bloqueio histórico do processo no Windows.
+
+`pnpm.cmd typecheck`, `pnpm.cmd lint`, `pnpm.cmd format:check` e `pnpm.cmd build` terminaram com código 0; `git diff --check` também passou. As portas locais de teste 3200/3201/3210/3211 ficaram sem listeners após o encerramento. Nenhum segredo foi identificado nas linhas acrescentadas do diff por padrões de chave privada, URL PostgreSQL autenticada, chave secreta Supabase e token longo. O alcance desse exame não equivale a auditoria geral de segurança.
+
+Lacuna de implementação confirmada: os gatilhos de auditoria originais não cobriam `perfis`, `identificacoes_profissionais` nem `estruturas_congeladas`. A nova migração `20260929000100_e1_auditoria_perfil_profissional_snapshot.sql` foi aplicada **apenas localmente**, sem editar versões aplicadas ou consultar os dois perfis remotos desconhecidos. O SQL local agora afirma eventos de perfil, identificação profissional e snapshot. O formulário de nova senha passou a obter a sessão atual do Auth no envio para evitar a corrida do link de recuperação; a confirmação sem link agora orienta a pessoa. Os testes de UI usam rótulos atuais e confirmam ausência de senha persistida pelo aplicativo. A migração remota depende de autorização específica após as checagens prévias exigidas. Até lá, e enquanto o signup/entrega pública remota não for comprovado, **E1 permanece PARCIAL**. A decisão acadêmica existente comprova TLS Nest→pooler com CA/hostname, sem inferir TLS ponta a ponta.
 
 ## 4. E2 / M1 — sete fichas de RF
 
@@ -297,7 +305,7 @@ Contagem: **0 COMPROVADO, 17 PARCIAL, 0 IMPLEMENTADO SEM EVIDÊNCIA, 4 AUSENTE, 
 ## 8. Dívidas técnicas
 
 1. **Proteção M1:** a fotografia evita pequenos grupos e complementos imediatos, mas comparação temporal, filtros adicionais e exportação podem permitir diferenciação. Definir política antes de novas consultas.
-2. **Operação E1:** signup/entrega de e-mail público, término limpo do Playwright, cobertura visual autenticada e TLS entre pooler e backend PostgreSQL permanecem sem aprovação integral. Não usar dados pessoais reais.
+2. **Operação E1:** signup/entrega de e-mail público remoto e aplicação autorizada da auditoria incremental permanecem pendentes; a retomada local aprovou o término limpo do Playwright e a inspeção visual E1. TLS entre pooler e backend PostgreSQL segue sem comprovação. Não usar dados pessoais reais.
 3. **Versionamento e documentos:** critério M2 e inventário M3 são rascunhos com hash. Falta assinatura verificável, diffs semânticos e custódia operacional; hash não é assinatura, bloqueio DELETE não prova 20 anos.
 4. **Deploy acadêmico:** Render/Vercel produção seguem `italo_SDD`, enquanto desenvolvimento atual está em `italo_dev`; a produção não acompanha automaticamente o HEAD auditado. Saúde HTTP pontual não prova capacidade/estabilidade nem suite ponta a ponta.
 5. **Fonte geral M3:** o item geral demonstrativo é digitado no fluxo; não há integração comprovada com inventário PGR geral versionado.

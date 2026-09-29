@@ -16,6 +16,16 @@ export function ConfirmacaoAuth() {
         setErro('O link é inválido ou expirou. Solicite uma nova confirmação.');
         return;
       }
+      if (
+        !hash &&
+        !url.searchParams.has('code') &&
+        !url.hash.includes('access_token=')
+      ) {
+        setErro(
+          sessao ? '' : 'Abra o link de confirmação recebido por e-mail.',
+        );
+        return;
+      }
       if (hash && cliente) {
         window.history.replaceState(null, '', url.pathname);
         if (tipo !== 'signup' && tipo !== 'email' && tipo !== 'recovery') {
@@ -37,7 +47,7 @@ export function ConfirmacaoAuth() {
       }
     }
     void confirmar();
-  }, [cliente]);
+  }, [cliente, sessao]);
   return (
     <div className="space-y-4">
       {erro ? (
