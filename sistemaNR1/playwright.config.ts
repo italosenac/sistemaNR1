@@ -1,10 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const portaWeb = process.env.E0_WEB_PORT ?? '3100';
+const portaApi = process.env.E0_API_PORT ?? '3101';
+const origemWeb = `http://localhost:${portaWeb}`;
+const origemApi = `http://localhost:${portaApi}`;
+
 const ambienteTeste = {
   NODE_ENV: 'development',
-  PORT: '3101',
-  FRONTEND_URL: 'http://localhost:3100',
-  NEXT_PUBLIC_API_URL: 'http://localhost:3101',
+  PORT: portaApi,
+  FRONTEND_URL: origemWeb,
+  NEXT_PUBLIC_API_URL: origemApi,
   NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_ficticia_para_testes',
   SUPABASE_URL: 'http://127.0.0.1:54321',
@@ -22,7 +27,7 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 10_000 },
   reporter: 'list',
-  use: { baseURL: 'http://localhost:3100', trace: 'retain-on-failure' },
+  use: { baseURL: origemWeb, trace: 'retain-on-failure' },
   projects: [
     {
       name: 'desktop',
@@ -35,14 +40,14 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm dev:api',
-      url: 'http://localhost:3101/health',
+      url: `${origemApi}/health`,
       reuseExistingServer: false,
       timeout: 120_000,
       env: ambienteTeste,
     },
     {
-      command: 'pnpm --filter @sistemanr1/web exec next dev --port 3100',
-      url: 'http://localhost:3100',
+      command: `pnpm --filter @sistemanr1/web exec next dev --port ${portaWeb}`,
+      url: origemWeb,
       reuseExistingServer: false,
       timeout: 120_000,
       env: { ...ambienteTeste, NEXT_DIST_DIR: '.next-e2e' },

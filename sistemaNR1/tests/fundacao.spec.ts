@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import type { Route } from '@playwright/test';
 
-const enderecoSaude = 'http://localhost:3101/health';
+const enderecoSaude = `http://localhost:${process.env.E0_API_PORT ?? '3101'}/health`;
 
-test('página consulta a API real e apresenta os módulos pendentes', async ({
+test('página consulta a API real e apresenta os módulos parcialmente implementados', async ({
   page,
   request,
 }) => {
@@ -33,7 +33,7 @@ test('página consulta a API real e apresenta os módulos pendentes', async ({
     await expect(page.getByRole('heading', { name: nome })).toBeVisible();
   }
   await expect(
-    page.getByText('Ainda não implementado', { exact: true }),
+    page.getByText('Parcialmente implementado', { exact: true }),
   ).toHaveCount(3);
   await expect(page.getByRole('status')).toHaveText('API conectada');
   await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR');
@@ -55,7 +55,7 @@ test('falha de rede preserva a página e permite recuperação real', async ({
     .getByRole('alert');
   await expect(alertaDaConexao).toContainText('A página continua disponível');
   await expect(
-    page.getByText('Ainda não implementado', { exact: true }),
+    page.getByText('Parcialmente implementado', { exact: true }),
   ).toHaveCount(3);
   await page.unroute(enderecoSaude);
   await page.getByRole('button', { name: 'Verificar novamente' }).click();
