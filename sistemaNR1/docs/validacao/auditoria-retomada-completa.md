@@ -282,6 +282,8 @@ O pré-flight remoto da migração incremental `20260929000100` foi somente de l
 
 O usuário confirmou a existência do Mailtrap Sandbox SISNR1 e Custom SMTP remoto. Sem sessão/API do sandbox disponível ao Codex e sem destinatário sintético designado, a jornada única ficou bloqueada antes do signup; não foi repetido cadastro, confirmação nem recuperação de senha remotos, e nenhum e-mail foi enviado. Os dois perfis remotos de origem desconhecida não foram consultados ou alterados. E1 segue **PARCIAL** até evidência de e-mail remoto e autorização/aplicação/verificação da migração incremental. Os resultados exatos dos checks desta missão estão no [relatório E1](relatorio-e1.md).
 
+**Complemento posterior, 2026-09-29:** o MCP Mailtrap tornou-se disponível e a jornada única de Auth remoto com identidade sintética `@example.invalid` foi concluída. Signup, recebimento de confirmação no SISNR1, confirmação, login/logout, recebimento de recuperação, atualização de senha, login novo e rejeição da senha anterior passaram. O sandbox mostrou duas mensagens, nos minutos 23:07 e 23:10 UTC; seus corpos, links e tokens não foram registrados. O relato detalhado e os limites estão no [relatório E1](relatorio-e1.md). O pré-flight remoto foi repetido: 12 versões anteriores alinhadas, apenas `20260929000100` pendente, hash local preservado e dry-run sem seed/roles. **Migração pronta para autorização remota: SIM; não aplicada.** Os dois perfis de origem desconhecida não foram consultados nem alterados. E1 permanece **PARCIAL** até aplicação autorizada e verificação da auditoria incremental; a limitação TLS acadêmica permanece.
+
 ## 7. Matriz consolidada dos 21 RFs
 
 | Etapa | RF | Estado | Base existente que deve ser preservada |

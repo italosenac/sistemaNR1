@@ -42,6 +42,8 @@ C0 usuários: [SPEC C0-USU](../specs/camada-0/usuarios-perfis.spec.md), CA-USU-0
 
 Dependências entre rascunho, publicação e consolidação não são ciclos entre módulos: ver [contratos](arquitetura/contratos-modulos.md). RF-03.2 é biblioteca auxiliar, não requisito anterior obrigatório para cadastrar perigo completo em M2.
 
+Complemento E1 de 2026-09-29: uma jornada pública sintética no Auth remoto, com recebimento de confirmação e recuperação no Mailtrap Sandbox SISNR1, confirmação, login/logout, atualização de senha, novo login e rejeição da senha antiga, passou. O teste não acrescenta estados aos 21 RFs. A auditoria incremental `20260929000100` segue somente local; histórico e dry-run remotos foram reconfirmados, sem aplicação. Evidência sanitizada no [relatório E1](validacao/relatorio-e1.md).
+
 ## Evidência futura e manutenção
 
 Ao implementar, registrar RF, IDs dos cenários, arquivo de teste, comando executado, data, resultado e revisão de código em `docs/evidencias/`; atualizar SPEC e esta matriz juntos. Arquivo não criado enquanto não houver evidência real. Resultado documental desta etapa está em [validação](validacao/relatorio.md) e **não** altera a coluna Estado.

@@ -151,3 +151,21 @@ O usuário confirmou que o Mailtrap Sandbox SISNR1 é uma caixa fictícia contro
 | `pnpm.cmd build` | Código 0; contratos, Nest e 31 páginas geradas pelo Next |
 | `git diff --check` | Código 0 |
 | Integridade das migrações | Hash `20260929000100` conferido; nenhum arquivo em `supabase/migrations` modificado nesta missão |
+
+### Complemento remoto controlado — 2026-09-29
+
+Após o checkpoint anterior, o MCP Mailtrap passou a responder para o sandbox fictício **SISNR1**. Foi executada **uma** jornada pública com uma única identidade sintética `@example.invalid` no Auth remoto do projeto vinculado, usando a chave publicável. As senhas foram geradas e mantidas só na memória de um processo local transitório; o auxiliar foi removido após o teste. Não foram exibidos nem persistidos senhas, tokens, links completos, cookies, chaves ou conteúdo das mensagens. Nenhuma conta além da identidade criada nessa jornada foi consultada.
+
+| Etapa | Evidência sanitizada |
+| --- | --- |
+| Signup público | HTTP 200, uma tentativa |
+| Confirmação recebida | **SIM**; SISNR1, 2026-09-29 23:07 UTC |
+| Confirmação pelo link real | Redirecionamento Auth 303, sem expor o link |
+| Login e logout | HTTP 200 e 204 |
+| Pedido de recuperação | HTTP 200, uma tentativa |
+| Recuperação recebida | **SIM**; SISNR1, 2026-09-29 23:10 UTC |
+| Atualização pelo link real | HTTP 200, sem expor o link |
+| Nova senha / senha anterior | Login novo HTTP 200; senha anterior rejeitada com HTTP 400 |
+| Mensagens observadas | **2** no sandbox: uma confirmação e uma recuperação; nenhuma alterada ou excluída |
+
+O fluxo acima usa os endpoints públicos do Supabase Auth equivalentes às ações do formulário web; **não é uma nova prova de interação visual no frontend remoto**. A matriz local E1 permanece 28/28 operações e os três testes novos permaneceram 3/3. O pré-flight foi repetido após a jornada: SHA-256 local de `20260929000100` igual a `6f867d62dd3104efb18074787a4e9aee6a45dd9b6a0382e46bc07e805ee1f1c5`; `supabase migration list --linked` mostrou as 12 versões anteriores alinhadas e `20260929000100` somente local; `supabase db push --linked --dry-run --skip-vault` saiu com código 0 e listou exclusivamente essa versão, `seeds: []`, `roles: []`. **Migração pronta para autorização específica: SIM. Migração aplicada remotamente: NÃO.** E1 continua **Parcialmente implementada** até aplicação autorizada e verificação remota dessa auditoria incremental. A limitação acadêmica já documentada do TLS entre pooler e PostgreSQL permanece.
