@@ -84,7 +84,7 @@ Fontes: `specs/camada-0/usuarios-perfis.spec.md`, `specs/camada-0/estrutura-orga
 | Perfil global, vínculos por empresa e matrícula | PARCIAL | API, UI, tabelas e testes multiempresa presentes; associação de conta existente tem fluxo e motivo, mas requer prova ponta a ponta completa em condição real de convite/cadastro público. |
 | Quatro papéis e autorização | COMPROVADO no recorte testado | `usuario.ts`, guard, serviço/repositórios e cinco cenários remotos fictícios; revogação com mesmo JWT e isolamento relatados. Cobertura integral de matriz de permissões ainda a conferir. |
 | Estabelecimentos, setores, funções, turnos, grupos e lotações | PARCIAL | `organizacao.controller.ts`, `repositorio-organizacao-postgres.ts`, `gestao-estrutura.tsx` e migração existem; telas e cenários principais funcionam, mas cobertura visual/autorização completa de cada operação não está demonstrada. |
-| Identificação profissional | PARCIAL | Campo e edição em `meu-perfil.tsx` e persistência C0; não constitui validação profissional nem assinatura. |
+| Identificação profissional | COMPROVADA no escopo E1 local | Titular cadastra, lista e altera; outro titular não lê nem altera na integração Auth/Nest/PostgreSQL de 2026-09-29. Não constitui validação oficial de conselho nem assinatura. |
 | Bootstrap, associação de conta existente e snapshots | PARCIAL | Fluxos, motivo de associação, congelamento e revisão estrutural aparecem no código e nos testes; faltam evidências ampliadas de revisão/revogação/concorrência e de conta pública existente. |
 | Eventos de auditoria | PARCIAL | Tabelas/gatilhos C0 e consulta restrita existem; política operacional de retenção, cobertura de todas as mutações e inspeção de logs ainda não comprovadas. |
 | RLS, FORCE RLS, runtime restrito e TLS | PARCIAL | Migração aplica RLS/FORCE, grants estreitos e login restrito; testes local/remoto fictícios de isolamento passaram. Cliente→pooler validado com CA/hostname; `pg_stat_ssl.ssl=false` no backend observado não comprova TLS ponta a ponta. Aceite acadêmico limitado a dados fictícios. |
@@ -273,6 +273,14 @@ Base comum: `servico-inventario.ts`, `inventario.controller.ts`, `inventario.dto
 - **API / frontend:** rota PDF e botão `/inventarios`.
 - **Testes / segurança / remoto:** `pdf-rascunho.spec.ts`, `testar-coleta-local.mjs` comprovam formato/hash e acesso empresarial; PDF online fictício histórico.
 - **Lacunas / regressão / próximo mínimo / reimplementar:** assinatura formal verificável, identidade/habilitação do responsável técnico e avanço formal. Conservar marcação **RASCUNHO NÃO ASSINADO** até evidência verificável; teste de assinatura e download. **Reimplementar: somente formalização.**
+
+### Missão 2B — fechamento das lacunas E1, 2026-09-29
+
+A [matriz de permissões](../arquitetura/matriz-permissoes.md) registra 28 operações E1 com papel, escopo empresarial, prova e lacuna. A nova suíte `tests/integracao/matriz-e1.spec.ts` cobre identidade própria, capacidades G/T/C/W, carteira da consultoria, referências cruzadas, concessão/revogação, estrutura, lotação, snapshot, identificação profissional e RLS da auditoria. Os três testes executam somente em Auth/Nest/PostgreSQL locais com fixtures sintéticas; a estrutura e lotação C0 ficam comprovadas nesse recorte. A auditoria de registros profissionais é global e não recebe `empresa_id`; não foi apresentada como auditoria empresarial. Nenhum RF M1–M3 mudou de estado.
+
+O pré-flight remoto da migração incremental `20260929000100` foi somente de leitura/dry-run: SHA-256 local `6f867d62dd3104efb18074787a4e9aee6a45dd9b6a0382e46bc07e805ee1f1c5`, 12 migrações anteriores alinhadas nas colunas local/remota e somente `20260929000100` pendente. `supabase db push --linked --dry-run --skip-vault` terminou com código 0 e listou exclusivamente esse arquivo, `seeds: []` e `roles: []`. O SQL cria três gatilhos de auditoria, dentro de `BEGIN`/`COMMIT`; não contém operação destrutiva de dados. **Pronta para autorização específica; não aplicada remotamente nesta missão.** O histórico do CLI confirma versões, não fornece checksum independente do SQL remoto.
+
+O usuário confirmou a existência do Mailtrap Sandbox SISNR1 e Custom SMTP remoto. Sem sessão/API do sandbox disponível ao Codex e sem destinatário sintético designado, a jornada única ficou bloqueada antes do signup; não foi repetido cadastro, confirmação nem recuperação de senha remotos, e nenhum e-mail foi enviado. Os dois perfis remotos de origem desconhecida não foram consultados ou alterados. E1 segue **PARCIAL** até evidência de e-mail remoto e autorização/aplicação/verificação da migração incremental. Os resultados exatos dos checks desta missão estão no [relatório E1](relatorio-e1.md).
 
 ## 7. Matriz consolidada dos 21 RFs
 
