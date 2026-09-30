@@ -95,7 +95,7 @@ Unitários de árvore/partições; integração de autorização e persistência
 
 ## Estado de implementação
 
-**Parcialmente implementado.** A Missão E1 implementa identidade Auth, perfil global, vínculos/matrículas opcionais, quatro papéis, lotação separada, empresas e estrutura. Migração consolidada aplicada somente no Supabase local; autorização/RLS, Auth e navegação estão em validação real. Aplicação/configuração remota e seus testes dependem da aprovação específica exigida na seção 12 do prompt. Evidências e critérios em [relatório E1](../../docs/validacao/relatorio-e1.md). M1–M6 permanecem fora desta implementação.
+**Concluído e testado no escopo acadêmico E1 com dados fictícios (2026-09-29).** Empresas, estrutura, grupos, lotação, arquivamento e snapshots foram exercitados com autorização e isolamento. A migração base e a incremental de auditoria `20260929000100` estão aplicadas no projeto remoto autorizado. O teste pós-migração confirmou gatilho e evento de snapshot em transação revertida; a matriz local cobriu 28 operações E1. Evidências e limites no [relatório E1](../../docs/validacao/relatorio-e1.md). Integração de snapshots com campanha/inventário pertence a E2/E4; esta conclusão não afirma prontidão para produção ou uso com dados reais.
 
 ## Observações
 

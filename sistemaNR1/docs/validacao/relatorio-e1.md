@@ -1,10 +1,10 @@
 # Relatório de validação — E1 / Camada 0
 
-Data inicial: 2026-09-27. Atualização remota: 2026-09-28. Retomada local: 2026-09-29. Escopo: identidade, autorização e estrutura organizacional da Camada 0. Todos os dados de teste foram fictícios. Esta evidência não implementa nem conclui M1, M2, M3, M4, M5 ou M6.
+Data inicial: 2026-09-27. Atualização remota: 2026-09-29. Retomada local: 2026-09-29. Escopo: identidade, autorização e estrutura organizacional da Camada 0. Todos os dados de teste foram fictícios. Esta evidência não implementa nem conclui M1, M2, M3, M4, M5 ou M6.
 
 ## Estado
 
-**Parcialmente implementado.** A E1 está funcional e validada no Supabase local. A migração base remota foi aplicada e cinco cenários funcionais remotos com fixtures fictícias passaram, incluindo Auth por link de fixture, Nest, PostgreSQL restrito, RLS, isolamento e navegador. O cadastro público remoto e a entrega de e-mail não passaram por validação: duas tentativas retornaram HTTP 400 sem causa sanitizada preservada, e a seguinte retornou `over_email_send_rate_limit` (HTTP 429). A falha histórica de encerramento do Playwright foi superada na integração local de 2026-09-29, conforme a seção de retomada abaixo. A nova migração de auditoria foi aplicada somente no Supabase local. **E1 ainda não atende ao critério de “Concluído e testado”** por falta de prova do fluxo público remoto, aplicação/autorização da nova migração remota e inspeção visual integral. Os 21 RFs originais não foram alterados nesta missão. A decisão acadêmica de usar TLS validado até o pooler não comprova TLS de ponta a ponta nem autoriza dados pessoais reais.
+**Concluído e testado no escopo acadêmico E1, com dados fictícios.** A migração base e a migração incremental de auditoria `20260929000100` estão aplicadas no projeto remoto autorizado. A jornada pública remota de cadastro, confirmação, login, logout e recuperação passou com mensagens recebidas no Mailtrap SISNR1; a matriz local cobriu 28 operações E1 e o teste remoto pós-migração confirmou objetos, grants, snapshot auditado e isolamento. A leitura direta dos eventos globais de perfil e identificação profissional pelo login runtime é vedada pelo RLS; seu disparo remoto foi verificado por DML transacional bem-sucedido com os gatilhos ativos, e o conteúdo desses eventos foi afirmado no teste SQL local. O escopo E1 não inclui confirmação oficial de habilitação profissional, assinatura nem a jornada anônima M1. A decisão acadêmica de usar TLS validado até o pooler não comprova TLS de ponta a ponta, não indica prontidão para produção e não autoriza dados pessoais reais. Os 21 RFs M1–M3 não mudam de estado.
 
 ## Entrega implementada
 
@@ -169,3 +169,24 @@ Após o checkpoint anterior, o MCP Mailtrap passou a responder para o sandbox fi
 | Mensagens observadas | **2** no sandbox: uma confirmação e uma recuperação; nenhuma alterada ou excluída |
 
 O fluxo acima usa os endpoints públicos do Supabase Auth equivalentes às ações do formulário web; **não é uma nova prova de interação visual no frontend remoto**. A matriz local E1 permanece 28/28 operações e os três testes novos permaneceram 3/3. O pré-flight foi repetido após a jornada: SHA-256 local de `20260929000100` igual a `6f867d62dd3104efb18074787a4e9aee6a45dd9b6a0382e46bc07e805ee1f1c5`; `supabase migration list --linked` mostrou as 12 versões anteriores alinhadas e `20260929000100` somente local; `supabase db push --linked --dry-run --skip-vault` saiu com código 0 e listou exclusivamente essa versão, `seeds: []`, `roles: []`. **Migração pronta para autorização específica: SIM. Migração aplicada remotamente: NÃO.** E1 continua **Parcialmente implementada** até aplicação autorizada e verificação remota dessa auditoria incremental. A limitação acadêmica já documentada do TLS entre pooler e PostgreSQL permanece.
+
+### Aplicação remota autorizada e verificação final E1 — 2026-09-29
+
+O usuário autorizou **exclusivamente** `20260929000100_e1_auditoria_perfil_profissional_snapshot.sql` no projeto `sfutycdmcjsvmfrvtxam`. Antes da escrita, `supabase/.temp/project-ref` confirmou o projeto; `supabase migration list --linked` mostrou as 12 versões anteriores alinhadas e a nova versão somente local; o SHA-256 recalculado foi exatamente `6f867d62dd3104efb18074787a4e9aee6a45dd9b6a0382e46bc07e805ee1f1c5`. `supabase db push --linked --dry-run --skip-vault` saiu com código 0 e listou somente essa migração, `seeds: []`, `roles: []`. Nenhum arquivo de migração havia sido modificado na árvore Git.
+
+`supabase db push --linked --skip-vault --yes` terminou com **código 0** e aplicou apenas `20260929000100`. A listagem posterior registrou essa versão nas colunas local e remota, com as 12 versões anteriores preservadas. Não houve `db reset`, `migration repair`, seed, alteração de roles ou outra migração.
+
+| Verificação pós-aplicação no projeto remoto | Resultado |
+| --- | --- |
+| Três gatilhos `z_auditar` ativos em `perfis`, `identificacoes_profissionais` e `estruturas_congeladas` | **3/3**, leitura de `pg_trigger` |
+| RLS e `FORCE ROW LEVEL SECURITY` | **13/13 tabelas** do schema `organizacao` |
+| Políticas | **34**, mesma contagem documentada antes da incremental |
+| Login runtime | `LOGIN` sem SUPERUSER/BYPASSRLS/CREATEROLE/CREATEDB; TLS cliente→pooler validado |
+| Grants do runtime | `USAGE` no schema, `SELECT` de perfil, `INSERT` de identificação/snapshot; `INSERT` e `DELETE` diretos na auditoria continuam negados |
+| Perfil e identificação profissional fictícios | `UPDATE` do próprio perfil e `INSERT` de identificação passaram na transação com gatilhos ativos; **ROLLBACK** |
+| Snapshot fictício e auditoria | `INSERT` passou; o evento de `estruturas_congeladas` com empresa, ator e operação corretos foi lido sob RLS; **ROLLBACK** |
+| Isolamento multiempresa | `node scripts/testar-rls-remoto.mjs` saiu com código 0: leitura de A, bloqueio de leitura/escrita em B, transação revertida |
+
+A primeira tentativa transacional de snapshot usou população `0` e recebeu `23514`, conforme a restrição já existente `populacao_total > 0`; foi totalmente revertida. Após verificar essa restrição no SQL local, uma única repetição com população fictícia `1` passou, também com rollback. Isso não indica falha da migração. Os eventos de `perfis` e `identificacoes_profissionais` têm `empresa_id` nulo e **não são legíveis diretamente pelo login runtime**; o resultado remoto comprova gatilhos ativos e DML concluído sem erro, enquanto o teste SQL local já afirmou entidade, operação e ator desses eventos. Não se alegou leitura remota direta do conteúdo global. Nenhum dos dois perfis de origem desconhecida foi consultado ou alterado. Os testes de e-mail não foram repetidos.
+
+**Decisão:** E1 **Concluída e testada no escopo acadêmico fictício**. O cadastro profissional é declaração armazenada, não validação oficial de conselho, habilitação ou assinatura. A conexão Nest→pooler mantém CA e hostname verificados; `pg_stat_ssl.ssl=false` no backend observado continua sem comprovar TLS no trecho pooler→PostgreSQL. Este resultado não atesta conformidade legal integral, prontidão para produção ou autorização de uso com dados pessoais reais.

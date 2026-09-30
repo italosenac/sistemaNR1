@@ -70,7 +70,7 @@ CA-USU-11 tem verificação estrutural/contratual na E1 e jornada de coleta na E
 
 ## Estado de implementação
 
-**Parcialmente implementado.** A Missão E1 implementa identidade Auth, perfil global, vínculos/matrículas opcionais, quatro papéis, lotação separada, empresas e estrutura. Migração consolidada aplicada somente no Supabase local; autorização/RLS, Auth e navegação estão em validação real. Aplicação/configuração remota e seus testes dependem da aprovação específica exigida na seção 12 do prompt. Evidências e critérios em [relatório E1](../../docs/validacao/relatorio-e1.md). M1–M6 permanecem fora desta implementação.
+**Concluído e testado no escopo acadêmico E1 com dados fictícios (2026-09-29).** Identidade Auth, perfil, vínculos/matrículas, quatro papéis e identificação profissional declarada foram exercitados local e remotamente. A migração base e a incremental de auditoria `20260929000100` estão aplicadas no projeto autorizado; matriz de 28 operações, RLS, isolamento, jornada pública de e-mail e verificação remota pós-migração constam no [relatório E1](../../docs/validacao/relatorio-e1.md). CA-USU-11 permanece fronteira estrutural da E1; a jornada anônima pertence à E2. Cadastro de conselho não verifica habilitação nem assinatura. A limitação TLS acadêmica não autoriza dados reais ou produção. M1–M6 permanecem fora desta conclusão.
 
 ## Observações
 
